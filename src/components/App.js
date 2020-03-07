@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import MyNavbar from './navbar'
 import Footer from './footer'
-import { BG } from '../json/temp'
+import { BG } from '../json/image-info'
 import '../index.css'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import Home from './Home'

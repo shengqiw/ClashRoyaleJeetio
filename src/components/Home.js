@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import '../index.css'
 import { CardImage } from './card'
-import { Jungle, BattleHealer, King, Flarney } from '../json/temp'
+import { Jungle, BattleHealer, King, Flarney } from '../json/image-info'
 import { Link } from 'react-router-dom'
 
 

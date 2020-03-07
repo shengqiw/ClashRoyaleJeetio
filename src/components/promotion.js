@@ -1,8 +1,18 @@
 import React from 'react'
-// import stuff from '../json/promotion-info.json'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 export default function Promotion() {
     return (
-        <h1>Hello</h1>
+        <React.Fragment>
+            <Container>
+                <Row>
+                    <Col>
+                    </Col>
+                </Row>
+            </Container>
+
+        </React.Fragment>
     );
 }
