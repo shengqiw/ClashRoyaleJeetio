@@ -9,6 +9,7 @@ export default function Promotion() {
             <Container>
                 <Row>
                     <Col>
+                        <h1>Abhijeet is the coolest ever :)</h1>
                     </Col>
                 </Row>
             </Container>
