@@ -4,14 +4,11 @@ export const BG = {
     backgroundImage: `url(${MyBG})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
-    height: 'auto',
-    width: 'auto',
     paddingBottom: '20px'
 }
 export const BattleHealer = {
     src: require("../images/lagertha.jpg"),
     title: "Promotions",
-    text: "Elder & CoLeader",
     footer: "",
     styles: {
         title: "mb-auto mt-1 text-warning",
@@ -19,6 +16,8 @@ export const BattleHealer = {
         img: "bg-dark text-white hoverzoom cursorpointer",
         imgsrc: {
             height: '40vh',
+            objectFit: 'cover',
+            objectPosition: 'center'
         }
     }
 }
@@ -26,7 +25,6 @@ export const BattleHealer = {
 export const Flarney = {
     src: require("../images/flarney.jpg"),
     title: "Founding Fathers",
-    text: "Elder & CoLeader",
     footer: "",
     styles: {
         title: "mb-auto mt-1 text-info text-right",
@@ -34,6 +32,7 @@ export const Flarney = {
         img: "bg-dark text-white hoverzoom cursorpointer",
         imgsrc: {
             height: '40vh',
+            objectFit: 'cover'
         }
     }
 }
@@ -49,6 +48,7 @@ export const Jungle = {
         img: "bg-dark text-white cursorpointer",
         imgsrc: {
             height: '60vh',
+            objectFit: 'cover'
         }
     }
 }
@@ -63,6 +63,7 @@ export const King = {
         img: "bg-dark text-white hoverzoom cursorpointer",
         imgsrc: {
             height: '40vh',
+            objectFit: 'cover'
         }
     }
 }
