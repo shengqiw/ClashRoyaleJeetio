@@ -2,6 +2,7 @@ import React from 'react'
 import Card from 'react-bootstrap/Card'
 import '../index.css'
 
+
 export function CardImage(props) {
     console.log(props.oof.styles.title)
     return (
@@ -30,5 +31,25 @@ export function CardDefault(props) {
                 </Card.Title>
             </Card.Body>
         </Card>
+    );
+}
+
+export function CardText(props) {
+    return (
+        <Card className="border-0">
+            <Card.Body>
+                <Card.Title>{props.oof.title}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">{props.oof.subtitle}</Card.Subtitle>
+                <Card.Title className="mt-3">{props.oof.optionalTitle}</Card.Title>
+                <Card.Subtitle className="">{props.oof.optionalSubtitle}</Card.Subtitle>
+                <Card.Title className="mt-3">{props.oof.optionalTitle2}</Card.Title>
+                <Card.Text>{props.oof.text[0]}</Card.Text>
+                <Card.Text>{props.oof.text[1]}</Card.Text>
+                <Card.Text>{props.oof.text[2]}</Card.Text>
+                <Card.Text>{props.oof.text[3]}</Card.Text>
+
+            </Card.Body>
+        </Card>
+
     );
 }

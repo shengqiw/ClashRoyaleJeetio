@@ -1,11 +1,12 @@
-import MyBG from '../images/clash-royale-bg.jpg'
+import MyBG from '../images/bg.jpg'
 
 export const BG = {
     backgroundImage: `url(${MyBG})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
-    height: '125vh',
-    width: 'auto'
+    height: 'auto',
+    width: 'auto',
+    paddingBottom: '20px'
 }
 export const BattleHealer = {
     src: require("../images/lagertha.jpg"),
@@ -45,7 +46,10 @@ export const Jungle = {
     styles: {
         title: "mb-auto text-center display-4 text-bold",
         text: "mt-auto display-4 hoverfade",
-        img: "bg-dark text-white cursorpointer"
+        img: "bg-dark text-white cursorpointer",
+        imgsrc: {
+            height: '60vh',
+        }
     }
 }
 export const King = {

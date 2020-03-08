@@ -18,7 +18,9 @@ export default function Home() {
                     </Link>
                     <Row className="mt-5">
                         <Col md={{ span: 4 }}>
-                            <CardImage oof={BattleHealer} />
+                            <Link to="/Promotion">
+                                <CardImage oof={BattleHealer} />
+                            </Link>
                         </Col>
                         <Col md={{ span: 4 }}>
                             <CardImage oof={King} />
