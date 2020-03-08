@@ -21,8 +21,6 @@ export default function Promotion() {
                 <Row>
                     <Col className="m-4 ml-5 mt-5">
                         <h2>Promotions</h2>
-                        {/* <Divider /> */}
-                        {/* <CardText oof={promotionHeader} /> */}
                         <h4 className="mt-4">Elder</h4>
                         <Divider />
                         <CardText oof={promotionElder} />

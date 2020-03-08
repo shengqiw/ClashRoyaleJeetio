@@ -38,8 +38,8 @@ export const rulesKick = {
 export const rulesSoft = {
     header: "Soft Rules",
     title: [
-        "Push ladder as much as possible",
-        "Being helpful to clan members",
+        "Push ladder consistently",
+        "Being helpful to others",
         "Don't change clan description"
     ],
     stylesUL: {},

@@ -4,7 +4,7 @@ export const BG = {
     backgroundImage: `url(${MyBG})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
-    paddingBottom: '20px'
+    paddingBottom: '30px'
 }
 export const BattleHealer = {
     src: require("../images/lagertha.jpg"),
@@ -72,6 +72,10 @@ export const Princess = {
     title: "Realest Rules",
     styles: {
         title: "mt-auto text-center display-1 text-bold",
-        img: "bg-dark text-warning"
+        img: "bg-dark text-warning",
+        imgsrc: {
+            height: '40vh',
+            objectFit: 'cover'
+        }
     }
 }

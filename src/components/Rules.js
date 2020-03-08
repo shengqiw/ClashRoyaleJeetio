@@ -15,19 +15,19 @@ export default function Rules() {
                         <CardImage oof={Princess} />
                     </Col>
                 </Row>
-                <Row className="mt-5">
-                    <Col md={{ span: 6 }}>
+                <Row >
+                    <Col sm="12" xl="6" className="mt-5">
                         <CardDefault oof={rulesReq} />
                     </Col>
-                    <Col md={{ span: 6 }}>
+                    <Col sm="12" xl="6" className="mt-5">
                         <CardDefault oof={rulesKeep} />
                     </Col>
                 </Row>
-                <Row className="mt-4">
-                    <Col md={{ span: 6 }}>
+                <Row>
+                    <Col sm="12" xl="6" className="mt-5">
                         <CardDefault oof={rulesKick} />
                     </Col>
-                    <Col md={{ span: 6 }}>
+                    <Col sm="12" xl="6" className="mt-5">
                         <CardDefault oof={rulesSoft} />
                     </Col>
                 </Row>
