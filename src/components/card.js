@@ -4,7 +4,6 @@ import '../index.css'
 
 
 export function CardImage(props) {
-    console.log(props.oof.styles.title)
     return (
         <Card className={props.oof.styles.img}>
             <Card.Img src={props.oof.src} style={props.oof.styles.imgsrc} alt="Card image" />

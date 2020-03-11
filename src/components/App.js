@@ -10,7 +10,7 @@ import Promotion from './promotion'
 import Guides from './guides'
 import { ScrollToTop } from './scroll-top'
 import { CRToken } from '../store/get-token'
-var request = require('request');
+import axios from 'axios'
 
 export default class App extends Component {
     constructor() {
@@ -19,28 +19,22 @@ export default class App extends Component {
             foundingFathers: ""
         }
         console.log(CRToken)
+    }
 
-        var headers = {
-            'Accept': 'application/json',
-            'authorization': `Bearer ${CRToken}`
-        };
-
-        var options = {
-            url: 'https://api.clashroyale.com/v1/clans/%23PRURJPJP',
-            headers: headers
-        };
-
-        function callback(error, response, body) {
-            if (!error && response.statusCode === 200) {
-                console.log(body);
-            }
-        }
-
-        request(options, callback);
-
-
+    async getDataAxios() {
+        const response =
+            await axios.get("https://api.clashroyale.com/v1/clans/%23PRURJPJP",
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': `Bearer ${CRToken}`
+                    }
+                }
+            )
+        console.log(response.data)
     }
     render() {
+        this.getDataAxios()
         return (
             <BrowserRouter>
                 <MyNavbar />
