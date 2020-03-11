@@ -9,26 +9,30 @@ import { Princess } from '../json/image-info'
 export default function Rules() {
     return (
         <React.Fragment>
-            <Container>
+            <Container fluid={true}>
                 <Row>
-                    <Col md={{ span: 12 }}>
-                        <CardImage oof={Princess} />
-                    </Col>
-                </Row>
-                <Row >
-                    <Col sm="12" xl="6" className="mt-5">
-                        <CardDefault oof={rulesReq} />
-                    </Col>
-                    <Col sm="12" xl="6" className="mt-5">
-                        <CardDefault oof={rulesKeep} />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col sm="12" xl="6" className="mt-5">
-                        <CardDefault oof={rulesKick} />
-                    </Col>
-                    <Col sm="12" xl="6" className="mt-5">
-                        <CardDefault oof={rulesSoft} />
+                    <Col md={{ span: 12 }} xl={{ span: 8, offset: 2 }}>
+                        <Row>
+                            <Col md={{ span: 12 }}>
+                                <CardImage oof={Princess} />
+                            </Col>
+                        </Row>
+                        <Row >
+                            <Col sm="12" xl="6" className="mt-5">
+                                <CardDefault oof={rulesReq} />
+                            </Col>
+                            <Col sm="12" xl="6" className="mt-5">
+                                <CardDefault oof={rulesKeep} />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm="12" xl="6" className="mt-5">
+                                <CardDefault oof={rulesKick} />
+                            </Col>
+                            <Col sm="12" xl="6" className="mt-5">
+                                <CardDefault oof={rulesSoft} />
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
             </Container>

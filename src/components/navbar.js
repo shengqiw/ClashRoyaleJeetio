@@ -20,7 +20,7 @@ export default function MyNavbar() {
             <Nav className="mr-auto">
                 <Nav.Link as={Link} to="/Rules" className="m-1" style={styles}>Rules</Nav.Link>
                 <Nav.Link as={Link} to="/Promotion" className="m-1" style={styles}>Promotions</Nav.Link>
-                <Nav.Link className="m-1" style={styles}>Guides</Nav.Link>
+                <Nav.Link as={Link} to="/Guides" className="m-1" style={styles}>Guides</Nav.Link>
             </Nav>
 
         </Navbar >

@@ -33,8 +33,8 @@ export const promotionCoLeader = {
 export const promotionCoLeaderTrials = {
     title: "Test yourself against the Founding Fathers",
     foundingFathers: "Founding Fathers List",
-    text: [" - Achieve 750+ donations each week",
-        " - Have a 70% war win rate or better",
-        " - Loyal to the clan for 3+ months",
-        "Upon completion, let us know in the clan chat and we will begin Co-Leader Trials"],
+    text: [" - Defeat 2 out of 4 Founding Fathers",
+        " - You get 2 tries per Founding Father",
+        " - Ban any 1 card each game",
+        "If you fail, win 3 final war battles in a row and try again!"],
 }

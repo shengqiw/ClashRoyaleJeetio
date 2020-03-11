@@ -10,9 +10,9 @@ import { Link } from 'react-router-dom'
 
 export default function Home() {
     return (
-        <Container className='MainBg'>
+        <Container className='MainBg' fluid={true}>
             <Row>
-                <Col md={{ span: 12 }}>
+                <Col xl={{ span: 8, offset: 2 }} sm={{ span: 12 }}>
                     <Link to="/Rules">
                         <CardImage oof={Jungle} />
                     </Link>
@@ -23,7 +23,9 @@ export default function Home() {
                             </Link>
                         </Col>
                         <Col md={{ span: 4 }}>
-                            <CardImage oof={King} />
+                            <Link to="/Guides">
+                                <CardImage oof={King} />
+                            </Link>
                         </Col>
                         <Col md={{ span: 4 }}>
                             <CardImage oof={Flarney} />

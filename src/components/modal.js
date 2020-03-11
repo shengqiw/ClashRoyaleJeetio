@@ -9,7 +9,7 @@ export function ModalCoLeader(props) {
     return (
         <React.Fragment>
 
-            <Button className="ml-3" size="sm" variant="info" onClick={() => setModalShow(true)}>
+            <Button className="m-3" size="sm" variant="info" onClick={() => setModalShow(true)}>
                 Founding Fathers
             </Button>
             <Modal size="lg" show={modalShow} onHide={() => setModalShow(false)} centered>
