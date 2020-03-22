@@ -54,5 +54,4 @@ export default function App() {
         <Redirect from="/" to="Home" />
         <ScrollToTop />
     </BrowserRouter>
-    );
 }
