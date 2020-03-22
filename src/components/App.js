@@ -32,26 +32,29 @@ export default function App() {
         fetchData();
         console.log('clan data', clanData);
     });
-    <BrowserRouter>
-        <MyNavbar />
-        <div style={BG}>
-            <Switch>
-                <Route path="/Home">
-                    <Home />
-                </Route>
-                <Route path="/Rules">
-                    <Rules />
-                </Route>
-                <Route path="/Promotion">
-                    <Promotion />
-                </Route>
-                <Route path="/Guides">
-                    <Guides />
-                </Route>
-            </Switch>
-        </div>
-        <Footer />
-        <Redirect from="/" to="Home" />
-        <ScrollToTop />
-    </BrowserRouter>
-}
+
+    return (
+        <BrowserRouter>
+            <MyNavbar />
+            <div style={BG}>
+                <Switch>
+                    <Route path="/Home">
+                        <Home />
+                    </Route>
+                    <Route path="/Rules">
+                        <Rules />
+                    </Route>
+                    <Route path="/Promotion">
+                        <Promotion />
+                    </Route>
+                    <Route path="/Guides">
+                        <Guides />
+                    </Route>
+                </Switch>
+            </div>
+            <Footer />
+            <Redirect from="/" to="Home" />
+            <ScrollToTop />
+        </BrowserRouter>
+    )
+};
