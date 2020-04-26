@@ -24,7 +24,7 @@ export const BattleHealer = {
 
 export const Flarney = {
     src: require("../images/flarney.jpg"),
-    title: "FOUNDING FATHERS",
+    title: "TOURNAMENTS",
     footer: "",
     styles: {
         title: "mb-auto mt-1 text-info text-right",

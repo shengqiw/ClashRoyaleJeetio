@@ -8,18 +8,22 @@ import Home from './Home'
 import Rules from './Rules'
 import Promotion from './promotion'
 import Guides from './guides'
+import Tournament from './tournament'
 import { ScrollToTop } from './scroll-top'
-// import { CRToken } from '../store/get-token'
 
 export default function App() {
 
+
+
     const [clanData, setClanData] = useState({});
+    const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjQ2ZjhmNjk3LTRmYzItNDJmOC1hODU0LWU1YzgyNGI0NDA5ZiIsImlhdCI6MTU4NzMxODQ2OCwic3ViIjoiZGV2ZWxvcGVyLzExMTU1OTNkLTgwZDctYThjMS01MTA3LTY1OTQwODIxNDI0MiIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI3NS4xNjIuNDguMzEiXSwidHlwZSI6ImNsaWVudCJ9XX0.kYiHJ20k12BplKU8M8oBRRv9U-buwtYKH1LiTa6_x1qpqmeRP31E44X8SMkbEIOMbdo_39eJF-aPlLi-iUXEVw"
 
     async function fetchData() {
         const res = await fetch("https://api.clashroyale.com/v1/clans/%23PRURJPJP", {
             headers: {
-                Accept: "application/json",
-                Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY4MzJhYjljLTJjMzYtNDUzNi1iMjNiLTE5OGI3NjQwMGViMCIsImlhdCI6MTU4Mzk3OTg0MSwic3ViIjoiZGV2ZWxvcGVyLzExMTU1OTNkLTgwZDctYThjMS01MTA3LTY1OTQwODIxNDI0MiIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI3NS4xNjIuMTkuMiJdLCJ0eXBlIjoiY2xpZW50In1dfQ.bcKqUe5Z6qA18WPOjFh-qHTeW65jiKtdZWMUkPtwxxq2jNEuAtmCl0dH4wxchk0DFe4jADSif5OBAQQXgSEFGQ"
+                "cache-control": "max-age=120",
+                "content-type": "application/json; charset=utf-8",
+                "Authorization": `Bearer ${TOKEN}`
             }
         });
         res
@@ -39,7 +43,8 @@ export default function App() {
             <div style={BG}>
                 <Switch>
                     <Route path="/Home">
-                        <Home />
+                        {/* <Home /> */}
+                        <Tournament />
                     </Route>
                     <Route path="/Rules">
                         <Rules />
@@ -49,6 +54,9 @@ export default function App() {
                     </Route>
                     <Route path="/Guides">
                         <Guides />
+                    </Route>
+                    <Route path="/Tournament">
+                        <Tournament />
                     </Route>
                 </Switch>
             </div>

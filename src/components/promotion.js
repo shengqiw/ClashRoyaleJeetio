@@ -16,31 +16,29 @@ export default function Promotion() {
     const [modalShow, setModalShow] = React.useState(false);
     console.log(modalShow)
     return (
-        <React.Fragment>
-            <Container fluid={true}>
-                <Row>
-                    <Col className="bg-white rounded" md={{ span: 12 }} xl={{ span: 8, offset: 2 }}>
-                        <Row>
-                            <Col className="m-5">
-                                <h2>Promotions</h2>
-                                <h4 className="mt-4">Elder</h4>
-                                <Divider />
-                                <CardText oof={promotionElder} />
-                                <h4 className="mt-2">Co-Leader</h4>
-                                <Divider />
-                                <CardText oof={promotionCoLeader} />
-                                <h4 className="mt-2">Co-Leader Trials</h4>
-                                <Divider />
-                                <CardText oof={promotionCoLeaderTrials} />
-                                <ModalCoLeader show={modalShow} onHide={() => setModalShow(false)} />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
+        <Container fluid={true}>
+            <Row>
+                <Col className="bg-white rounded" md={{ span: 12 }} xl={{ span: 8, offset: 2 }}>
+                    <Row>
+                        <Col className="m-5">
+                            <h2>Promotions</h2>
+                            <h4 className="mt-4">Elder</h4>
+                            <Divider />
+                            <CardText oof={promotionElder} />
+                            <h4 className="mt-2">Co-Leader</h4>
+                            <Divider />
+                            <CardText oof={promotionCoLeader} />
+                            <h4 className="mt-2">Co-Leader Trials</h4>
+                            <Divider />
+                            <CardText oof={promotionCoLeaderTrials} />
+                            <ModalCoLeader show={modalShow} onHide={() => setModalShow(false)} />
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
 
-            </Container>
+        </Container>
 
-        </React.Fragment>
     );
 }
 

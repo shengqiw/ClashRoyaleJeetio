@@ -28,7 +28,9 @@ export default function Home() {
                             </Link>
                         </Col>
                         <Col md={{ span: 4 }}>
-                            <CardImage oof={Flarney} />
+                            <Link to="/Tournament">
+                                <CardImage oof={Flarney} />
+                            </Link>
                         </Col>
                     </Row>
                 </Col>

@@ -26,9 +26,9 @@ export function ModalCoLeader(props) {
                     </ul>
                     <h4>Honorary Veterans who helped us grow</h4>
                     <ul>
-                        <li>Verify</li>
-                        <li>Robbie0304</li>
                         <li>CFCBoilers(no longer with us)</li>
+                        <li>Robbie0304</li>
+                        <li>Verify</li>
                     </ul>
                 </Modal.Body>
                 <Modal.Footer>
