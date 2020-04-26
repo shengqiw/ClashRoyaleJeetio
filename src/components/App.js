@@ -43,8 +43,7 @@ export default function App() {
             <div style={BG}>
                 <Switch>
                     <Route path="/Home">
-                        {/* <Home /> */}
-                        <Tournament />
+                        <Home />
                     </Route>
                     <Route path="/Rules">
                         <Rules />
