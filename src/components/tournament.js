@@ -20,6 +20,7 @@ export default function Tournament() {
                                     <li>Wait for a clan message from a founding father</li>
                                     <li>Join the clan tournament</li>
                                     <li>Win as many battles at you can</li>
+                                    <li>Founding fathers <b>won't</b> earn rewards</li>
                                 </ul>
                                 <Divider />
                                 <h4 className="m-3">Rewards?</h4>
