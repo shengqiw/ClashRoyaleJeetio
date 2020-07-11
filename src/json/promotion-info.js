@@ -14,7 +14,7 @@ export const promotionElder = {
     subtitle: "Elders are distinguished individuals that have proven themselves in war",
     optionalTitle: "Steps to become Elder",
     text: [" - Achieve 500+ donations each week",
-        " - Win 3 consecutive final war battles",
+        " - Participate in 5 consecutive wars and winning at least 4",
         " - Be active in the clan",
         "Upon completion, let us know in the clan chat"],
 

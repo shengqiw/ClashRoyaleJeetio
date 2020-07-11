@@ -18,28 +18,27 @@ export default function Tournament() {
                                 <h4 className="m-4">How does it work?</h4>
                                 <ul>
                                     <li>Wait for a clan message from a founding father</li>
-                                    <li>Join the clan tournament</li>
+                                    <li>Join the right tournament</li>
                                     <li>Win as many battles at you can</li>
                                     <li>Founding fathers <b>won't</b> earn rewards</li>
                                 </ul>
                                 <Divider />
-                                <h4 className="m-3">Rewards?</h4>
+                                <h4 className="m-3">Tournaments Rewards</h4>
                                 <div className="ml-3">
-                                    <h5>Less than 12 participants</h5>
+                                    <h5>Members only Tournament</h5>
                                     <h6 className="ml-3">Top 2 finishers will earn rewards</h6>
                                 </div>
                                 <ul>
-                                    <li>1st place gets $10 dollar itunes gift card</li>
-                                    <li>2nd place gets $5 dollar itunes gift card</li>
+                                    <li>1st place gets $15 dollar itunes gift card and promotion!</li>
+                                    <li>2nd place gets $10 dollar itunes gift card</li>
                                 </ul>
                                 <div className="ml-3">
-                                    <h5>12 or more participants</h5>
-                                    <h6 className="ml-3">Top 3 finishers will earn rewards</h6>
+                                    <h5>Elders and Co-leaders Tournament</h5>
+                                    <h6 className="ml-3">Top 2 finishers will earn rewards</h6>
                                 </div>
                                 <ul className="ml-3">
-                                    <li>1st place gets $10 dollar itunes gift card</li>
-                                    <li>2nd place gets $5 dollar itunes gift card</li>
-                                    <li>3rd place $5 dollar itunes gift card</li>
+                                    <li>1st place gets $20 dollar itunes gift card</li>
+                                    <li>2nd place gets $15 dollar itunes gift card</li>
                                 </ul>
                                 <Divider />
                                 <h4 className="m-3">How will I get my rewards?</h4>
