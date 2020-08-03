@@ -14,7 +14,6 @@ import {
 
 export default function Promotion() {
     const [modalShow, setModalShow] = React.useState(false);
-    console.log(modalShow)
     return (
         <Container fluid={true}>
             <Row>

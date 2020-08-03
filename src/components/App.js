@@ -3,7 +3,7 @@ import MyNavbar from './navbar'
 import Footer from './footer'
 import { BG } from '../json/image-info'
 import '../index.css'
-import { BrowserRouter, Route, Redirect } from 'react-router-dom'
+import { Router, Route, Redirect } from 'react-router-dom'
 import Home from './Home'
 import Rules from './Rules'
 import Promotion from './promotion'
@@ -24,10 +24,18 @@ export default class App extends Component {
     componentDidMount() {
         ReactGA.pageview(window.location.pathname)
     }
+    componentWillMount() {
+        this.unlisten = history.listen((location, action) => {
+          ReactGA.pageview(window.location.pathname)
+        });
+      }
+      componentWillUnmount() {
+          this.unlisten();
+      }
 
     render() {
         return (
-            <BrowserRouter history={history}>
+            <Router history={history}>
                 <MyNavbar />
                 <div style={BG}>
                     <Route path="/Home" component={Home} />
@@ -39,7 +47,7 @@ export default class App extends Component {
                 <Footer />
                 <Redirect from="/" to="Home" />
                 <ScrollToTop />
-            </BrowserRouter>
+            </Router>
         )
     }
 };

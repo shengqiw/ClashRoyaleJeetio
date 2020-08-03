@@ -21,7 +21,7 @@ export const Youtube = () => {
                 }}
                 src={`https://www.youtube.com/embed/1jpoDlaejZs`}
                 frameBorder="0"
-                allowfullscreen="allowfullscreen"
+                fs="1"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             />
         </div>
