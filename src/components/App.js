@@ -3,7 +3,7 @@ import MyNavbar from './navbar'
 import Footer from './footer'
 import { BG } from '../json/image-info'
 import '../index.css'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route, Redirect } from 'react-router-dom'
 import Home from './Home'
 import Rules from './Rules'
 import Promotion from './promotion'
@@ -30,23 +30,11 @@ export default class App extends Component {
             <BrowserRouter history={history}>
                 <MyNavbar />
                 <div style={BG}>
-                    <Switch>
-                        <Route path="/Home">
-                            <Home />
-                        </Route>
-                        <Route path="/Rules">
-                            <Rules />
-                        </Route>
-                        <Route path="/Promotion">
-                            <Promotion />
-                        </Route>
-                        <Route path="/Guides">
-                            <Guides />
-                        </Route>
-                        <Route path="/Tournament">
-                            <Tournament />
-                        </Route>
-                    </Switch>
+                    <Route path="/Home" component={Home} />
+                    <Route path="/Rules" component={Rules} />
+                    <Route path="/Promotion" component={Promotion} />
+                    <Route path="/Guides" component={Guides} />
+                    <Route path="/Tournament" component={Tournament} />
                 </div>
                 <Footer />
                 <Redirect from="/" to="Home" />
