@@ -41,7 +41,7 @@ export const Jungle = {
     src: require("../images/jungle.jpg"),
     title: "Grow Stronger Together",
     text: "Check out our rules",
-    footer: "Clan Record #740 in NA",
+    footer: "Clan Record #400 in NA",
     styles: {
         title: "mb-auto text-center display-4 text-bold",
         text: "mt-auto display-4 hoverfade",
