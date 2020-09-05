@@ -63,6 +63,9 @@ export default function Tournament() {
                             <h6 className="ml-3">If you won a reward, just give us a email you have access to</h6>
                         </Col>
                     </Row>
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfB-KTyfjQRhCFQj-b6lfvwSi4qvD85BrtQ4M8wC78Rd5egfQ/viewform?embedded=true" width="100%" height="1950" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                    <Row>
+                    </Row>
                 </Col>
             </Row>
         </Container>
