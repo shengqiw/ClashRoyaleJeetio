@@ -1,67 +1,53 @@
-import React, { useState, useEffect } from 'react'
+import React, { Component } from 'react'
 import MyNavbar from './navbar'
 import Footer from './footer'
 import { BG } from '../json/image-info'
 import '../index.css'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { Router, Route, Redirect } from 'react-router-dom'
 import Home from './Home'
 import Rules from './Rules'
 import Promotion from './promotion'
 import Guides from './guides'
 import Tournament from './tournament'
 import { ScrollToTop } from './scroll-top'
+import { createBrowserHistory as createHistory } from 'history'
+import ReactGA from 'react-ga'
 
-export default function App() {
+const history = createHistory()
+history.listen(location => {
+    ReactGA.set({ page: location.pathname })
+    ReactGA.pageview(location.pathname)
+})
 
 
-
-    const [clanData, setClanData] = useState({});
-    const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjQ2ZjhmNjk3LTRmYzItNDJmOC1hODU0LWU1YzgyNGI0NDA5ZiIsImlhdCI6MTU4NzMxODQ2OCwic3ViIjoiZGV2ZWxvcGVyLzExMTU1OTNkLTgwZDctYThjMS01MTA3LTY1OTQwODIxNDI0MiIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI3NS4xNjIuNDguMzEiXSwidHlwZSI6ImNsaWVudCJ9XX0.kYiHJ20k12BplKU8M8oBRRv9U-buwtYKH1LiTa6_x1qpqmeRP31E44X8SMkbEIOMbdo_39eJF-aPlLi-iUXEVw"
-
-    async function fetchData() {
-        const res = await fetch("https://api.clashroyale.com/v1/clans/%23PRURJPJP", {
-            headers: {
-                "cache-control": "max-age=120",
-                "content-type": "application/json; charset=utf-8",
-                "Authorization": `Bearer ${TOKEN}`
-            }
-        });
-        res
-            .json()
-            .then(res => setClanData(res))
-            .catch(err => console.log('Errors yo', err));
-        console.log('give me something', res);
+export default class App extends Component {
+    componentDidMount() {
+        ReactGA.pageview(window.location.pathname)
     }
-    useEffect(() => {
-        fetchData();
-        console.log('clan data', clanData);
-    });
+    componentWillMount() {
+        this.unlisten = history.listen((location, action) => {
+          ReactGA.pageview(window.location.pathname)
+        });
+      }
+      componentWillUnmount() {
+          this.unlisten();
+      }
 
-    return (
-        <BrowserRouter>
-            <MyNavbar />
-            <div style={BG}>
-                <Switch>
-                    <Route path="/Home">
-                        <Home />
-                    </Route>
-                    <Route path="/Rules">
-                        <Rules />
-                    </Route>
-                    <Route path="/Promotion">
-                        <Promotion />
-                    </Route>
-                    <Route path="/Guides">
-                        <Guides />
-                    </Route>
-                    <Route path="/Tournament">
-                        <Tournament />
-                    </Route>
-                </Switch>
-            </div>
-            <Footer />
-            <Redirect from="/" to="Home" />
-            <ScrollToTop />
-        </BrowserRouter>
-    )
+    render() {
+        return (
+            <Router history={history}>
+                <MyNavbar />
+                <div style={BG}>
+                    <Route path="/Home" component={Home} />
+                    <Route path="/Rules" component={Rules} />
+                    <Route path="/Promotion" component={Promotion} />
+                    <Route path="/Guides" component={Guides} />
+                    <Route path="/Tournament" component={Tournament} />
+                </div>
+                <Footer />
+                <Redirect from="/" to="Home" />
+                <ScrollToTop />
+            </Router>
+        )
+    }
 };
