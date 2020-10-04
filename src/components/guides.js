@@ -8,11 +8,9 @@ export default function Guides() {
     return (
         <React.Fragment>
             <Container>
-                <Row>
-                    <Col>
-                        <Youtube />
-                    </Col>
-                </Row>
+                <Row><Col>
+                    <h3>ClashWithDeejAndHades</h3>
+                </Col></Row>
             </Container>
         </React.Fragment>
     );
