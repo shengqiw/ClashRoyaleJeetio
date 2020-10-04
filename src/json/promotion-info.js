@@ -13,9 +13,9 @@ export const promotionElder = {
     title: "Elder Status",
     subtitle: "Elders are distinguished individuals that have proven themselves in war",
     optionalTitle: "Steps to become Elder",
-    text: [" - Achieve 500+ donations each week",
-        " - Participate in 5 consecutive wars and winning at least 4",
-        " - Be active in the clan",
+    text: [" - Active in donations and in the chat",
+        " - Personal best trophy requirement of 5300+",
+        " - Be top 10 in war for 2 war seasons",
         "Upon completion, let us know in the clan chat"],
 
 }
@@ -25,8 +25,8 @@ export const promotionCoLeader = {
     optionalTitle: "Responsibilites and Expectations",
     optionalSubtitle: "Start war, Kick inactive members, Help clan members improve",
     optionalTitle2: "Steps to become Co-Leader",
-    text: [" - Achieve 750+ donations each week",
-        " - Have a 70% war win rate or better",
+    text: [" - Personal best trophy requirement of 6100+",
+        " - Be top 5 in war for 2 war seasons",
         " - Loyal to the clan for 3+ months",
         "Upon completion, let us know in the clan chat and we will begin Co-Leader Trials"],
 }
@@ -34,7 +34,7 @@ export const promotionCoLeaderTrials = {
     title: "Test yourself against the Founding Fathers",
     foundingFathers: "Founding Fathers List",
     text: [" - Defeat 2 out of 4 Founding Fathers",
-        " - You get 2 tries per Founding Father",
-        " - Ban any 1 card each game",
-        "If you fail, win 3 final war battles in a row and try again!"],
+        " - Best of 3 for each coleader",
+        " - You may switch decks in between each battle",
+        "If you fail, place top 5 in the next war season and try again!"],
 }
