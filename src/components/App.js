@@ -26,12 +26,12 @@ export default class App extends Component {
     }
     componentWillMount() {
         this.unlisten = history.listen((location, action) => {
-          ReactGA.pageview(window.location.pathname)
+            ReactGA.pageview(window.location.pathname)
         });
-      }
-      componentWillUnmount() {
-          this.unlisten();
-      }
+    }
+    componentWillUnmount() {
+        this.unlisten();
+    }
 
     render() {
         return (

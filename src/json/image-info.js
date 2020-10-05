@@ -54,7 +54,7 @@ export const Jungle = {
 }
 export const King = {
     src: require("../images/ragnar.jpg"),
-    title: "GUIDES",
+    title: "Deej & Hades",
     text: "",
     footer: "",
     styles: {
