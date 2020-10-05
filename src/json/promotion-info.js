@@ -14,7 +14,7 @@ export const promotionElder = {
     subtitle: "Elders are distinguished individuals that have proven themselves in war",
     optionalTitle: "Steps to become Elder",
     text: [" - Active in donations and in the chat",
-        " - Personal best trophy requirement of 5300+",
+        " - Personal best trophy requirement of 5600+",
         " - Be top 10 in war for 2 war seasons",
         "Upon completion, let us know in the clan chat"],
 
