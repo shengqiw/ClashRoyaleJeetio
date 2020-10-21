@@ -24,10 +24,10 @@ export const rulesKeep = {
     }
 }
 export const rulesKick = {
-    header: "How To Get Kicked",
+    header: "How To Get Demoted/Kicked",
     title: [
         "Inactive for 1+ week w/o notice",
-        "Miss 3 final battles in 10 wars",
+        "End with 0 fame + repairs in 2 weeks",
         "Being extremely annoying"
     ],
     stylesUL: {},

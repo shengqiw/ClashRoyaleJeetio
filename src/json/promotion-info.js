@@ -15,7 +15,7 @@ export const promotionElder = {
     optionalTitle: "Steps to become Elder",
     text: [" - Active in donations and in the chat",
         " - Personal best trophy requirement of 5600+",
-        " - Be top 10 in war for 2 war seasons",
+        " - 2500 fame + repairs 2 weeks back to back",
         "Upon completion, let us know in the clan chat"],
 
 }
