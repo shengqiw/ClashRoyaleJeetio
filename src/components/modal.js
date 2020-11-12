@@ -19,7 +19,7 @@ export function ModalCoLeader(props) {
                 <Modal.Body>
                     <h4>Leaders that started it all</h4>
                     <ul>
-                        <li>bcquinn109</li>
+                        <li>El Chat</li>
                         <li>cornbread</li>
                         <li>Hades</li>
                         <li>JeetChainz</li>
