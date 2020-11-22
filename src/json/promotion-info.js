@@ -15,7 +15,7 @@ export const promotionElder = {
     optionalTitle: "Steps to become Elder",
     text: [" - Active in donations and in the chat",
         " - Personal best trophy requirement of 5600+",
-        " - 2500 fame + repairs 2 weeks back to back",
+        " - 3000 fame + repairs, 3 weeks in a row",
         "Upon completion, let us know in the clan chat"],
 
 }
@@ -26,7 +26,7 @@ export const promotionCoLeader = {
     optionalSubtitle: "Start war, Kick inactive members, Help clan members improve",
     optionalTitle2: "Steps to become Co-Leader",
     text: [" - Personal best trophy requirement of 6100+",
-        " - Be top 5 in war for 2 war seasons",
+        " - Be top 5 in war for 6 weeks",
         " - Loyal to the clan for 3+ months",
         "Upon completion, let us know in the clan chat and we will begin Co-Leader Trials"],
 }
