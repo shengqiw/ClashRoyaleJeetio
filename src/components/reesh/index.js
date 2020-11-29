@@ -7,7 +7,7 @@ export default function funfunfun() {
     console.log('in here');
     return (
         <Container fluid={true}>
-            <Button variant="primary" onClick={fetchShit}>Primary</Button>{' '}
+            <Button variant="primary" onClick={fetchShit}>Fetch Cool Shit</Button>{' '}
         </Container >
     );
 }
