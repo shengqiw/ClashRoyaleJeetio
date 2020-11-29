@@ -9,6 +9,7 @@ import Rules from './Rules'
 import Promotion from './promotion'
 import Guides from './guides'
 import Tournament from './tournament'
+import funfunfun from './reesh/index'
 import { ScrollToTop } from './scroll-top'
 import { createBrowserHistory as createHistory } from 'history'
 import ReactGA from 'react-ga'
@@ -43,9 +44,10 @@ export default class App extends Component {
                     <Route path="/Promotion" component={Promotion} />
                     <Route path="/Guides" component={Guides} />
                     <Route path="/Tournament" component={Tournament} />
+                    <Route path="/Reesh" component={funfunfun} />
                 </div>
                 <Footer />
-                <Redirect from="/" to="Home" />
+                <Redirect exact from="/" to="/Home" />
                 <ScrollToTop />
             </Router>
         )

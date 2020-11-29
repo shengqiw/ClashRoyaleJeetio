@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
 export function ModalCoLeader(props) {
-    // console.log("Applesauce")
 
     const [modalShow, setModalShow] = useState(false);
     return (
