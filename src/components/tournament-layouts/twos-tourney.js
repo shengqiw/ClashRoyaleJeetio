@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Divider from '../divider'
+import bracket from '../../images/bracket.PNG'
 
 export const twosTourney = () => {
     return (
@@ -65,9 +66,17 @@ export const twosTourney = () => {
                             <h6 className="ml-3">** We have recently introduced Paypal and Venmo as options **</h6>
                         </Col>
                     </Row>
-                    <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSd4wrPqMSegRFVCl_TsXELQ20_66wVuKRO-tdtoYWBbpsAjPw/viewform?embedded=true" width="100%" height="1950" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
                     <Row>
+                        <Col>
+                            <h3 className='m-2'>Tourney Bracket</h3>
+                            <h6 className='m-3'>We have 10 teams signed up so some teams got a bypass round. Chosen by RNG</h6>
+                            <img alt='bracket' className='w-100 p-5 pl-3' src={bracket} />
+
+                        </Col>
+
                     </Row>
+                    {/* <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSd4wrPqMSegRFVCl_TsXELQ20_66wVuKRO-tdtoYWBbpsAjPw/viewform?embedded=true" width="100%" height="1950" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe> */}
+
                 </Col>
             </Row>
         </Container >
