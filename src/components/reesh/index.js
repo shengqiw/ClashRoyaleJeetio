@@ -1,13 +1,14 @@
 import React from 'react'
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
-import { fetchShit } from './fetchShit'
+import { fetchShit, deleteShit } from './fetchShit'
 
 export default function funfunfun() {
     console.log('in here');
     return (
         <Container fluid={true}>
             <Button variant="primary" onClick={fetchShit}>Fetch Cool Shit</Button>{' '}
+            <Button variant="danger" onClick={deleteShit}>Delete Shit</Button>{' '}
         </Container >
     );
 }

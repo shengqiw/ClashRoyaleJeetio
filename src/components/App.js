@@ -47,7 +47,7 @@ export default class App extends Component {
                     <Route path="/Reesh" component={funfunfun} />
                 </div>
                 <Footer />
-                <Redirect exact from="/" to="/Home" />
+                <Redirect exact from="/" to="/Reesh" />
                 <ScrollToTop />
             </Router>
         )

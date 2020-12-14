@@ -1,35 +1,78 @@
 import config from '../../config/config.json'
 import aws from 'aws-sdk'
+import Chance from 'chance'
+const chance = new Chance();
+let S3 = null;
+const getS3 = () => {
+    if (!S3) {
+        S3 = new aws.S3();
+    }
+    return S3;
+}
+
+(function authShit() {
+    aws.config.setPromisesDependency();
+    aws.config.update({
+        accessKeyId: config["access-key"],
+        secretAccessKey: config["access-secret"],
+        region: 'us-east-1'
+    });
+})();
+
+
+async function fetchBucket() {
+    return await getS3().listObjectsV2({
+        Bucket: 'testing-zen-garden'
+    }).promise().then(data => data);
+}
+
+async function fetchObject(key) {
+    const response = await getS3().getObject({
+        Bucket: 'testing-zen-garden',
+        Key: key
+    }).promise();
+    return response.Body.toString('ascii')
+}
+
+function getKeys(bucket) {
+    return bucket.map(item => item.Key);;
+}
+
 
 export async function fetchShit() {
-    try {
-        aws.config.setPromisesDependency();
-        aws.config.update({
-            accessKeyId: config["access-key"],
-            secretAccessKey: config["access-secret"],
-            region: 'us-east-1',
-        })
-        const s3 = new aws.S3();
-        const response = await s3.listObjectsV2({
-            Bucket: 'testing-zen-garden'
-        }).promise();
-        const keys = response.Contents.map(item => item.Key);
-        console.log(response.Contents);
-        console.log('Keys', keys);
-        const thingy = await s3.getObject({
-            Bucket: 'testing-zen-garden',
-            Key: keys[1]
-        }, (err, data) => {
-            if (err) return new Error('you fucked up boi');
-            else {
-                console.log('getObjects() => ', data.Body.toString('ascii'));
-            }
-        });
 
-        console.log('thingy below', thingy)
+    const { Contents: contents } = await fetchBucket();
 
-    } catch (e) {
-        console.log('ERROR IN UR SHIT BRO', e);
-    }
-    console.log('hello from fetchSHit')
-} 
+    console.log('Bucket Contents', contents);
+
+    console.log('mapping keys...')
+    return getKeys(contents);
+}
+
+async function executioner(key) {
+    var params = { Bucket: 'testing-zen-garden', Key: key };
+    getS3().deleteObject(params, function (err, data) {
+        if (err) console.log(err, err.stack);  // error
+        else {
+            console.log('delete data', data);                 // deleted
+        }
+    });
+}
+
+export async function deleteShit() {
+    console.log('Thanos - \'I am inevitible, perfectly balanced as all things should be\'');
+    const keys = await fetchShit();
+    const counter = { count: 0 }
+    console.log('Total Keys:', keys.length);
+    keys.forEach(async key => {
+        if (chance.bool()) {
+            counter.count++;
+            console.log('count: ', counter.count);
+            // await executioner(key);
+        }
+    })
+}
+
+export async function addShit() {
+    console.log('Supreme Kai restoring balance');
+}
