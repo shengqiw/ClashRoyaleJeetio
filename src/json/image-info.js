@@ -39,12 +39,12 @@ export const Flarney = {
 
 export const Jungle = {
     src: require("../images/jungle.jpg"),
-    title: "Grow Stronger Together",
+    title: "Be Exceptional",
     text: "Check out our rules",
     footer: "Clan Record #120 in NA",
     styles: {
         title: "mb-auto text-center display-4 text-bold",
-        text: "mt-auto display-4 hoverfade",
+        text: "mt-auto display-4 hoverfade text-light",
         img: "bg-dark text-white cursorpointer",
         imgsrc: {
             height: '60vh',
@@ -54,12 +54,12 @@ export const Jungle = {
 }
 export const King = {
     src: require("../images/ragnar.jpg"),
-    title: "Deej & Hades",
-    text: "",
+    title: "Entertainment",
+    text: "ft. Deej & Hades",
     footer: "",
     styles: {
         title: "mb-auto text-center",
-        text: "mb-0",
+        text: "mb-0 h3",
         img: "bg-dark text-white hoverzoom cursorpointer",
         imgsrc: {
             height: '40vh',

@@ -15,12 +15,14 @@ export default function MyNavbar() {
     return (
         <Navbar className="navbg">
             <Nav.Link as={Link} to="/Home">
-                <Image className="ml-2 mr-3" src={Jeetio} style={{ height: '5vh', width: 'auto' }} rounded />
+                <Image className="ml-2 mr-2" src={Jeetio} style={{ height: '5vh', width: 'auto' }} rounded />
             </Nav.Link>
             <Nav className="mr-auto">
-                <Nav.Link as={Link} to="/Rules" className="m-1" style={styles}>Rules</Nav.Link>
-                <Nav.Link as={Link} to="/Promotion" className="m-1" style={styles}>Promotions</Nav.Link>
-                <Nav.Link as={Link} to="/Guides" className="m-1" style={styles}>Guides</Nav.Link>
+                <Nav.Link as={Link} to="/Rules" className="mr-1 mt-2 mb-1" style={styles}>Rules</Nav.Link>
+                <Nav.Link as={Link} to="/Promotion" className="m-1 mt-2" style={styles}>Promotions</Nav.Link>
+                <Nav.Link as={Link} to="/Guides" className="m-1 mt-2" style={styles}>Stream</Nav.Link>
+                <Nav.Link as={Link} to="/Tournament" className="m-1 mt-2" style={styles}>Tourney</Nav.Link>
+
             </Nav>
 
         </Navbar >

@@ -32,7 +32,8 @@ code {
   transition: transform.2s;
 }
 .hoverfade:hover {
-  opacity: 0.5;
+  opacity: .65;
+  text-decoration: underline;
 }
 .cursorpointer:hover {
   cursor:pointer;
