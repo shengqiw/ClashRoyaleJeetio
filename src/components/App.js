@@ -7,7 +7,7 @@ import { Router, Route, Redirect } from 'react-router-dom'
 import Home from './Home'
 import Rules from './Rules'
 import Promotion from './promotion'
-import Guides from './guides'
+import Stream from './stream'
 import Tournament from './tournament'
 import funfunfun from './reesh/index'
 import { ScrollToTop } from './scroll-top'
@@ -42,7 +42,7 @@ export default class App extends Component {
                     <Route path="/Home" component={Home} />
                     <Route path="/Rules" component={Rules} />
                     <Route path="/Promotion" component={Promotion} />
-                    <Route path="/Guides" component={Guides} />
+                    <Route path="/Stream" component={Stream} />
                     <Route path="/Tournament" component={Tournament} />
                     <Route path="/Reesh" component={funfunfun} />
                 </div>

@@ -23,7 +23,7 @@ export default function Home() {
                             </Link>
                         </Col>
                         <Col md={{ span: 4 }}>
-                            <Link to="/Guides">
+                            <Link to="/Stream">
                                 <CardImage oof={King} />
                             </Link>
                         </Col>

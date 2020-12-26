@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 
-export default function Guides() {
+export default function Stream() {
     return (
         <React.Fragment>
             <Container>

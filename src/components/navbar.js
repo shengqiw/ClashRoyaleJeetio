@@ -20,7 +20,7 @@ export default function MyNavbar() {
             <Nav className="mr-auto">
                 <Nav.Link as={Link} to="/Rules" className="mr-1 mt-2 mb-1" style={styles}>Rules</Nav.Link>
                 <Nav.Link as={Link} to="/Promotion" className="m-1 mt-2" style={styles}>Promotions</Nav.Link>
-                <Nav.Link as={Link} to="/Guides" className="m-1 mt-2" style={styles}>Stream</Nav.Link>
+                <Nav.Link as={Link} to="/Stream" className="m-1 mt-2" style={styles}>Stream</Nav.Link>
                 <Nav.Link as={Link} to="/Tournament" className="m-1 mt-2" style={styles}>Tourney</Nav.Link>
 
             </Nav>
