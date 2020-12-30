@@ -39,15 +39,17 @@ export default class App extends Component {
             <Router history={history}>
                 <MyNavbar />
                 <div style={BG}>
-                    <Route path="/Home" component={Home} />
-                    <Route path="/Rules" component={Rules} />
-                    <Route path="/Promotion" component={Promotion} />
-                    <Route path="/Stream" component={Stream} />
-                    <Route path="/Tournament" component={Tournament} />
-                    <Route path="/Reesh" component={funfunfun} />
+                    <Route exact path="/Home" component={Home} />
+                    <Route exact path="/Rules" component={Rules} />
+                    <Route exact path="/Promotion" component={Promotion} />
+                    <Route exact path="/Stream" component={Stream} />
+                    <Route exact path="/Tournament" component={Tournament} />
+                    <Route exact path="/Reesh" component={funfunfun} />
+                    <Route exact path="/">
+                        <Redirect to="/Home" />
+                    </Route>
                 </div>
                 <Footer />
-                <Redirect exact from="/" to="/Home" />
                 <ScrollToTop />
             </Router>
         )
