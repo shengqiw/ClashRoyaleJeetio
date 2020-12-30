@@ -48,6 +48,9 @@ export default class App extends Component {
                     <Route exact path="/">
                         <Redirect to="/Home" />
                     </Route>
+                    <Route exact path="/index.html">
+                        <Redirect to="/Home" />
+                    </Route>
                 </div>
                 <Footer />
                 <ScrollToTop />
