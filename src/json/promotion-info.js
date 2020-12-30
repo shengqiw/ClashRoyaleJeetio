@@ -23,7 +23,7 @@ export const promotionCoLeader = {
     title: "Co-Leader Status",
     subtitle: "Co-Leaders are veterans in the clan who are fearsome in battle",
     optionalTitle: "Responsibilites and Expectations",
-    optionalSubtitle: "Start war, Kick inactive members, Help clan members improve",
+    optionalSubtitle: "Remind members to do war, Kick inactive members, Help clan members improve",
     optionalTitle2: "Steps to become Co-Leader",
     text: [" - Personal best trophy requirement of 6100+",
         " - Be top 5 in war for 6 weeks",

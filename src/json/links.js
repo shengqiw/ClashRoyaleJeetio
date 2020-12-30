@@ -5,7 +5,7 @@ import youtube from '../images/youtube.png'
 
 export const YTMap = new Map([
     ['first-video', 'https://www.youtube.com/embed/jmiaiCw3V98'],
-    ['beat#1', 'https://www.youtube.com/embed/IFx62PLNgKI']
+    ['beat#1', 'https://www.youtube.com/embed/Dh44j5dXnFM']
 ])
 
 const twitchUrl = "https://www.twitch.tv/clashwithdeejandhades";
