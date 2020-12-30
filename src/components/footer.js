@@ -10,14 +10,17 @@ export default function Footer() {
             <Container>
                 <Row className='pt-5'>
                     <Col md={{ span: 5, offset: 1 }}>
-                        <h6>Bestest Awesomest Coolest Clan EVER!</h6>
-                        <h6>Email: jeetioclash@gmail.com</h6>
+                        <h5>Bestest Awesomest Coolest Clan EVER!</h5>
+                        <p>&copy; 2019 jeetio.com</p>
                         <Link to="/Reesh">
                             <h6 className="">Follow us on jeetsagram :p</h6>
                         </Link>
                     </Col>
-                    <Col>
-                        <p className="text-center">&copy; 2019 jeetio.com</p>
+                    <Col className='text-right'>
+                        <a href='https://discord.gg/ZhRz4F8eVF'>
+                        <h5 className='text-white'>Click Here to Join Our Discord!</h5>
+                        </a>
+                        <h5>Email: jeetioclash@gmail.com</h5>
                     </Col>
                 </Row>
 

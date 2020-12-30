@@ -75,7 +75,7 @@ export const twosTourney = () => {
                         </Col>
 
                     </Row>
-                    {/* <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSd4wrPqMSegRFVCl_TsXELQ20_66wVuKRO-tdtoYWBbpsAjPw/viewform?embedded=true" width="100%" height="1950" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe> */}
+                    {/* <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSd4wrPqMSegRFVCl_TsXELQ20_66wVuKRO-tdtoYWBbpsAjPw/viewform?embedded=true" width="100%" height="1950" frameBorder="0" marginheight="0" marginwidth="0">Loading…</iframe> */}
 
                 </Col>
             </Row>
