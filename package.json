@@ -18,7 +18,8 @@
     "react-dom": "^16.14.0",
     "react-ga": "^3.3.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "react-twitter-embed": "^3.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
