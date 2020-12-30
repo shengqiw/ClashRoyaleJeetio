@@ -33,17 +33,17 @@ export default function Stream() {
                             md={{span: 12}} xl={{span: 8}}>
                             <Row>
                                 <Col className="col-10 offset-1 mt-5 mb-4 bg-light rounded">
-                                    <h2 className='text-warning'>ClashWithDeejAndHades</h2>
-                                    <h5 className='text-primary'>Chill dudes that love Clash!</h5>
+                                    <h1 className='text-warning'>ClashWithDeejAndHades</h1>
+                                    <h4 className='text-primary'>Chill dudes that love Clash!</h4>
                                     <ul className='text-left text-secondary'>
-                                        <li>Pros and Semi Pros are invited to the channel constantly</li>
-                                        <li>Friendly battles with viewers and prized tourneys!</li>
-                                        <li>HIGH ENERGY + AWESOME CONTENT</li>
+                                        <li><h5>Pros and Semi Pros are invited to the channel constantly</h5></li>
+                                        <li><h5>Friendly battles with viewers and prized tourneys!</h5></li>
+                                        <li><h5>HIGH ENERGY + AWESOME CONTENT</h5></li>
                                     </ul>
-                                    <h5><b>Check Out Their Videos and Social Media Below!</b></h5>
+                                    <h5 className="mt-3"><b>Check Out Their Videos and Social Media Below!</b></h5>
                                 </Col>
                             </Row>
-                            <Row>
+                            <Row className="mb-4 mt-2">
                                 <Col>
                                     {clickableImage(hakai('twitch'))}
                                 </Col>
@@ -64,9 +64,9 @@ export default function Stream() {
                     </Row>
                     <Row>
                         <Col className="transparentWhite col-10 offset-1 mt-5 pt-5">
-                            <h2 className="text-primary text-center">Checkout Our Jeetio Videos</h2>
+                            <h1 className="text-dark text-center">Jeetio Videos</h1>
                             <Row>
-                                <Col className="col-10 offset-1">
+                                <Col className="col-10 offset-1 text-primary">
                                     <h3 className="mt-4">Cornbread defeats #1 Ranked player on ladder</h3>
                                     {YT(YTMap.get('beat#1'))}
                                     <Divider />
