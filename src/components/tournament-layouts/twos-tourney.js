@@ -3,7 +3,6 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Divider from '../divider'
-import bracket from '../../images/bracket.PNG'
 
 export const twosTourney = () => {
     return (
@@ -68,14 +67,18 @@ export const twosTourney = () => {
                     </Row>
                     <Row>
                         <Col>
-                            <h3 className='m-2'>Tourney Bracket</h3>
-                            <h6 className='m-3'>We have 10 teams signed up so some teams got a bypass round. Chosen by RNG</h6>
-                            <img alt='bracket' className='w-100 p-5 pl-3' src={bracket} />
+                            <h3 className='m-5 '>Tourney Bracket</h3>
+                            <h6 className='m-5'>Will be displayed after signups are finished</h6>
 
                         </Col>
 
                     </Row>
-                    {/* <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSd4wrPqMSegRFVCl_TsXELQ20_66wVuKRO-tdtoYWBbpsAjPw/viewform?embedded=true" width="100%" height="1950" frameBorder="0" marginheight="0" marginwidth="0">Loading…</iframe> */}
+                    <Row>
+                        <Col>
+                            <h3 className='ml-5'>Sign Ups</h3>
+                            <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSeHleUzny4aDRd_mQrSHejbJzxxQJCmlF4IuY_Pl_re___PVg/viewform?embedded=true" width="100%" height="1950" frameBorder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                        </Col>
+                    </Row>
 
                 </Col>
             </Row>
