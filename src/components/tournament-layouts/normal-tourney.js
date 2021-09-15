@@ -25,8 +25,8 @@ export const normalTourney = () => {
                                 <h5 className="ml-3">Top 3 finishers will earn rewards</h5>
                             </div>
                             <ul>
-                                <li>1st place gets $30</li>
-                                <li>2nd place gets $20</li>
+                                <li>1st place gets $20</li>
+                                <li>2nd place gets $15</li>
                                 <li>3rd place gets $10</li>
                             </ul>
                             <Divider />
@@ -45,7 +45,7 @@ export const normalTourney = () => {
                     </Row>
                     <Row>
                         <Col className="col-10 offset-1">
-                            <iframe title='Google forms' src="https://docs.google.com/forms/d/e/1FAIpQLSeUSFmyECOWbpMy5BxWSswxHBJx6pP0JbFH5FffMtp4SrPncw/viewform?embedded=true" width="100%" height="2200" frameBorder="0">Loading…</iframe>
+                            <iframe title='Google forms' src="https://docs.google.com/forms/d/e/1FAIpQLSdr7QbevDkyJgg6eDVEk0Gipu8ngfVUKkxLZRaeBZSa-W3xUw/viewform?embedded=true" width="100%" height="2200" frameBorder="0">Loading…</iframe>
                         </Col>
                     </Row>
                 </Col>
