@@ -1,5 +1,5 @@
-import config from '../../config/config.json'
-import aws from 'aws-sdk'
+// import config from '../../config/config.json'
+// import aws from 'aws-sdk'
 import axios from 'axios'
 
 // export async function fetchShit() {

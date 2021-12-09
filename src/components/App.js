@@ -9,7 +9,7 @@ import Rules from './Rules'
 import Promotion from './promotion'
 import Stream from './stream'
 import Tournament from './tournament'
-import funfunfun from './reesh/index'
+import Clan from './reesh/index'
 import { ScrollToTop } from './scroll-top'
 import { createBrowserHistory as createHistory } from 'history'
 import ReactGA from 'react-ga'
@@ -44,7 +44,7 @@ export default class App extends Component {
                     <Route exact path="/Promotion" component={Promotion} />
                     <Route exact path="/Stream" component={Stream} />
                     <Route exact path="/Tournament" component={Tournament} />
-                    <Route exact path="/Reesh" component={funfunfun} />
+                    <Route exact path="/Clan" component={Clan} />
                     <Route exact path="/">
                         <Redirect to="/Home" />
                     </Route>

@@ -45,7 +45,7 @@ export const normalTourney = () => {
                     </Row>
                     <Row>
                         <Col className="col-10 offset-1">
-                            <iframe title='Google forms' src="https://docs.google.com/forms/d/e/1FAIpQLSdr7QbevDkyJgg6eDVEk0Gipu8ngfVUKkxLZRaeBZSa-W3xUw/viewform?embedded=true" width="100%" height="2200" frameBorder="0">Loading…</iframe>
+                            <iframe title='Google forms' src="https://docs.google.com/forms/d/e/1FAIpQLSdoZgm960LBAc3HcphTyC6B6iBEU7jdNgXoKzqFsh7w54SXCg/viewform?embedded=true" width="100%" height="2200" frameBorder="0">Loading…</iframe>
                         </Col>
                     </Row>
                 </Col>

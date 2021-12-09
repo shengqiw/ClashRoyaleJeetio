@@ -22,6 +22,7 @@ export default function MyNavbar() {
                 <Nav.Link as={Link} to="/Promotion" className="m-1 mt-2" style={styles}>Promotions</Nav.Link>
                 <Nav.Link as={Link} to="/Stream" className="m-1 mt-2" style={styles}>Stream</Nav.Link>
                 <Nav.Link as={Link} to="/Tournament" className="m-1 mt-2" style={styles}>Tourney</Nav.Link>
+                <Nav.Link as={Link} to="/Clan" className="m-1 mt-2" style={styles}>Clan</Nav.Link>
 
             </Nav>
 
