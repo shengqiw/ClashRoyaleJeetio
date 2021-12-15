@@ -14,8 +14,8 @@ export const twosTourney = () => {
                     <Row>
                         <Col>
                             <h3 className='m-5 '>Tourney Bracket</h3>
-                            {/* <h6 className='m-5'>Will be displayed after signups are finished</h6> */}
-                            <img className='img-fluid' src={bracket} alt='poop'></img>
+                            <h6 className='m-5'>Will be displayed after signups are finished</h6>
+                            {/* <img className='img-fluid' src={bracket} alt='poop'></img> */}
                         </Col>
 
                     </Row>
