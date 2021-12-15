@@ -59,7 +59,7 @@ export const twosTourney = () => {
                             <Divider />
                             <h4 className="ml-3">Prizes for top finishers</h4>
                             <ul>
-                                <li>1st place team gets $50 dollars</li>
+                                <li>1st place team gets $40 dollars</li>
                                 <li>2nd place team gets $30 dollars</li>
                                 <li>3rd place team gets $20 dollars</li>
                                 {/* <li>Exact $$ amount are still being decided by founders, will update ASAP</li> */}
@@ -76,13 +76,12 @@ export const twosTourney = () => {
                         </Col>
                     </Row>
 
-                    {/* <Row>
+                    <Row>
                         <Col>
                             <h3 className='ml-5'>Sign Ups</h3>
-                            <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSeHleUzny4aDRd_mQrSHejbJzxxQJCmlF4IuY_Pl_re___PVg/viewform?embedded=true" width="100%" height="1950" frameBorder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                            <iframe title="December" src="https://docs.google.com/forms/d/e/1FAIpQLSfJsw0NUvbZBsf7tnnecGjY9hV6tSvz9E098jQ0uJED8U0Oog/viewform?embedded=true" width="100%" height="1950" frameBorder="0" marginheight="0" marginwidth="0">Loading…</iframe>
                         </Col>
-                    </Row> */}
-
+                    </Row>
                 </Col>
             </Row>
         </Container >
