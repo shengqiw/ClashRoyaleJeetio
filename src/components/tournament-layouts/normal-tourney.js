@@ -25,27 +25,26 @@ export const normalTourney = () => {
                                 <h5 className="ml-3">Top 3 finishers will earn rewards</h5>
                             </div>
                             <ul>
-                                <li>1st place gets $20</li>
-                                <li>2nd place gets $15</li>
+                                <li>1st place gets $30</li>
+                                <li>2nd place gets $20</li>
                                 <li>3rd place gets $10</li>
                             </ul>
                             <Divider />
                             <h4 className="m-3">Prize Options</h4>
                             <h5 className="ml-3 mb-1">e-Gift cards (iTunes or Google Play)</h5>
-                            <p className="ml-5 mb-1">Purchased as US gift card, if you are from outside the US, it might be hard to redeem</p>
+                            <p className="ml-5 mb-1">Purchased as US gift card (possibly CA aswell), if you are from outside the US, it might be hard to redeem</p>
                             <h5 className="ml-3 mb-1">Paypal</h5>
                             <p className="ml-5 mb-1">Should be universal, most countries support paypal</p>
                             <h5 className="ml-3 mb-1">Venmo</h5>
                             <p className="ml-5 mb-1">Quick n EZ</p>
 
-                            <h6 className="ml-3 mb-4">*If you won a reward, email us or message us on discord(check out Deej & Hades page)</h6>
                             <Divider />
                             <h4 className="mt-5 ml-4 mb-0">Sign Ups</h4>
                         </Col>
                     </Row>
                     <Row>
                         <Col className="col-10 offset-1">
-                            <iframe title='Google forms' src="https://docs.google.com/forms/d/e/1FAIpQLSdoZgm960LBAc3HcphTyC6B6iBEU7jdNgXoKzqFsh7w54SXCg/viewform?embedded=true" width="100%" height="2200" frameBorder="0">Loading…</iframe>
+                            <iframe title='Google forms' src="https://docs.google.com/forms/d/e/1FAIpQLSf0CFDQgirlMB0KHCuIeXvUVqME_BAbZfKRtsvZhshAjnqUjA/viewform?embedded=true" width="100%" height="2200" frameBorder="0">Loading…</iframe>
                         </Col>
                     </Row>
                 </Col>
