@@ -3,7 +3,6 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Divider from "../divider";
-import bracket from "../../images/bracket.PNG";
 
 export const twosTourney = () => {
   return (
@@ -20,7 +19,7 @@ export const twosTourney = () => {
               <h6 className="m-5">
                 Will be displayed here after signups are finished
               </h6>
-              <img className='img-fluid' src={bracket} alt='poop'></img>
+              {/* <img className='img-fluid' src={bracket} alt='poop'></img> */}
             </Col>
           </Row>
           <Row>
@@ -81,8 +80,7 @@ export const twosTourney = () => {
               <h4 className="ml-3">Prizes for top finishers</h4>
               <ul>
                 <li>1st place team gets $40 dollars</li>
-                <li>2nd place team gets $30 dollars</li>
-                <li>3rd place team gets $20 dollars</li>
+                <li>Runner up team gets $30 dollars</li>
                 {/* <li>Exact $$ amount are still being decided by founders, will update ASAP</li> */}
                 <li>Money will be split 50/50 amongst teamate</li>
               </ul>
@@ -108,13 +106,12 @@ export const twosTourney = () => {
               </h6>
             </Col>
           </Row>
-
           <Row>
             <Col>
               <h3 className="ml-5">Sign Ups</h3>
               <iframe
                 title="December"
-                src="https://docs.google.com/forms/d/e/1FAIpQLSfJsw0NUvbZBsf7tnnecGjY9hV6tSvz9E098jQ0uJED8U0Oog/viewform?embedded=true"
+                src="https://docs.google.com/forms/d/e/1FAIpQLSfmUbvQha_bp17OA8EUROxHg8pZgUXOvfwpTwa17tUizv_DNw/viewform?embedded=true"
                 width="100%"
                 height="1950"
                 frameBorder="0"
