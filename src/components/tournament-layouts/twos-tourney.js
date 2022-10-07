@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Divider from "../divider";
+import bracket from '../../images/bracket.png'
 
 export const twosTourney = () => {
   return (
@@ -17,9 +18,9 @@ export const twosTourney = () => {
             <Col>
               <h3 className="m-5 ">Tourney Bracket</h3>
               <h6 className="m-5">
-                Will be displayed here after signups are finished
+                {/* Will be displayed here after signups are finished */}
+              <img className='img-fluid' src={bracket} alt='poop'></img>
               </h6>
-              {/* <img className='img-fluid' src={bracket} alt='poop'></img> */}
             </Col>
           </Row>
           <Row>
