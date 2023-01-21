@@ -42,6 +42,7 @@ export const normalTourney = () => {
                             <h4 className="mt-5 ml-4 mb-0">Sign Ups</h4>
                         </Col>
                     </Row>
+                    //stupid aws amplify got crappier servers now
                     <Row>
                         <Col className="col-10 offset-1">
                             <iframe title="Tourney" src="https://docs.google.com/forms/d/e/1FAIpQLSfuU565N0Gsiu3YDkEbYrRBw5YFv0divvcAz9uot8v2j084Uw/viewform?embedded=true" width="640" height="921" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
