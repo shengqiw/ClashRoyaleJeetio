@@ -25,9 +25,9 @@ export const normalTourney = () => {
                                 <h5 className="ml-3">Top 3 finishers will earn rewards</h5>
                             </div>
                             <ul>
-                                <li>1st place gets $20</li>
-                                <li>2nd place gets $10</li>
-                                <li>3rd place gets $10</li>
+                                <li>1st place gets $60</li>
+                                <li>2nd place gets $40</li>
+                                <li>3rd place gets $20</li>
                             </ul>
                             <Divider />
                             <h4 className="m-3">Prize Options</h4>
