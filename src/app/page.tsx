@@ -1,5 +1,10 @@
+import { Box } from "@mui/material";
+
 export default function Home() {
   return (
-    <h1>hello</h1>
+    <Box className={'border page-content'}>
+
+      <h1>hello</h1>
+    </Box>
   );
 }
