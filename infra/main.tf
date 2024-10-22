@@ -29,7 +29,7 @@ data "aws_subnets" "public_subets" {
   }
 }
 
-resource "aws_security_groups" "ecs_sg" {
+resource "aws_security_group" "ecs_sg" {
   name        = "ecs-sg"
   description = "Allow inbound access to ECS tasks"
   vpc_id      = data.aws_vpc.default_vpc.id
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "clash_website_task_definition" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
-  execution_role_arn = data.iam_role.ecs_task_execution_role.arn
+  execution_role_arn = data.aws_iam_role.ecs_task_execution_role.arn
   container_definitions = jsonencode([
     {
       name  = "clash_website_task_definition"
@@ -106,6 +106,6 @@ resource "aws_ecs_service" "clash_website_service" {
   network_configuration {
     subnets          = data.aws_subnets.ids
     assign_public_ip = true
-    security_groups  = data.aws_security_groups.ids
+    security_groups  = [aws_security_group.ecs_sg.id]
   }
 }
