@@ -199,4 +199,9 @@ resource "aws_ecs_service" "clash_website_service" {
     assign_public_ip = true
     security_groups  = [aws_security_group.ecs_sg.id]
   }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.clash_website_tg.arn
+    container_name   = "clash_website_cluster"
+    container_port   = 8080
+  }
 }
