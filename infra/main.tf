@@ -72,8 +72,8 @@ resource "aws_lb" "clash_website_lb" {
   subnets            = data.aws_subnets.public_subnets.ids
 }
 
-resource "aws_lb_target_group" "clash_website_tg_new" {
-  name     = "clash-website-tg-new"
+resource "aws_lb_target_group" "clash_website_tg" {
+  name     = "clash-website-tg"
   port     = 8080
   protocol = "HTTP"
   target_type = "ip"
@@ -97,7 +97,7 @@ resource "aws_lb_listener" "clash_website_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.clash_website_tg_new.arn
+    target_group_arn = aws_lb_target_group.clash_website_tg.arn
   }
 }
 
@@ -201,7 +201,7 @@ resource "aws_ecs_service" "clash_website_service" {
     security_groups  = [aws_security_group.ecs_sg.id]
   }
   load_balancer {
-    target_group_arn = aws_lb_target_group.clash_website_tg_new.arn
+    target_group_arn = aws_lb_target_group.clash_website_tg.arn
     container_name   = "clash_website_ecs"
     container_port   = 8080
   }
