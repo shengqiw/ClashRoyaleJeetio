@@ -49,5 +49,5 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       shell: bash
       run: |
-        docker build -t clash-website:latest .
+        docker build -t 394414610569.dkr.ecr.us-east-1.amazonaws.com/clash_website_repo:latest .
         docker push 394414610569.dkr.ecr.us-east-1.amazonaws.com/clash_website_repo:latest
