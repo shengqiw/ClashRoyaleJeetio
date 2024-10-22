@@ -76,6 +76,7 @@ resource "aws_lb_target_group" "clash_website_tg" {
   name     = "clash-website-tg"
   port     = 8080
   protocol = "HTTP"
+  target_type = "ip"
   vpc_id   = data.aws_vpc.default_vpc.id
 
   health_check {
