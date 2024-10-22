@@ -42,6 +42,14 @@ resource "aws_security_group" "ecs_sg" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "clash_website_lg" {
+  name = "clash_website_lg"
+  retention_in_days = 60
+  tags = {
+    Name = "clash_website_lg"
+  }
+}
+
 resource "aws_ecr_repository" "clash_website_repo" {
   name = "clash_website_repo"
 }
@@ -86,10 +94,18 @@ resource "aws_ecs_task_definition" "clash_website_task_definition" {
     {
       name  = "clash_website_task_definition"
       image = "${aws_ecr_repository.clash_website_repo.repository_url}:latest"
+      logConfiguration {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group" = aws_cloudwatch_log_group.clash_website_lg.name
+          "awslogs-region" = "us-east-1"
+          "awslogs-stream-prefix" = "clash_website"
+        }
+      }
       portMappings = [
         {
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 8080
+          hostPort      = 8080
         }
       ]
     }
