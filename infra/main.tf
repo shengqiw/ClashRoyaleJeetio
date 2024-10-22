@@ -88,7 +88,7 @@ resource "aws_lb_target_group" "clash_website_tg" {
   }
 }
 resource "aws_lb_target_group" "clash_website_tg_new" {
-  name     = "clash-website-tg"
+  name     = "clash-website-tg-new"
   port     = 8080
   protocol = "HTTP"
   target_type = "ip"
