@@ -70,7 +70,7 @@ resource "aws_lb_target_group" "clash_website_tg" {
     path                = "/"
     protocol            = "HTTP"
     timeout             = 60
-    interval            = 60
+    interval            = 120
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
