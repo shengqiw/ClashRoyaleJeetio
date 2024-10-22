@@ -3,7 +3,6 @@ WORKDIR /app
 
 COPY .env* package*.json tsconfig*.json next.config.mjs ./
 COPY src/ ./src/
-COPY public/ ./public/
 
 RUN npm ci --ignore-scripts
 RUN npm run build
