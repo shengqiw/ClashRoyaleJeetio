@@ -43,6 +43,7 @@ resource "aws_security_group" "ecs_sg" {
 }
 
 data "aws_acm_certificate" "jeetio_certificate" {
+  domain = "jeetio.com"
   statuses = ["ISSUED"]
   most_recent = true
 }
