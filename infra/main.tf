@@ -69,7 +69,7 @@ resource "aws_ecs_cluster" "clash_website_cluster" {
   name = "clash_website_cluster"
 }
 
-data "iam_role" "ecs_task_execution_role" {
+data "aws_iam_role" "ecs_task_execution_role" {
     name = "ecs_execution_role"
 }
 
