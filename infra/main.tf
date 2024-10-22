@@ -61,6 +61,31 @@ resource "aws_security_group" "ecs_sg" {
 
   ingress {
     protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+   ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "fargate_sg" {
+  name        = "ecs-sg"
+  description = "Allow inbound access to ECS tasks"
+  vpc_id      = data.aws_vpc.default_vpc.id
+
+  ingress {
+    protocol    = "tcp"
     from_port   = 8080
     to_port     = 8080
     cidr_blocks = [aws_security_group.alb_sg.id]
@@ -216,7 +241,7 @@ resource "aws_ecs_service" "clash_website_service" {
   network_configuration {
     subnets          = data.aws_subnets.public_subnets.ids
     assign_public_ip = true
-    security_groups  = [aws_security_group.ecs_sg.id]
+    security_groups  = [aws_security_group.ecs_fargate.id]
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.clash_website_tg.arn
