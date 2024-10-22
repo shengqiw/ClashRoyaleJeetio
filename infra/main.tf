@@ -29,15 +29,15 @@ data "aws_subnets" "public_subnets" {
   }
 }
 
-resource "aws_security_group" "ecs_sg" {
+resource "aws_security_group" "alb_sg" {
   name        = "ecs-sg"
   description = "Allow inbound access to ECS tasks"
   vpc_id      = data.aws_vpc.default_vpc.id
 
   ingress {
     protocol    = "tcp"
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = 80
+    to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
    ingress {
@@ -54,6 +54,24 @@ resource "aws_security_group" "ecs_sg" {
   }
 }
 
+resource "aws_security_group" "ecs_sg" {
+  name        = "ecs-sg"
+  description = "Allow inbound access to ECS tasks"
+  vpc_id      = data.aws_vpc.default_vpc.id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 8080
+    to_port     = 8080
+    cidr_blocks = [aws_security_group.alb_sg.id]
+  }
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 data "aws_acm_certificate" "jeetio_certificate" {
   domain = "jeetio.com"
   statuses = ["ISSUED"]
