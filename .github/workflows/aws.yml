@@ -41,13 +41,7 @@ jobs:
         terraform plan
         terraform apply -auto-approve
       working-directory: infra
-    - name: Upload code to ECR
-      run: |
-        echo "Uploading code to ECR"
-        working-directory: infra
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-  
+
     - name: Login to ECR
       uses: aws-actions/amazon-ecr-login@v2
 
