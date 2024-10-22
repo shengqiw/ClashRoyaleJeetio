@@ -135,8 +135,12 @@ resource "aws_ecs_cluster" "clash_website_cluster" {
   name = "clash_website_cluster"
 }
 
-data "aws_iam_role" "ecs_task_execution_role" {
+data "aws_iam_role" "ecs_execution_role" {
     name = "ecs-execution-role"
+}
+
+data "aws_iam_role" "ecs_task_role" {
+    name = "ecs-task-role"
 }
 
 # ECS Task Definition
@@ -146,8 +150,8 @@ resource "aws_ecs_task_definition" "clash_website_task_definition" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
-  execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn            = data.aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = data.aws_iam_role.ecs_execution_role.arn
+  task_role_arn            = data.aws_iam_role.ecs_task_role.arn
   container_definitions    = jsonencode([
     {
       name  = "clash_website_task_definition"
