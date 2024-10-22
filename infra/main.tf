@@ -42,6 +42,63 @@ resource "aws_security_group" "ecs_sg" {
   }
 }
 
+data "aws_acm_certificate" "jeetio_certificate" {
+  statuses = ["ISSUED"]
+  most_recent = true
+}
+
+data "aws_route53_zone" "clash_website_zone" {
+  name = "jeetio.com"
+}
+
+resource "aws_lb" "clash_website_lb" {
+  name               = "clash-website-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.ecs_sg.id]
+  subnets            = data.aws_subnets.public_subnets.ids
+}
+
+resource "aws_lb_target_group" "clash_website_tg" {
+  name     = "clash-website-tg"
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = data.aws_vpc.default_vpc.id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    timeout             = 60
+    interval            = 60
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_listener" "clash_website_listener" {
+  load_balancer_arn = aws_lb.clash_website_lb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  certificate_arn = data.aws_acm_certificate.jeetio_certificate.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.clash_website_tg.arn
+  }
+}
+
+resource "aws_route53_record" "clash_website_record" {
+  zone_id = data.aws_route53_zone.clash_website_zone.zone_id
+  name    = "clash-website-jeetio"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.clash_website_lb.dns_name
+    zone_id                = aws_lb.clash_website_lb.zone_id
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_cloudwatch_log_group" "clash_website_lg" {
   name = "clash_website_lg"
   retention_in_days = 60
@@ -94,7 +151,7 @@ resource "aws_ecs_task_definition" "clash_website_task_definition" {
     {
       name  = "clash_website_task_definition"
       image = "${aws_ecr_repository.clash_website_repo.repository_url}:latest"
-      logConfiguration {
+      logConfiguration = {
         logDriver = "awslogs"
         options = {
           "awslogs-group" = aws_cloudwatch_log_group.clash_website_lg.name
