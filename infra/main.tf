@@ -72,21 +72,6 @@ resource "aws_lb" "clash_website_lb" {
   subnets            = data.aws_subnets.public_subnets.ids
 }
 
-resource "aws_lb_target_group" "clash_website_tg" {
-  name     = "clash-website-tg"
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = data.aws_vpc.default_vpc.id
-
-  health_check {
-    path                = "/"
-    protocol            = "HTTP"
-    timeout             = 60
-    interval            = 120
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-  }
-}
 resource "aws_lb_target_group" "clash_website_tg_new" {
   name     = "clash-website-tg-new"
   port     = 8080
