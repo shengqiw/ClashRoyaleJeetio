@@ -30,7 +30,7 @@ data "aws_subnets" "public_subnets" {
 }
 
 resource "aws_security_group" "alb_sg" {
-  name        = "ecs-sg"
+  name        = "alb-sg"
   description = "Allow inbound access to ECS tasks"
   vpc_id      = data.aws_vpc.default_vpc.id
 
@@ -80,7 +80,7 @@ resource "aws_security_group" "ecs_sg" {
 }
 
 resource "aws_security_group" "fargate_sg" {
-  name        = "ecs-sg"
+  name        = "fargate-sg"
   description = "Allow inbound access to ECS tasks"
   vpc_id      = data.aws_vpc.default_vpc.id
 
