@@ -86,7 +86,7 @@ resource "aws_lb" "clash_website_lb" {
   name               = "clash-website-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.ecs_sg.id]
+  security_groups    = [aws_security_group.alb_sg.id]
   subnets            = data.aws_subnets.public_subnets.ids
 }
 
