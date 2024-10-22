@@ -22,7 +22,7 @@ data "aws_vpc" "default_vpc" {
   }
 }
 
-data "aws_subnets" "public_subets" {
+data "aws_subnets" "public_subnets" {
   filter {
     name   = "tag:Name"
     values = ["*public*"]  # This will match any subnet with "public" in its name
