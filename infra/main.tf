@@ -166,7 +166,7 @@ resource "aws_ecs_task_definition" "clash_website_task_definition" {
   task_role_arn            = data.aws_iam_role.ecs_task_role.arn
   container_definitions    = jsonencode([
     {
-      name  = "clash_website_task_definition"
+      name  = "clash_website_ecs"
       image = "${aws_ecr_repository.clash_website_repo.repository_url}:latest"
       logConfiguration = {
         logDriver = "awslogs"
@@ -201,7 +201,7 @@ resource "aws_ecs_service" "clash_website_service" {
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.clash_website_tg.arn
-    container_name   = "clash_website_cluster"
+    container_name   = "clash_website_ecs"
     container_port   = 8080
   }
 }
