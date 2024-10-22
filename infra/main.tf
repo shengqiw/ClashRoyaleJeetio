@@ -76,6 +76,21 @@ resource "aws_lb_target_group" "clash_website_tg" {
   name     = "clash-website-tg"
   port     = 8080
   protocol = "HTTP"
+  vpc_id   = data.aws_vpc.default_vpc.id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    timeout             = 60
+    interval            = 120
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+resource "aws_lb_target_group" "clash_website_tg_new" {
+  name     = "clash-website-tg"
+  port     = 8080
+  protocol = "HTTP"
   target_type = "ip"
   vpc_id   = data.aws_vpc.default_vpc.id
 
@@ -97,7 +112,7 @@ resource "aws_lb_listener" "clash_website_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.clash_website_tg.arn
+    target_group_arn = aws_lb_target_group.clash_website_tg_new.arn
   }
 }
 
@@ -201,7 +216,7 @@ resource "aws_ecs_service" "clash_website_service" {
     security_groups  = [aws_security_group.ecs_sg.id]
   }
   load_balancer {
-    target_group_arn = aws_lb_target_group.clash_website_tg.arn
+    target_group_arn = aws_lb_target_group.clash_website_tg_new.arn
     container_name   = "clash_website_ecs"
     container_port   = 8080
   }
