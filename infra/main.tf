@@ -73,7 +73,7 @@ resource "aws_security_group" "fargate_sg" {
   }
 }
 data "aws_acm_certificate" "jeetio_certificate" {
-  domain = "jeetio.com"
+  domain = "*.jeetio.com"
   statuses = ["ISSUED"]
   most_recent = true
 }
