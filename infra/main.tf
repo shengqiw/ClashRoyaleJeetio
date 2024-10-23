@@ -137,7 +137,7 @@ resource "aws_lb_listener" "http_listener" {
 
 resource "aws_route53_record" "clash_website_record" {
   zone_id = data.aws_route53_zone.clash_website_zone.zone_id
-  name    = "clash-website-jeetio"
+  name    = "www"
   type    = "A"
 
   alias {
