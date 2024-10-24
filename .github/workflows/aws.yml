@@ -32,6 +32,12 @@ jobs:
         echo "wassah dude"
         ls -la
 
+    - name: Build, tag, and push image to Amazon ECR
+      shell: bash
+      run: |
+        docker build -t 394414610569.dkr.ecr.us-east-1.amazonaws.com/clash_website_repo:latest .
+        docker push 394414610569.dkr.ecr.us-east-1.amazonaws.com/clash_website_repo:latest
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
     
@@ -46,8 +52,4 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
 
-    - name: Build, tag, and push image to Amazon ECR
-      shell: bash
-      run: |
-        docker build -t 394414610569.dkr.ecr.us-east-1.amazonaws.com/clash_website_repo:latest .
-        docker push 394414610569.dkr.ecr.us-east-1.amazonaws.com/clash_website_repo:latest
+    

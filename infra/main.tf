@@ -177,6 +177,10 @@ resource "aws_ecr_lifecycle_policy" "clash_website_ecr_policy" {
     }]
   })
 }
+data "aws_ecr_image" "service_image" {
+  repository_name = "clash_website_repo"
+  image_tag       = "latest"
+}
 
 resource "aws_ecs_cluster" "clash_website_cluster" {
   name = "clash_website_cluster"
@@ -190,6 +194,7 @@ data "aws_iam_role" "ecs_task_role" {
     name = "ecs-task-role"
 }
 
+
 # ECS Task Definition
 resource "aws_ecs_task_definition" "clash_website_task_definition" {
   family                   = "service"
@@ -202,7 +207,7 @@ resource "aws_ecs_task_definition" "clash_website_task_definition" {
   container_definitions    = jsonencode([
     {
       name  = "clash_website_ecs"
-      image = "${aws_ecr_repository.clash_website_repo.repository_url}:latest"
+      image = "${aws_ecr_repository.clash_website_repo.repository_url}:latest@${data.aws_ecr_image.service_image.image_digest}"
       logConfiguration = {
         logDriver = "awslogs"
         options = {
