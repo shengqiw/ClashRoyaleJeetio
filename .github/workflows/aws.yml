@@ -31,6 +31,9 @@ jobs:
       run: |
         echo "wassah dude"
         ls -la
+        
+    - name: Login to ECR
+      uses: aws-actions/amazon-ecr-login@v2
 
     - name: Build, tag, and push image to Amazon ECR
       shell: bash
@@ -48,8 +51,7 @@ jobs:
         terraform apply -auto-approve
       working-directory: infra
 
-    - name: Login to ECR
-      uses: aws-actions/amazon-ecr-login@v2
+    
 
 
     
