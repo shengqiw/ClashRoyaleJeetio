@@ -15,7 +15,7 @@ export default function RootLayout({
   console.log("RootLayout", process.env.APP_NAME);
   return (
     <html lang="en">
-      <body>
+      <body className="no-margin">
         <PageLayout>{children}</PageLayout>
       </body>
     </html>

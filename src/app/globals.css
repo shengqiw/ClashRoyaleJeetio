@@ -1,7 +1,80 @@
+.hero {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #D8B5FF , #1EAE98);
+  position: relative;
+  display: flex;
+  z-index: 1;
+}
+
+nav {
+  width: 100vw;
+  padding: 10px;
+  background: transparent;
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  z-index: 2;
+}
+
+nav .logo {
+  height: 100px;
+  width: auto;
+}
+
+.content {
+  position: relative;
+  width: 100vw;
+  height: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  display: flex;
+  z-index: 1;
+}
+
+.background-video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -2;
+  width: 100vw;
+  height: 100vh;
+}
+
+.center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.no-margin {
+  margin: 0;
+  
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.inline {
+  display: inline;
+}
 .border {
   border: 1px solid #000;
 }
 
-.page-content {
-  min-height: 60vh;
+ul {
+  margin-left: auto;
+  list-style: none;
+  padding: 0;
+  border: 1px
+}
+
+
+li {
+  display: inline;
+  margin: 0 10px;
+  padding: 1rem;
 }

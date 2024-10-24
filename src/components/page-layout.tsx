@@ -1,94 +1,44 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  Grid2 as Grid,
-  IconButton,
-  Link,
-  Toolbar,
-  Typography,
-} from "@mui/material";
 import Image from "next/image";
-import navLogo from "../assets/logo.png"
+import navLogo from "../assets/jeetio-logo.png";
 import { ReactNode } from "react";
+import { NavText } from "./small/nav-text";
 
 export const PageLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <>
-      <Box
-        sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    <div className="hero">
+      {/* <video
+        className="object-cover background-video"
+        autoPlay
+        loop
+        muted
+        playsInline
       >
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <Link href="/">
-                <Image src={navLogo} alt="logo-jeetio" priority={true}/>
-              </Link>
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Button color="inherit">Home</Button>
-              <Button color="inherit">About</Button>
-              <Button color="inherit">Contact</Button>
-              <IconButton color="inherit">
-                {/* <AccountCircleIcon /> */}
-                icon
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
-        <Container component="main" sx={{ flexGrow: 1, mt: 4, mb: 4 }}>
-          {children}
-        </Container>
-
-        <Box component="footer" sx={{ bgcolor: "background.paper", py: 6 }}>
-          <Container maxWidth="lg">
-            <Grid container spacing={4} justifyContent="space-evenly">
-              <Grid size={6}>
-                <Typography variant="h6" color="text.primary" gutterBottom>
-                  Company
-                </Typography>
-                <Link href="/about">
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ display: "block", mb: 1 }}
-                  >
-                    About Us
-                  </Typography>
-                </Link>
-                <Link href="/team">
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ display: "block", mb: 1 }}
-                  >
-                    Our Team
-                  </Typography>
-                </Link>
-              </Grid>
-              <Grid size={6}>
-                <Typography variant="h6" color="text.primary" gutterBottom>
-                  Contact
-                </Typography>
-                <Link href="/contact">
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ display: "block", mb: 1 }}
-                  >
-                    Contact Us
-                  </Typography>
-                </Link>
-                <Typography variant="body2" color="text.secondary">
-                  support@example.com
-                </Typography>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
-      </Box>
-    </>
+        <source src={"/black-cat.mp4"} type="video/mp4" />
+      </video> */}
+      <iframe
+        src="https://www.youtube.com/embed/y9yCNrBhtgk?si=o7mvZJxBGdA3gmbn&amp;controls=0&amp;start=4&autoplay=1&loop=1&mute=1&showinfo=0$frameborder=0"
+        title="YouTube video player"
+        className="object-cover background-video"
+        allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      />
+      <nav className="nav">
+        <Image src={navLogo} alt="Jeetio Logo" height="90" />
+        <ul>
+          <li>
+            <NavText href="/">Home</NavText>
+          </li>
+          <li>
+            <NavText href="/deckai">Deck AI</NavText>
+          </li>
+          <li>
+            <NavText href="/contact">Look Up</NavText>
+          </li>
+        </ul>
+      </nav>
+      <div className="content">
+        <h1>Jeetio Clash Royale</h1>
+      </div>
+      <div className="">{children}</div>
+    </div>
   );
 };
