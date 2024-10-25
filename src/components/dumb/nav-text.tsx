@@ -10,7 +10,7 @@ export const NavText = ({
 }) => {
   return (
     <Link href={href} className="no-underline">
-      <Typography variant="h4" color="white" className="inline">
+      <Typography variant="h5" color="white" className="inline">
         {children}
       </Typography>
     </Link>
