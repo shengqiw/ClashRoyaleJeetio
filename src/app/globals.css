@@ -76,11 +76,11 @@ li {
   padding: 1rem;
 }
 
-.green-shadow {
+.purple-shadow {
   color: white;
   font-weight: 600;
-  text-shadow: 3px 3px 10px var(--theme-color-1), 
-  0 0 15px var(--theme-color-1);
+  text-shadow: 8px 8px 15px var(--theme-color-1), 
+  8px 8px 15px var(--theme-color-1);
 }
 
 .my-card {
@@ -109,7 +109,6 @@ li {
 
 .trans-bg {
   background-color: rgba(20, 119, 104, 0.4);
-  /* opacity: 0.7; */
 }
 
 .trans-bg:hover {

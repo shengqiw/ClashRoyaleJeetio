@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { PageLayout } from "@/components/page-layout";
+import { PageLayout } from "@/components/smart/page-layout";
 
 export const metadata: Metadata = {
   title: "Jeetio Clash Royale",
