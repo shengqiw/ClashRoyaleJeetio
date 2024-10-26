@@ -135,6 +135,28 @@ resource "aws_lb_listener" "http_listener" {
   }
 }
 
+resource "aws_lb_listener_rule" "redirect_apex_to_www" {
+  listener_arn = aws_lb_listener.clash_website_listener.arn
+  priority     = 1
+
+  condition {
+    host_header {
+      values = ["jeetio.com"]
+    }
+  }
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "www.jeetio.com"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
 resource "aws_route53_record" "clash_website_record" {
   zone_id = data.aws_route53_zone.clash_website_zone.zone_id
   name    = "www"
