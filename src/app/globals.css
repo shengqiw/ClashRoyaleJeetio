@@ -22,10 +22,9 @@
 }
 
 .page-bg {
-  background-color: rgba(255, 255, 255);
-  border-radius: 15px;
+  background-color: #fafafa;
   min-height: 90vh;
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-bottom: 2rem;
   padding: 3rem;
 }
@@ -95,14 +94,14 @@ li {
 
 
 .gold-shadow {
-  color: white;
+  color: rgb(141, 236, 0);
   font-weight: 600;
-  text-shadow: 8px 8px 15px goldenrod, 
-  8px 8px 15px goldenrod;
+  text-shadow: 8px 8px 15px greenyellow, 
+  8px 8px 15px greenyellow;
 }
 
 .gold {
-  color: goldenrod
+  color: rgb(141, 236, 0);
 }
 
 .my-card {
@@ -140,4 +139,11 @@ li {
 
 .bottom-y {
   justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.img-fit {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
 }
