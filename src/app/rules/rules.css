@@ -1,0 +1,9 @@
+.vert-li ul {
+    list-style-type: square;
+}
+.vert-li ul li {
+    display: block;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    color: goldenrod;
+}

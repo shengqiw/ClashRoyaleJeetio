@@ -6,7 +6,7 @@
 
 .simp {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(
@@ -21,6 +21,15 @@
   cursor: default;
 }
 
+.page-bg {
+  background-color: rgba(255, 255, 255);
+  border-radius: 15px;
+  min-height: 90vh;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 3rem;
+}
+
 nav {
   width: 100vw;
   padding: 10px;
@@ -28,6 +37,7 @@ nav {
   display: flex;
   flex-direction: row;
   position: relative;
+  align-items: center;
 }
 
 .nav-logo {
@@ -81,6 +91,18 @@ li {
   font-weight: 600;
   text-shadow: 8px 8px 15px var(--theme-color-1), 
   8px 8px 15px var(--theme-color-1);
+}
+
+
+.gold-shadow {
+  color: white;
+  font-weight: 600;
+  text-shadow: 8px 8px 15px goldenrod, 
+  8px 8px 15px goldenrod;
+}
+
+.gold {
+  color: goldenrod
 }
 
 .my-card {

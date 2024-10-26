@@ -1,12 +1,7 @@
-import { MyCard } from "@/components/dumb/card";
-import { Grid2 as Grid, Typography } from "@mui/material";
-
-import pekka from "@/assets/pekka.jpg";
-import explorer from "@/assets/explorer.jpg";
-import battleHealer from "@/assets/battle-healer.jpg";
+import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import { HomeCards } from "@/components/smart/home-cards";
 
-export default function Home() {
+export default function Root() {
   return (
     <>
       <Grid container mt={3}>
@@ -21,6 +16,8 @@ export default function Home() {
       </Grid>
       <div className="br" />
       <HomeCards />
+      <div className="br" />
+      <Box mb={5} />
     </>
   );
 }
