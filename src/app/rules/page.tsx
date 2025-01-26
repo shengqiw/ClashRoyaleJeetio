@@ -1,6 +1,5 @@
 import { Box, Grid2 as Grid, Typography } from "@mui/material";
 import "./rules.css";
-import spells from "@/assets/spells.jpg";
 
 export default function Rules() {
   return (
