@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardActionArea, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 export const MyCard = ({
   bgImage,
