@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import "./stats.css";
-import { ClanInfo } from "@/components/smart/clan-info";
-import { MemberList } from "@/components/smart/member-list";
+// import { ClanInfo } from "@/components/smart/clan-info";
+// import { MemberList } from "@/components/smart/member-list";
 
 export default async function Stats() {
   // const clanFetch = await fetch(

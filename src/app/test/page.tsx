@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import MonkBG from "@/assets/monk-bg.jpg";
-import { Height } from "@mui/icons-material";
 
 export default function Test() {
   return (
