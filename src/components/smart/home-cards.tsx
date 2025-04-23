@@ -16,8 +16,8 @@ export const HomeCards = () => {
       <Grid size={{xs: 12, md:4}}>
         <MyCard
           bgImage={battleHealer.src}
-          title="Hierarchy"
-          href="/hierarchy"
+          title="Promotions"
+          href="/promotions"
           styleProps={{'backgroundPosition': "25%" }}
         />
       </Grid>

@@ -16,8 +16,7 @@ export default function Root() {
       </Grid>
       <div className="br" />
       <HomeCards />
-      <div className="br" />
-      <Box mb={5} />
+      <Box mb={5} className="br"/>
     </>
   );
 }
