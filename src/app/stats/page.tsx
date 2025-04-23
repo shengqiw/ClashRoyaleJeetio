@@ -4,14 +4,14 @@ import { ClanInfo } from "@/components/smart/clan-info";
 import { MemberList } from "@/components/smart/member-list";
 
 export default async function Stats() {
-  const clanFetch = await fetch(
-    "https://xgyzcbqe9i.execute-api.us-east-1.amazonaws.com/clan?tag=PRURJPJP"
-  );
+  // const clanFetch = await fetch(
+  //   "https://xgyzcbqe9i.execute-api.us-east-1.amazonaws.com/clan?tag=PRURJPJP"
+  // );
 
-  const clanData = await clanFetch.json();
-  const members = clanData.memberList;
-  delete clanData.memberList;
-  console.log("clanData", clanData);
+  // const clanData = await clanFetch.json();
+  // const members = clanData.memberList;
+  // delete clanData.memberList;
+  // console.log("clanData", clanData);
 
   return (
     <Box className="page-bg">
@@ -19,9 +19,10 @@ export default async function Stats() {
         Clan Stats
       </Typography>
       <div className="br" />
-      <ClanInfo clan={clanData} />
+      Apologies... This is too expensive to display. Exploring alternative solution
+      {/* <ClanInfo clan={clanData} /> */}
       <div className="br" />
-      <MemberList members={members} />
+      {/* <MemberList members={members} /> */}
     </Box>
   );
 }
