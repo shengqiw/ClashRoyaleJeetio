@@ -18,10 +18,11 @@ export default async function Stats() {
       <Typography variant="h1" className="gold-shadow center" sx={{ mt: 3 }}>
         Clan Stats (Sorry Im too poor to afford lambda and NAT Gateway sad)
       </Typography>
-      {/* <div className="br" />
-      <ClanInfo clan={clanData} />
       <div className="br" />
-      <MemberList members={members} /> */}
+      Apologies... This is too expensive to display. Exploring alternative solution
+      {/* <ClanInfo clan={clanData} /> */}
+      <div className="br" />
+      {/* <MemberList members={members} /> */}
     </Box>
   );
 }

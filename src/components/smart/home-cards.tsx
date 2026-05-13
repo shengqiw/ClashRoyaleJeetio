@@ -6,7 +6,7 @@ import battleHealer from "@/assets/battle-healer.jpg";
 
 export const HomeCards = () => {
   return (
-    <Grid container spacing={8} sx={{ px: { xs: 2, sm: 4, md: 8 } }}>
+    <Grid container spacing={8} sx={{ px: 8 }}>
       <Grid size={{xs: 12, md: 4}}>
         <MyCard bgImage={explorer.src} title="Rules" href="/rules" />
       </Grid>
@@ -16,8 +16,8 @@ export const HomeCards = () => {
       <Grid size={{xs: 12, md:4}}>
         <MyCard
           bgImage={battleHealer.src}
-          title="Hierarchy"
-          href="/hierarchy"
+          title="Promotions"
+          href="/promotions"
           styleProps={{'backgroundPosition': "25%" }}
         />
       </Grid>
