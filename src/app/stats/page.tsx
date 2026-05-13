@@ -15,7 +15,7 @@ export default async function Stats() {
 
   return (
     <Box className="page-bg">
-      <Typography variant="h1" className="gold-shadow center" mt={3}>
+      <Typography variant="h1" className="gold-shadow center" sx={{ mt: 3 }}>
         Clan Stats (Sorry Im too poor to afford lambda and NAT Gateway sad)
       </Typography>
       {/* <div className="br" />

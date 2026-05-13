@@ -7,7 +7,16 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="simp">
       <nav className="nav">
-        <Image src={navLogo} className="nav-logo" alt="Jeetio Logo" height="90" />
+        <Image
+          src={navLogo}
+          className="nav-logo"
+          alt="Jeetio Logo"
+          height={100}
+          width={280}
+          priority
+          sizes="(max-width: 768px) 120px, 280px"
+          style={{ width: "auto", height: 100 }}
+        />
         <ul>
           <li>
             <NavText href="/">Home</NavText>

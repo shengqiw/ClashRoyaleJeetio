@@ -1,15 +1,15 @@
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import "./rules.css";
 
 export default function Rules() {
   return (
     <Grid container>
       <Grid size={10} offset={1} className="page-bg">
-          <Typography variant="h1" className="gold-shadow center" mt={3}>
+          <Typography variant="h1" className="gold-shadow center" sx={{ mt: 3 }}>
             Clan Rules
           </Typography>
-        <Box className="vert-li" mx={2}>
-          <Typography variant="h4" className="gold" mt={3}>
+        <Box className="vert-li" sx={{ mx: 2 }}>
+          <Typography variant="h4" className="gold" sx={{ mt: 3 }}>
             Requirements
           </Typography>
           <ul>

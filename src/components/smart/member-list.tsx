@@ -3,7 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  Grid2 as Grid,
+  Grid,
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -68,13 +68,11 @@ export const MemberList = async ({ members }: { members: any[] }) => {
   const memberDetails = await Promise.all(fetchMemberDetails);
 
   return (
-    <Box mt={2} pt={4}>
+    <Box sx={{ mt: 2, pt: 4 }}>
       <Typography
         variant="h3"
-        textAlign={"center"}
-        mb={2}
         className="gold"
-        fontWeight={"bold"}
+        sx={{ textAlign: "center", mb: 2, fontWeight: "bold" }}
       >
         Clan Members
       </Typography>
@@ -94,24 +92,22 @@ export const MemberList = async ({ members }: { members: any[] }) => {
                   &nbsp;
                   <Typography
                     variant="subtitle2"
-                    mx={2}
                     color="secondary"
-                    style={{ display: "flex", flexDirection: "column-reverse" }}
+                    sx={{ mx: 2, display: "flex", flexDirection: "column-reverse" }}
                   >
                     {member.outer.role.toUpperCase()}
                   </Typography>
                   <Typography
                     variant="h6"
-                    marginLeft={"auto"}
-                    marginRight={"3rem"}
+                    sx={{ ml: "auto", mr: "3rem" }}
                   >
                     {member.outer.trophies}
                     &nbsp;
                     <Image
                       src={TrophyIcon}
                       alt="Clan Trophies"
-                      width="15"
-                      height="15"
+                      width={15}
+                      height={15}
                     />
                   </Typography>
                 </AccordionSummary>
@@ -146,7 +142,7 @@ export const MemberList = async ({ members }: { members: any[] }) => {
                         {member.innerRight.bestPathOfLegendSeasonResult
                           ?.leagueNumber || 0}
                       </Typography>
-                      <Typography variant="h6" mt={2}>
+                      <Typography variant="h6" sx={{ mt: 2 }}>
                         Trophy Road
                       </Typography>
                       <Typography variant="body1">

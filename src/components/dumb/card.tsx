@@ -13,7 +13,6 @@ export const MyCard = ({
   styleProps?: object
 }) => {
   const router = useRouter();
-  console.log('env', bgImage);
   return (
     <Card
       style={{ backgroundImage: `url(${bgImage})`, ...styleProps }}
@@ -21,7 +20,7 @@ export const MyCard = ({
       onClick={() => router.push(href)}
     >
       <div className="center-x trans-bg">
-        <Typography variant="h4" color="white" p={1}>
+        <Typography variant="h4" color="white" sx={{ p: 1 }}>
           {title}
         </Typography>
       </div>
