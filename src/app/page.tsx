@@ -37,8 +37,7 @@ export default function Root() {
           <Grid size={{ xs: 12, md: 6 }} key={f.title}>
             <Box
               sx={{
-                background: "rgba(0,0,0,0.22)",
-                backdropFilter: "blur(6px)",
+                background: "rgba(0,0,0,0.35)",
                 border: "1px solid rgba(255,255,255,0.09)",
                 borderRadius: "10px",
                 padding: { xs: "1.1rem 1.25rem", md: "1.4rem 1.75rem" },

@@ -33,7 +33,7 @@ body {
 .page-bg {
   background-color: #fafafa;
   min-height: 90vh;
-  margin-top: 1rem;
+  margin-top: 0;
   margin-bottom: 2rem;
   padding: 3rem;
 }
@@ -41,8 +41,7 @@ body {
 nav {
   width: 100%;
   padding: 6px 20px;
-  background: rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: row;
   position: relative;
@@ -122,14 +121,14 @@ li {
   background-position: center;
   border-radius: 10px;
   box-shadow: 8px 8px 10px rgba(0, 0, 0, 0.6);
-
   display: flex;
   flex-direction: column-reverse;
+  transition: transform 0.2s ease;
+  will-change: transform;
 }
 
 .my-card:hover {
-  transform: scale(1.1);
-  transition: 0.8s;
+  transform: scale(1.05);
   box-shadow: 8px 8px 15px 15px rgba(0, 0, 0, 0.3);
   cursor: pointer;
 }
@@ -140,11 +139,11 @@ li {
 
 .trans-bg {
   background-color: rgba(20, 119, 104, 0.4);
+  transition: background-color 0.2s ease;
 }
 
 .trans-bg:hover {
   background-color: rgb(23, 118, 104, 0.8);
-  transition: 0.8s;
 }
 
 .bottom-y {

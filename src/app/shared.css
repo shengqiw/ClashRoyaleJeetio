@@ -2,11 +2,11 @@
 
 .game-bg {
   min-height: 90vh;
-  margin-top: 1rem;
+  margin-top: 0;
   margin-bottom: 2rem;
   padding: 2rem 1rem;
   background: rgba(8, 22, 5, 0.87);
-  backdrop-filter: blur(4px);
+
   border-radius: 4px;
 }
 

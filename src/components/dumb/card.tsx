@@ -17,6 +17,7 @@ export const MyCard = ({
     <Card
       style={{ backgroundImage: `url(${bgImage})`, ...styleProps }}
       className="my-card"
+      elevation={0}
       onClick={() => router.push(href)}
     >
       <div className="center-x trans-bg">

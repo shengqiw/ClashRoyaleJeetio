@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import navLogo from "@/assets/logo.png";
 import { ReactNode } from "react";
 import { NavText } from "../dumb/nav-text";
@@ -7,16 +8,18 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="simp">
       <nav className="nav">
-        <Image
-          src={navLogo}
-          className="nav-logo"
-          alt="Jeetio Logo"
-          height={80}
-          width={244}
-          priority
-          sizes="(max-width: 400px) 90px, (max-width: 640px) 130px, 140px"
-          style={{ width: "auto", height: "46px" }}
-        />
+        <Link href="/" className="no-underline">
+          <Image
+            src={navLogo}
+            className="nav-logo"
+            alt="Jeetio Logo"
+            height={80}
+            width={244}
+            priority
+            sizes="(max-width: 400px) 90px, (max-width: 640px) 130px, 140px"
+            style={{ width: "auto", height: "46px" }}
+          />
+        </Link>
         <ul>
           <li>
             <NavText href="/">Home</NavText>
