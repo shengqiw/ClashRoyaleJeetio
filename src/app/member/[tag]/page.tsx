@@ -15,11 +15,11 @@ import "./member.css";
 
 const getRoleColor = (role: string) => {
   switch (role) {
-    case "leader":   return "#d03030";
-    case "coLeader": return "#d07820";
-    case "elder":    return "#1e9ac0";
-    case "member":   return "#4aaa80";
-    default:         return "#4aaa80";
+    case "leader":   return "#B91C1C";
+    case "coLeader": return "#92400E";
+    case "elder":    return "#1D4ED8";
+    case "member":   return "#374151";
+    default:         return "#374151";
   }
 };
 
@@ -80,7 +80,7 @@ export default function MemberPage() {
 
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
-            <CircularProgress sx={{ color: "#90e040" }} />
+            <CircularProgress sx={{ color: "#3B82F6" }} />
           </Box>
         ) : error ? (
           <Typography

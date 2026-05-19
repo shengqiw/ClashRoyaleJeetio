@@ -1,25 +1,20 @@
 import { Grid } from "@mui/material";
 import { MyCard } from "../dumb/card";
-import explorer from "@/assets/explorer.jpg";
+import monkBg from "@/assets/monk-bg.jpg";
 import pekka from "@/assets/pekka.jpg";
-import battleHealer from "@/assets/battle-healer.jpg";
+import spells from "@/assets/spells.jpg";
 
 export const HomeCards = () => {
   return (
     <Grid container spacing={8} sx={{ px: 8 }}>
       <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={explorer.src} title="Rules" href="/rules" />
+        <MyCard bgImage={monkBg.src} title="Clan Info" href="/clan-info" />
       </Grid>
       <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={pekka.src} title="Stats" href="/stats" />
+        <MyCard bgImage={pekka.src} title="Stats Lookup" href="/stats" />
       </Grid>
-      <Grid size={{xs: 12, md:4}}>
-        <MyCard
-          bgImage={battleHealer.src}
-          title="Promotions"
-          href="/promotions"
-          styleProps={{'backgroundPosition': "25%" }}
-        />
+      <Grid size={{xs: 12, md: 4}}>
+        <MyCard bgImage={spells.src} title="Deck AI" href="/deckai" />
       </Grid>
     </Grid>
   );

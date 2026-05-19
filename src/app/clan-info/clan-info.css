@@ -1,0 +1,82 @@
+/* Purple/gold theme for the Clan Info page */
+
+.clan-info-page.game-bg {
+  background: rgba(20, 10, 60, 0.92);
+}
+
+.clan-info-page .game-title {
+  color: #FCD34D !important;
+  text-shadow:
+    0 3px 0 rgba(60, 20, 0, 0.9),
+    0 0 22px rgba(252, 211, 77, 0.45),
+    0 0 50px rgba(76, 29, 149, 0.3) !important;
+}
+
+.clan-info-page .game-subtitle {
+  color: #E9D5FF !important;
+}
+
+.clan-info-page .section-divider-label {
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #FCD34D;
+  font-size: 1.15rem;
+  text-align: center;
+  margin: 2rem 0 1.25rem;
+  text-shadow: 0 2px 0 rgba(60, 20, 0, 0.8), 0 0 18px rgba(252, 211, 77, 0.35);
+}
+
+.clan-info-page .game-panel {
+  background: rgba(38, 15, 90, 0.97);
+  border: 1px solid rgba(252, 211, 77, 0.22);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.clan-info-page .game-panel::after {
+  background: linear-gradient(90deg, transparent 5%, rgba(252, 211, 77, 0.28) 40%, rgba(252, 211, 77, 0.28) 60%, transparent 95%);
+}
+
+.clan-info-page .game-panel-title {
+  color: #FEF08A !important;
+}
+
+.clan-info-page .game-section-label {
+  color: #FCD34D !important;
+}
+
+.clan-info-page .game-divider {
+  border-color: rgba(252, 211, 77, 0.15) !important;
+}
+
+.clan-info-page .game-section-divider {
+  border-color: rgba(252, 211, 77, 0.12) !important;
+  margin: 2rem 0 !important;
+}
+
+.clan-info-page .game-footer-panel {
+  background: rgba(30, 10, 80, 0.88);
+  border: 1px solid rgba(252, 211, 77, 0.18);
+}
+
+.clan-info-page .game-footer-panel::after {
+  background: linear-gradient(90deg, transparent 10%, rgba(252, 211, 77, 0.25) 40%, rgba(252, 211, 77, 0.25) 60%, transparent 90%);
+}
+
+.clan-info-page .game-footer-title {
+  color: #FCD34D !important;
+}
+
+.clan-info-page .game-footer-body {
+  color: #E9D5FF !important;
+}
+
+/* Tier icon + name header */
+.tier-title {
+  font-weight: 900 !important;
+  color: #FEF08A !important;
+  font-size: 1.15rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}

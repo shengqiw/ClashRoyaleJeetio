@@ -1,0 +1,136 @@
+/* Shared game page styles used by rules, promotions, and any dark-themed page */
+
+.game-bg {
+  min-height: 90vh;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  padding: 2rem 1rem;
+  background: rgba(8, 22, 5, 0.87);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+}
+
+.game-title {
+  font-weight: 900 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase;
+  color: #a0e840 !important;
+  text-shadow:
+    0 3px 0 rgba(10, 60, 0, 0.9),
+    0 0 22px rgba(140, 230, 50, 0.5),
+    0 0 50px rgba(100, 200, 30, 0.18) !important;
+  font-size: 2rem !important;
+}
+
+.game-subtitle {
+  color: #7ec040 !important;
+  font-size: 1rem !important;
+  opacity: 0.88;
+}
+
+/* Panel / card */
+.game-panel {
+  background: rgba(10, 26, 6, 0.97);
+  border: 1px solid rgba(110, 200, 50, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: 100%;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(140, 225, 60, 0.32) 40%, rgba(140, 225, 60, 0.32) 60%, transparent 95%);
+}
+
+.game-panel-title {
+  font-weight: 700 !important;
+  color: #d4f878 !important;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.03em;
+  line-height: 1.3 !important;
+}
+
+.game-section-label {
+  font-size: 0.68rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2em !important;
+  color: #80b848 !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.game-divider {
+  border-color: rgba(110, 200, 50, 0.13) !important;
+  margin: 0.9rem 0 !important;
+}
+
+.game-list-text {
+  color: #c0e878 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Footer summary banner */
+.game-footer-panel {
+  background: rgba(10, 26, 6, 0.88);
+  border: 1px solid rgba(110, 200, 50, 0.16);
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-footer-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 10%, rgba(140, 225, 60, 0.28) 40%, rgba(140, 225, 60, 0.28) 60%, transparent 90%);
+}
+
+.game-footer-title {
+  font-weight: 800 !important;
+  color: #cef870 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.game-footer-body {
+  color: #80b848 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .game-bg {
+    padding: 1.25rem 0.75rem;
+  }
+  .game-title {
+    font-size: 1.5rem !important;
+  }
+  .game-subtitle {
+    font-size: 0.88rem !important;
+  }
+  .game-panel {
+    padding: 1.1rem 1rem;
+  }
+  .game-panel-title {
+    font-size: 0.95rem !important;
+  }
+  .game-footer-panel {
+    padding: 1.1rem 1rem;
+  }
+}

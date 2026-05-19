@@ -3,7 +3,7 @@
   margin-top: 1rem;
   margin-bottom: 2rem;
   padding: 2rem 1rem;
-  background: rgba(8, 22, 5, 0.87);
+  background: rgba(11, 20, 55, 0.92);
   backdrop-filter: blur(4px);
   border-radius: 4px;
 }
@@ -17,33 +17,54 @@
   font-weight: 900 !important;
   letter-spacing: 0.1em !important;
   text-transform: uppercase;
-  color: #a0e840 !important;
+  color: #F1F5F9 !important;
   text-shadow:
-    0 3px 0 rgba(10, 60, 0, 0.9),
-    0 0 22px rgba(140, 230, 50, 0.5),
-    0 0 50px rgba(100, 200, 30, 0.18) !important;
+    0 3px 0 rgba(0, 10, 60, 0.9),
+    0 0 22px rgba(59, 130, 246, 0.55),
+    0 0 50px rgba(30, 58, 138, 0.3) !important;
   font-size: 2rem !important;
 }
 
 .stats-tag-display {
-  color: #7ec040 !important;
+  color: #94A3B8 !important;
   font-size: 0.82rem !important;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   font-family: monospace;
   margin-top: 0.25rem !important;
 }
 
 /* Controls panel */
 .stats-controls {
-  background: rgba(10, 28, 6, 0.75);
-  border: 1px solid rgba(120, 210, 50, 0.28);
+  background: rgba(30, 58, 138, 0.22);
+  border: 1px solid rgba(59, 130, 246, 0.28);
   border-radius: 8px;
   padding: 1.1rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
   margin-bottom: 1.75rem;
-  box-shadow: 0 0 0 1px rgba(100, 190, 40, 0.06) inset;
+  box-shadow: 0 0 0 1px rgba(30, 58, 138, 0.08) inset;
+}
+
+/* Mode toggle (Clan / Player) */
+.stats-mode-group .MuiToggleButton-root {
+  color: #94A3B8 !important;
+  border-color: rgba(59, 130, 246, 0.28) !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  padding: 5px 20px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.stats-mode-group .MuiToggleButton-root.Mui-selected {
+  background: rgba(59, 130, 246, 0.18) !important;
+  color: #F1F5F9 !important;
+  border-color: rgba(99, 160, 255, 0.6) !important;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset;
 }
 
 .stats-tag-input-row {
@@ -55,69 +76,69 @@
 
 .stats-tag-field {
   flex: 1;
-  min-width: 180px;
+  min-width: 160px;
 }
 
 .stats-tag-field .MuiOutlinedInput-root {
-  color: #d8f898 !important;
-  background: rgba(2, 12, 2, 0.65) !important;
+  color: #F1F5F9 !important;
+  background: rgba(11, 20, 55, 0.65) !important;
   font-size: 0.85rem !important;
 }
 
 .stats-tag-field .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(110, 200, 50, 0.3) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
 }
 
 .stats-tag-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(130, 220, 60, 0.55) !important;
+  border-color: rgba(99, 160, 255, 0.55) !important;
 }
 
 .stats-tag-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #90e040 !important;
-  box-shadow: 0 0 0 2px rgba(130, 220, 50, 0.14);
+  border-color: #60A5FA !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.14);
 }
 
 .stats-tag-field input::placeholder {
-  color: rgba(150, 210, 90, 0.35) !important;
+  color: rgba(148, 163, 184, 0.4) !important;
   opacity: 1 !important;
 }
 
 .stats-btn-fetch {
-  background: linear-gradient(160deg, #4a8e18 0%, #70cc2a 100%) !important;
-  color: #f0fff0 !important;
+  background: linear-gradient(160deg, #1D4ED8 0%, #3B82F6 100%) !important;
+  color: #F1F5F9 !important;
   font-weight: 800 !important;
   font-size: 0.7rem !important;
   letter-spacing: 0.12em !important;
   text-transform: uppercase !important;
-  border: 1px solid rgba(130, 220, 60, 0.5) !important;
-  border-bottom: 2px solid rgba(30, 90, 5, 0.8) !important;
+  border: 1px solid rgba(99, 160, 255, 0.5) !important;
+  border-bottom: 2px solid rgba(15, 40, 120, 0.8) !important;
   white-space: nowrap;
   padding: 6px 18px !important;
   transition: all 0.15s !important;
   min-width: 100px;
-  box-shadow: 0 2px 0 rgba(20, 70, 5, 0.6) !important;
+  box-shadow: 0 2px 0 rgba(10, 30, 100, 0.6) !important;
 }
 
 .stats-btn-fetch:hover {
-  background: linear-gradient(160deg, #5aaa22 0%, #80e032 100%) !important;
-  box-shadow: 0 2px 0 rgba(20, 70, 5, 0.6), 0 0 14px rgba(120, 220, 50, 0.35) !important;
+  background: linear-gradient(160deg, #2563EB 0%, #60A5FA 100%) !important;
+  box-shadow: 0 2px 0 rgba(10, 30, 100, 0.6), 0 0 14px rgba(59, 130, 246, 0.35) !important;
   transform: translateY(-1px);
 }
 
 .stats-btn-fetch:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 0 rgba(20, 70, 5, 0.6) !important;
+  box-shadow: 0 1px 0 rgba(10, 30, 100, 0.6) !important;
 }
 
 .stats-btn-default {
-  background: rgba(18, 44, 10, 0.95) !important;
-  color: #90cc50 !important;
+  background: rgba(15, 30, 80, 0.95) !important;
+  color: #94A3B8 !important;
   font-weight: 700 !important;
   font-size: 0.7rem !important;
   letter-spacing: 0.1em !important;
   text-transform: uppercase !important;
-  border: 1px solid rgba(110, 200, 50, 0.28) !important;
-  border-bottom: 2px solid rgba(10, 40, 5, 0.6) !important;
+  border: 1px solid rgba(59, 130, 246, 0.28) !important;
+  border-bottom: 2px solid rgba(10, 20, 60, 0.6) !important;
   white-space: nowrap;
   padding: 6px 16px !important;
   transition: all 0.15s !important;
@@ -125,9 +146,9 @@
 }
 
 .stats-btn-default:hover {
-  border-color: rgba(130, 220, 60, 0.5) !important;
-  color: #b0e870 !important;
-  background: rgba(22, 55, 12, 0.95) !important;
+  border-color: rgba(99, 160, 255, 0.5) !important;
+  color: #F1F5F9 !important;
+  background: rgba(25, 50, 120, 0.95) !important;
 }
 
 .stats-sort-row {
@@ -138,7 +159,7 @@
 }
 
 .stats-sort-label {
-  color: #80b848 !important;
+  color: #94A3B8 !important;
   font-size: 0.68rem !important;
   letter-spacing: 0.18em !important;
   text-transform: uppercase;
@@ -146,8 +167,8 @@
 }
 
 .stats-sort-group .MuiToggleButton-root {
-  color: #78a840 !important;
-  border-color: rgba(110, 200, 50, 0.22) !important;
+  color: #94A3B8 !important;
+  border-color: rgba(59, 130, 246, 0.22) !important;
   font-size: 0.67rem !important;
   letter-spacing: 0.1em !important;
   text-transform: uppercase !important;
@@ -158,19 +179,19 @@
 }
 
 .stats-sort-group .MuiToggleButton-root:hover {
-  background: rgba(120, 210, 50, 0.08) !important;
-  color: #a0d858 !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #CBD5E1 !important;
 }
 
 .stats-sort-group .MuiToggleButton-root.Mui-selected {
-  background: rgba(120, 210, 50, 0.16) !important;
-  color: #a0e840 !important;
-  border-color: rgba(140, 225, 55, 0.5) !important;
-  box-shadow: 0 0 8px rgba(130, 220, 50, 0.2) inset;
+  background: rgba(59, 130, 246, 0.16) !important;
+  color: #F1F5F9 !important;
+  border-color: rgba(99, 160, 255, 0.5) !important;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.2) inset;
 }
 
 .stats-member-count {
-  color: #6aaa38 !important;
+  color: #94A3B8 !important;
   font-size: 0.68rem !important;
   letter-spacing: 0.3em !important;
   font-weight: 700 !important;
@@ -180,10 +201,10 @@
 
 /* Member cards */
 .member-card {
-  background: linear-gradient(145deg, rgba(10, 26, 6, 0.98) 0%, rgba(16, 36, 10, 0.98) 100%) !important;
-  border-top: 1px solid rgba(110, 200, 50, 0.18) !important;
-  border-right: 1px solid rgba(110, 200, 50, 0.1) !important;
-  border-bottom: 1px solid rgba(110, 200, 50, 0.1) !important;
+  background: linear-gradient(145deg, rgba(11, 20, 55, 0.98) 0%, rgba(20, 40, 90, 0.98) 100%) !important;
+  border-top: 1px solid rgba(59, 130, 246, 0.18) !important;
+  border-right: 1px solid rgba(59, 130, 246, 0.1) !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
   cursor: pointer !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s !important;
   position: relative;
@@ -197,18 +218,18 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent 5%, rgba(140, 225, 60, 0.35) 40%, rgba(140, 225, 60, 0.35) 60%, transparent 95%);
+  background: linear-gradient(90deg, transparent 5%, rgba(99, 160, 255, 0.35) 40%, rgba(99, 160, 255, 0.35) 60%, transparent 95%);
   pointer-events: none;
 }
 
 .member-card:hover {
   transform: translateY(-4px) !important;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(120, 210, 50, 0.18) !important;
-  border-top-color: rgba(130, 220, 55, 0.35) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.18) !important;
+  border-top-color: rgba(99, 160, 255, 0.35) !important;
 }
 
 .member-name {
-  color: #cef870 !important;
+  color: #F1F5F9 !important;
   font-weight: 800 !important;
   font-size: 0.95rem !important;
   letter-spacing: 0.02em;
@@ -216,7 +237,7 @@
 }
 
 .member-tag {
-  color: #5a8840 !important;
+  color: #94A3B8 !important;
   font-size: 0.67rem !important;
   font-family: monospace !important;
   letter-spacing: 0.06em;
@@ -224,13 +245,13 @@
 
 .rank-chip {
   background: rgba(48, 36, 4, 0.95) !important;
-  color: #ffd040 !important;
+  color: #FFD93D !important;
   font-weight: 800 !important;
   font-family: monospace !important;
-  border: 1px solid rgba(220, 180, 30, 0.4) !important;
+  border: 1px solid rgba(255, 210, 60, 0.4) !important;
   font-size: 0.7rem !important;
   height: 22px !important;
-  text-shadow: 0 0 8px rgba(255, 200, 30, 0.3);
+  text-shadow: 0 0 8px rgba(255, 210, 60, 0.3);
 }
 
 .member-stats-grid {
@@ -238,9 +259,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 0.4rem;
   padding: 0.65rem 0.75rem;
-  background: rgba(2, 10, 2, 0.4);
+  background: rgba(5, 10, 30, 0.4);
   border-radius: 5px;
-  border: 1px solid rgba(100, 190, 45, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.1);
 }
 
 .stat-box {
@@ -251,7 +272,7 @@
 
 .stat-label {
   font-size: 0.61rem;
-  color: #608040;
+  color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-family: monospace;
@@ -259,19 +280,64 @@
 
 .stat-value {
   font-size: 0.85rem;
-  color: #a8e050;
+  color: #60A5FA;
   font-weight: 700;
   font-family: monospace;
 }
 
 .arena-name {
   font-size: 0.72rem !important;
-  color: #6aaa40 !important;
+  color: #94A3B8 !important;
   font-style: italic;
 }
 
 .last-seen {
   font-size: 0.62rem !important;
-  color: #456030 !important;
+  color: #64748B !important;
   font-family: monospace !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .stats-bg {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .stats-title {
+    font-size: 1.5rem !important;
+  }
+
+  .stats-controls {
+    padding: 0.85rem 0.9rem;
+    gap: 0.75rem;
+  }
+
+  .stats-mode-group .MuiToggleButton-root {
+    padding: 4px 14px !important;
+    font-size: 0.67rem !important;
+  }
+
+  .stats-tag-input-row {
+    gap: 0.45rem;
+  }
+
+  .stats-tag-field {
+    min-width: 120px;
+  }
+
+  .stats-btn-fetch,
+  .stats-btn-default {
+    font-size: 0.65rem !important;
+    padding: 5px 10px !important;
+    min-width: unset !important;
+  }
+
+  .stats-sort-row {
+    gap: 0.5rem;
+  }
+
+  .stats-sort-group .MuiToggleButton-root {
+    padding: 3px 10px !important;
+    font-size: 0.63rem !important;
+  }
 }

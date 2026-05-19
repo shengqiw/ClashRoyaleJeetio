@@ -6,8 +6,11 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+html,
 body {
   font-family: var(--font-sans);
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .simp {
@@ -36,18 +39,20 @@ body {
 }
 
 nav {
-  width: 100vw;
-  padding: 10px;
-  background: transparent;
+  width: 100%;
+  padding: 6px 20px;
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: row;
   position: relative;
   align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .nav-logo {
-  margin-left: 3rem;
-  height: 100px;
+  margin-left: 1.25rem;
+  height: 46px;
   width: auto;
 }
 
@@ -79,16 +84,15 @@ nav {
 
 ul {
   margin-left: auto;
-  margin-right: 3rem;
+  margin-right: 1.25rem;
   list-style: none;
   padding: 0;
-  border: 1px;
 }
 
 li {
   display: inline;
-  margin: 0 10px;
-  padding: 1rem;
+  margin: 0 2px;
+  padding: 0.4rem 0.7rem;
 }
 
 .purple-shadow {
@@ -152,4 +156,74 @@ li {
   object-fit: cover;
   height: 100%;
   width: 100%;
+}
+
+/* ── Footer ── */
+.site-footer {
+  width: 100%;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: auto;
+}
+
+.site-footer-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.site-footer-sep {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.75rem;
+}
+
+.site-footer-copy {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Mobile nav ── */
+@media (max-width: 640px) {
+  nav {
+    flex-wrap: wrap;
+    padding: 6px 10px;
+    gap: 2px;
+  }
+
+  .nav-logo {
+    margin-left: 0.5rem;
+    height: 36px !important;
+  }
+
+  ul {
+    margin-left: 0;
+    margin-right: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  li {
+    padding: 0.25rem 0.45rem;
+    margin: 0 1px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nav-logo {
+    height: 30px !important;
+  }
+
+  li {
+    padding: 0.2rem 0.3rem;
+    margin: 0;
+  }
 }

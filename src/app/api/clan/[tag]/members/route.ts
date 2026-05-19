@@ -24,6 +24,5 @@ export async function GET(
   });
 
   const data = await response.json();
-  console.log(`Fetched members for clan ${tag}:`, data);
   return NextResponse.json(data, { status: response.status });
 }

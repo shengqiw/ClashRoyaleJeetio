@@ -1,0 +1,55 @@
+/* Gold-forward / deep purple theme overrides for the Promotions page */
+
+.promos-page.game-bg {
+  background: rgba(20, 10, 60, 0.92);
+}
+
+.promos-page .game-title {
+  color: #FCD34D !important;
+  text-shadow:
+    0 3px 0 rgba(60, 20, 0, 0.9),
+    0 0 22px rgba(252, 211, 77, 0.45),
+    0 0 50px rgba(76, 29, 149, 0.3) !important;
+}
+
+.promos-page .game-subtitle {
+  color: #E9D5FF !important;
+}
+
+.promos-page .game-panel {
+  background: rgba(38, 15, 90, 0.97);
+  border: 1px solid rgba(252, 211, 77, 0.25);
+}
+
+.promos-page .game-panel::after {
+  background: linear-gradient(90deg, transparent 5%, rgba(252, 211, 77, 0.3) 40%, rgba(252, 211, 77, 0.3) 60%, transparent 95%);
+}
+
+.promos-page .game-panel-title {
+  color: #FEF08A !important;
+}
+
+.promos-page .game-section-label {
+  color: #FCD34D !important;
+}
+
+.promos-page .game-divider {
+  border-color: rgba(252, 211, 77, 0.15) !important;
+}
+
+.promos-page .game-footer-panel {
+  background: rgba(30, 10, 80, 0.88);
+  border: 1px solid rgba(252, 211, 77, 0.18);
+}
+
+.promos-page .game-footer-panel::after {
+  background: linear-gradient(90deg, transparent 10%, rgba(252, 211, 77, 0.25) 40%, rgba(252, 211, 77, 0.25) 60%, transparent 90%);
+}
+
+.promos-page .game-footer-title {
+  color: #FCD34D !important;
+}
+
+.promos-page .game-footer-body {
+  color: #E9D5FF !important;
+}

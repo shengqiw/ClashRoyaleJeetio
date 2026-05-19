@@ -1,9 +1,55 @@
-.vert-li ul {
-    list-style-type: square;
+/* Crimson theme overrides for the Rules page */
+
+.rules-page.game-bg {
+  background: rgba(40, 8, 8, 0.92);
 }
-.vert-li ul li {
-    display: block;
-    font-size: 1.5rem;
-    padding: 0.5rem;
-    color: goldenrod;
+
+.rules-page .game-title {
+  color: #FEF3C7 !important;
+  text-shadow:
+    0 3px 0 rgba(80, 0, 0, 0.9),
+    0 0 22px rgba(239, 68, 68, 0.45),
+    0 0 50px rgba(127, 29, 29, 0.25) !important;
+}
+
+.rules-page .game-subtitle {
+  color: #D6D3D1 !important;
+}
+
+.rules-page .game-panel {
+  background: rgba(60, 10, 10, 0.97);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.rules-page .game-panel::after {
+  background: linear-gradient(90deg, transparent 5%, rgba(251, 191, 36, 0.28) 40%, rgba(251, 191, 36, 0.28) 60%, transparent 95%);
+}
+
+.rules-page .game-panel-title {
+  color: #FEF3C7 !important;
+}
+
+.rules-page .game-section-label {
+  color: #FBBF24 !important;
+}
+
+.rules-page .game-divider {
+  border-color: rgba(109, 40, 217, 0.22) !important;
+}
+
+.rules-page .game-footer-panel {
+  background: rgba(50, 8, 8, 0.88);
+  border: 1px solid rgba(220, 38, 38, 0.16);
+}
+
+.rules-page .game-footer-panel::after {
+  background: linear-gradient(90deg, transparent 10%, rgba(251, 191, 36, 0.22) 40%, rgba(251, 191, 36, 0.22) 60%, transparent 90%);
+}
+
+.rules-page .game-footer-title {
+  color: #FEF3C7 !important;
+}
+
+.rules-page .game-footer-body {
+  color: #D6D3D1 !important;
 }

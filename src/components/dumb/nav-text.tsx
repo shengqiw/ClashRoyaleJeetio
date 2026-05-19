@@ -10,7 +10,18 @@ export const NavText = ({
 }) => {
   return (
     <Link href={href} className="no-underline">
-      <Typography variant="h5" color="white" className="inline">
+      <Typography
+        className="inline"
+        sx={{
+          color: "rgba(255,255,255,0.80)",
+          fontWeight: 600,
+          fontSize: "0.75rem",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          transition: "color 0.15s",
+          "&:hover": { color: "#fff" },
+        }}
+      >
         {children}
       </Typography>
     </Link>

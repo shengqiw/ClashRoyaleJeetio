@@ -13,6 +13,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
+import { Groups, Person } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "./stats.css";
@@ -28,11 +29,11 @@ const ROLE_ORDER: Record<string, number> = {
 
 const getRoleColor = (role: string) => {
   switch (role) {
-    case "leader":   return "#d03030";
-    case "coLeader": return "#d07820";
-    case "elder":    return "#1e9ac0";
-    case "member":   return "#4aaa80";
-    default:         return "#4aaa80";
+    case "leader":   return "#B91C1C";
+    case "coLeader": return "#92400E";
+    case "elder":    return "#1D4ED8";
+    case "member":   return "#374151";
+    default:         return "#374151";
   }
 };
 
@@ -48,9 +49,11 @@ function formatDate(raw: string): string {
 }
 
 type SortKey = "clanRank" | "role" | "donations";
+type SearchMode = "clan" | "player";
 
 export default function Stats() {
   const router = useRouter();
+  const [mode, setMode] = useState<SearchMode>("clan");
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -67,9 +70,7 @@ export default function Stats() {
       });
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(
-          payload?.message || payload?.reason || `HTTP ${res.status}`
-        );
+        throw new Error(payload?.message || payload?.reason || `HTTP ${res.status}`);
       }
       const data = await res.json();
       setMembers(data?.items || []);
@@ -85,6 +86,19 @@ export default function Stats() {
     fetchMembers(DEFAULT_TAG, false);
   }, []);
 
+  function handleSearch() {
+    const raw = tagInput.trim();
+    if (!raw) return;
+    setTagInput("");
+    setErrorMessage("");
+    if (mode === "player") {
+      const playerTag = raw.startsWith("#") ? raw : `#${raw}`;
+      router.push(`/member/${encodeURIComponent(playerTag)}`);
+    } else {
+      fetchMembers(raw.replace(/^#/, ""), false);
+    }
+  }
+
   const sorted = [...members].sort((a, b) => {
     if (sortBy === "clanRank")  return a.clanRank - b.clanRank;
     if (sortBy === "role")      return (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9);
@@ -92,65 +106,91 @@ export default function Stats() {
     return 0;
   });
 
-  function handleFetch() {
-    const cleaned = tagInput.trim().replace(/^#/, "");
-    if (cleaned) {
-      fetchMembers(cleaned, false);
-      setTagInput("");
-    }
-  }
-
   return (
     <Box className="stats-bg">
       {/* Header */}
       <Box className="stats-header">
-        <Typography className="stats-title">Clan Stats</Typography>
-        <Typography className="stats-tag-display">#{activeTag}</Typography>
+        <Typography className="stats-title">Stats Lookup</Typography>
+        <Typography className="stats-tag-display">
+          {mode === "clan" ? `Clan: #${activeTag}` : "Search any player by tag"}
+        </Typography>
       </Box>
 
       <Container maxWidth="lg">
         {/* Controls */}
         <Box className="stats-controls">
+          {/* Mode toggle */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <ToggleButtonGroup
+              value={mode}
+              exclusive
+              onChange={(_, v) => {
+                if (v) { setMode(v); setTagInput(""); setErrorMessage(""); }
+              }}
+              size="small"
+              className="stats-mode-group"
+            >
+              <ToggleButton value="clan">
+                <Groups sx={{ fontSize: 16, mr: 0.6 }} />
+                Clan
+              </ToggleButton>
+              <ToggleButton value="player">
+                <Person sx={{ fontSize: 16, mr: 0.6 }} />
+                Player
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+
+          {/* Search row */}
           <Box className="stats-tag-input-row">
             <TextField
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
-              placeholder="Enter clan tag (e.g. PRURJPJP)"
+              placeholder={
+                mode === "clan"
+                  ? "Clan tag (e.g. PRURJPJP)"
+                  : "Player tag (e.g. #ABC123)"
+              }
               size="small"
               className="stats-tag-field"
-              onKeyDown={(e) => e.key === "Enter" && handleFetch()}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
-            <Button className="stats-btn-fetch" onClick={handleFetch}>
-              Fetch Clan
+            <Button className="stats-btn-fetch" onClick={handleSearch}>
+              {mode === "clan" ? "Fetch Clan" : "Lookup Player"}
             </Button>
-            <Button
-              className="stats-btn-default"
-              onClick={() => fetchMembers(DEFAULT_TAG, true)}
-            >
-              Default Clan
-            </Button>
+            {mode === "clan" && (
+              <Button
+                className="stats-btn-default"
+                onClick={() => fetchMembers(DEFAULT_TAG, true)}
+              >
+                Default Clan
+              </Button>
+            )}
           </Box>
 
-          <Box className="stats-sort-row">
-            <Typography className="stats-sort-label">Sort by:</Typography>
-            <ToggleButtonGroup
-              value={sortBy}
-              exclusive
-              onChange={(_, v) => v && setSortBy(v)}
-              size="small"
-              className="stats-sort-group"
-            >
-              <ToggleButton value="clanRank">Rank</ToggleButton>
-              <ToggleButton value="role">Role</ToggleButton>
-              <ToggleButton value="donations">Donations</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
+          {/* Sort (clan mode only) */}
+          {mode === "clan" && (
+            <Box className="stats-sort-row">
+              <Typography className="stats-sort-label">Sort by:</Typography>
+              <ToggleButtonGroup
+                value={sortBy}
+                exclusive
+                onChange={(_, v) => v && setSortBy(v)}
+                size="small"
+                className="stats-sort-group"
+              >
+                <ToggleButton value="clanRank">Rank</ToggleButton>
+                <ToggleButton value="role">Role</ToggleButton>
+                <ToggleButton value="donations">Donations</ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          )}
         </Box>
 
         {/* Content */}
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
-            <CircularProgress sx={{ color: "#90e040" }} />
+            <CircularProgress sx={{ color: "#3B82F6" }} />
           </Box>
         ) : errorMessage ? (
           <Typography

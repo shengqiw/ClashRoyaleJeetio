@@ -3,32 +3,32 @@
   margin-top: 1rem;
   margin-bottom: 2rem;
   padding: 2rem 1rem;
-  background: rgba(8, 22, 5, 0.87);
+  background: rgba(11, 20, 55, 0.92);
   backdrop-filter: blur(4px);
   border-radius: 4px;
 }
 
 .back-btn {
-  color: #90d840 !important;
+  color: #60A5FA !important;
   font-size: 0.76rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.1em !important;
   text-transform: none !important;
   padding: 5px 16px !important;
-  border: 1px solid rgba(120, 210, 50, 0.3) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
   border-radius: 5px !important;
   transition: all 0.15s !important;
 }
 
 .back-btn:hover {
-  background: rgba(110, 200, 45, 0.1) !important;
-  border-color: rgba(140, 225, 55, 0.55) !important;
-  color: #b0f060 !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-color: rgba(99, 160, 255, 0.55) !important;
+  color: #93C5FD !important;
 }
 
 .player-profile {
-  background: rgba(10, 26, 6, 0.97);
-  border: 1px solid rgba(110, 200, 50, 0.22);
+  background: rgba(11, 20, 55, 0.97);
+  border: 1px solid rgba(59, 130, 246, 0.22);
   border-radius: 10px;
   padding: 2rem;
   position: relative;
@@ -43,7 +43,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent 5%, rgba(150, 235, 55, 0.55) 35%, rgba(150, 235, 55, 0.55) 65%, transparent 95%);
+  background: linear-gradient(90deg, transparent 5%, rgba(99, 160, 255, 0.55) 35%, rgba(99, 160, 255, 0.55) 65%, transparent 95%);
 }
 
 .player-header {
@@ -58,27 +58,27 @@
 .player-name {
   font-size: 1.75rem !important;
   font-weight: 900 !important;
-  color: #cef870 !important;
+  color: #F1F5F9 !important;
   letter-spacing: 0.04em;
   line-height: 1.2 !important;
-  text-shadow: 0 2px 0 rgba(10, 60, 0, 0.8);
+  text-shadow: 0 2px 0 rgba(0, 10, 60, 0.8);
 }
 
 .player-tag-text {
   font-family: monospace;
   font-size: 0.78rem !important;
-  color: #5a8840 !important;
+  color: #94A3B8 !important;
   letter-spacing: 0.12em;
 }
 
 .level-chip {
   background: rgba(48, 36, 4, 0.95) !important;
-  color: #ffd040 !important;
+  color: #FFD93D !important;
   font-weight: 800 !important;
   font-family: monospace !important;
-  border: 1px solid rgba(220, 180, 30, 0.4) !important;
+  border: 1px solid rgba(255, 210, 60, 0.4) !important;
   font-size: 0.72rem !important;
-  text-shadow: 0 0 8px rgba(255, 200, 30, 0.3);
+  text-shadow: 0 0 8px rgba(255, 210, 60, 0.3);
 }
 
 .info-row {
@@ -86,21 +86,21 @@
   align-items: center;
   gap: 1rem;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(100, 190, 45, 0.08);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.08);
 }
 
 .info-label {
   font-size: 0.65rem !important;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: #608040 !important;
+  color: #94A3B8 !important;
   min-width: 90px;
   font-family: monospace;
 }
 
 .info-value {
   font-size: 0.9rem !important;
-  color: #a8e050 !important;
+  color: #60A5FA !important;
   font-weight: 700;
 }
 
@@ -108,20 +108,20 @@
   font-size: 0.68rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.22em !important;
-  color: #80b848 !important;
+  color: #94A3B8 !important;
   font-weight: 800 !important;
   margin-bottom: 0.9rem !important;
   margin-top: 1.1rem !important;
 }
 
 .player-divider {
-  border-color: rgba(110, 200, 50, 0.12) !important;
+  border-color: rgba(59, 130, 246, 0.12) !important;
   margin: 1.1rem 0 !important;
 }
 
 .stat-panel {
-  background: rgba(2, 12, 2, 0.5);
-  border: 1px solid rgba(100, 190, 45, 0.14);
+  background: rgba(5, 10, 30, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.14);
   border-radius: 6px;
   padding: 0.75rem 0.9rem;
   text-align: center;
@@ -129,15 +129,15 @@
 }
 
 .stat-panel:hover {
-  border-color: rgba(130, 220, 55, 0.3);
-  box-shadow: 0 0 10px rgba(120, 210, 50, 0.08) inset;
+  border-color: rgba(99, 160, 255, 0.3);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.08) inset;
 }
 
 .stat-panel-label {
   font-size: 0.61rem !important;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #608040 !important;
+  color: #94A3B8 !important;
   display: block;
   margin-bottom: 3px !important;
   font-family: monospace;
@@ -145,7 +145,7 @@
 
 .stat-panel-value {
   font-size: 1.1rem !important;
-  color: #a8e050 !important;
+  color: #60A5FA !important;
   font-weight: 800 !important;
   font-family: monospace !important;
 }
@@ -157,8 +157,8 @@
 }
 
 .deck-card {
-  background: rgba(4, 14, 4, 0.65);
-  border: 1px solid rgba(100, 190, 45, 0.16);
+  background: rgba(5, 10, 30, 0.65);
+  border: 1px solid rgba(59, 130, 246, 0.16);
   border-radius: 5px;
   padding: 0.55rem 0.65rem;
   text-align: center;
@@ -166,21 +166,55 @@
 }
 
 .deck-card:hover {
-  border-color: rgba(140, 225, 55, 0.38);
-  background: rgba(10, 28, 6, 0.8);
+  border-color: rgba(99, 160, 255, 0.38);
+  background: rgba(15, 30, 70, 0.8);
 }
 
 .deck-card-name {
   font-size: 0.73rem !important;
-  color: #a8e050 !important;
+  color: #F1F5F9 !important;
   line-height: 1.3 !important;
   font-weight: 600;
 }
 
 .deck-card-level {
   font-size: 0.62rem !important;
-  color: #60a030 !important;
+  color: #60A5FA !important;
   font-family: monospace !important;
   margin-top: 3px !important;
   display: block;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .member-page-bg {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .player-profile {
+    padding: 1.25rem 1rem;
+  }
+
+  .player-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .player-name {
+    font-size: 1.35rem !important;
+  }
+
+  .deck-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+}
+
+@media (max-width: 400px) {
+  .player-name {
+    font-size: 1.15rem !important;
+  }
+
+  .stat-panel-value {
+    font-size: 0.9rem !important;
+  }
 }
