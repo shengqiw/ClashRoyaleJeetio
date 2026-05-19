@@ -1,28 +1,269 @@
-import { Box, Typography } from "@mui/material";
+"use client";
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+  CircularProgress,
+  Container,
+  TextField,
+  Button,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "./stats.css";
-// import { ClanInfo } from "@/components/smart/clan-info";
-// import { MemberList } from "@/components/smart/member-list";
 
-export default async function Stats() {
-  // const clanFetch = await fetch(
-  //   "https://xgyzcbqe9i.execute-api.us-east-1.amazonaws.com/clan?tag=PRURJPJP"
-  // );
+const DEFAULT_TAG = "PRURJPJP";
 
-  // const clanData = await clanFetch.json();
-  // const members = clanData.memberList;
-  // delete clanData.memberList;
-  // console.log("clanData", clanData);
+const ROLE_ORDER: Record<string, number> = {
+  leader: 0,
+  coLeader: 1,
+  elder: 2,
+  member: 3,
+};
+
+const getRoleColor = (role: string) => {
+  switch (role) {
+    case "leader":   return "#d03030";
+    case "coLeader": return "#d07820";
+    case "elder":    return "#1e9ac0";
+    case "member":   return "#4aaa80";
+    default:         return "#4aaa80";
+  }
+};
+
+const getRoleLabel = (role: string) => {
+  if (role === "coLeader") return "Co-Leader";
+  return role.charAt(0).toUpperCase() + role.slice(1);
+};
+
+function formatDate(raw: string): string {
+  const m = raw.match(/^(\d{4})(\d{2})(\d{2})/);
+  if (!m) return raw;
+  return `${m[1]}-${m[2]}-${m[3]}`;
+}
+
+type SortKey = "clanRank" | "role" | "donations";
+
+export default function Stats() {
+  const router = useRouter();
+  const [members, setMembers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [activeTag, setActiveTag] = useState(DEFAULT_TAG);
+  const [tagInput, setTagInput] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("clanRank");
+
+  async function fetchMembers(tag: string, fromCache = false) {
+    setLoading(true);
+    setErrorMessage("");
+    try {
+      const res = await fetch(`/api/clan/${encodeURIComponent(tag)}/members`, {
+        cache: fromCache ? "default" : "no-store",
+      });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(
+          payload?.message || payload?.reason || `HTTP ${res.status}`
+        );
+      }
+      const data = await res.json();
+      setMembers(data?.items || []);
+      setActiveTag(tag);
+    } catch (err) {
+      setErrorMessage((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchMembers(DEFAULT_TAG, false);
+  }, []);
+
+  const sorted = [...members].sort((a, b) => {
+    if (sortBy === "clanRank")  return a.clanRank - b.clanRank;
+    if (sortBy === "role")      return (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9);
+    if (sortBy === "donations") return b.donations - a.donations;
+    return 0;
+  });
+
+  function handleFetch() {
+    const cleaned = tagInput.trim().replace(/^#/, "");
+    if (cleaned) {
+      fetchMembers(cleaned, false);
+      setTagInput("");
+    }
+  }
 
   return (
-    <Box className="page-bg">
-      <Typography variant="h1" className="gold-shadow center" sx={{ mt: 3 }}>
-        Clan Stats (Sorry Im too poor to afford lambda and NAT Gateway sad)
-      </Typography>
-      <div className="br" />
-      Apologies... This is too expensive to display. Exploring alternative solution
-      {/* <ClanInfo clan={clanData} /> */}
-      <div className="br" />
-      {/* <MemberList members={members} /> */}
+    <Box className="stats-bg">
+      {/* Header */}
+      <Box className="stats-header">
+        <Typography className="stats-title">Clan Stats</Typography>
+        <Typography className="stats-tag-display">#{activeTag}</Typography>
+      </Box>
+
+      <Container maxWidth="lg">
+        {/* Controls */}
+        <Box className="stats-controls">
+          <Box className="stats-tag-input-row">
+            <TextField
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              placeholder="Enter clan tag (e.g. PRURJPJP)"
+              size="small"
+              className="stats-tag-field"
+              onKeyDown={(e) => e.key === "Enter" && handleFetch()}
+            />
+            <Button className="stats-btn-fetch" onClick={handleFetch}>
+              Fetch Clan
+            </Button>
+            <Button
+              className="stats-btn-default"
+              onClick={() => fetchMembers(DEFAULT_TAG, true)}
+            >
+              Default Clan
+            </Button>
+          </Box>
+
+          <Box className="stats-sort-row">
+            <Typography className="stats-sort-label">Sort by:</Typography>
+            <ToggleButtonGroup
+              value={sortBy}
+              exclusive
+              onChange={(_, v) => v && setSortBy(v)}
+              size="small"
+              className="stats-sort-group"
+            >
+              <ToggleButton value="clanRank">Rank</ToggleButton>
+              <ToggleButton value="role">Role</ToggleButton>
+              <ToggleButton value="donations">Donations</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+        </Box>
+
+        {/* Content */}
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
+            <CircularProgress sx={{ color: "#90e040" }} />
+          </Box>
+        ) : errorMessage ? (
+          <Typography
+            color="error"
+            sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}
+          >
+            {errorMessage}
+          </Typography>
+        ) : (
+          <>
+            <Typography className="stats-member-count" sx={{ mb: 2.5 }}>
+              {members.length} members
+            </Typography>
+            <Grid container spacing={2}>
+              {sorted.map((member: any) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={member.tag}>
+                  <Card
+                    className="member-card"
+                    sx={{ borderLeft: `3px solid ${getRoleColor(member.role)}` }}
+                    onClick={() =>
+                      router.push(`/member/${encodeURIComponent(member.tag)}`)
+                    }
+                  >
+                    <CardContent>
+                      {/* Name + rank */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          mb: 1.25,
+                        }}
+                      >
+                        <Box sx={{ flex: 1, minWidth: 0, pr: 1 }}>
+                          <Typography className="member-name" noWrap>
+                            {member.name}
+                          </Typography>
+                          <Typography className="member-tag">
+                            {member.tag}
+                          </Typography>
+                        </Box>
+                        <Chip
+                          label={`#${member.clanRank}`}
+                          size="small"
+                          className="rank-chip"
+                        />
+                      </Box>
+
+                      {/* Role */}
+                      <Box sx={{ mb: 1.25 }}>
+                        <Chip
+                          label={getRoleLabel(member.role)}
+                          size="small"
+                          sx={{
+                            background: getRoleColor(member.role),
+                            color: "#fff",
+                            fontWeight: 700,
+                            fontSize: "0.67rem",
+                            height: 20,
+                          }}
+                        />
+                      </Box>
+
+                      {/* Stats grid */}
+                      <Box className="member-stats-grid">
+                        <Box className="stat-box">
+                          <span className="stat-label">Trophies</span>
+                          <span className="stat-value">
+                            {member.trophies.toLocaleString()}
+                          </span>
+                        </Box>
+                        <Box className="stat-box">
+                          <span className="stat-label">Level</span>
+                          <span className="stat-value">{member.expLevel}</span>
+                        </Box>
+                        <Box className="stat-box">
+                          <span className="stat-label">Donated</span>
+                          <span className="stat-value">
+                            {member.donations.toLocaleString()}
+                          </span>
+                        </Box>
+                        <Box className="stat-box">
+                          <span className="stat-label">Received</span>
+                          <span className="stat-value">
+                            {member.donationsReceived.toLocaleString()}
+                          </span>
+                        </Box>
+                      </Box>
+
+                      {/* Arena + last seen */}
+                      <Box
+                        sx={{
+                          mt: 1.25,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography className="arena-name">
+                          {member.arena.name}
+                        </Typography>
+                        <Typography className="last-seen">
+                          {formatDate(member.lastSeen)}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </>
+        )}
+      </Container>
     </Box>
   );
 }
