@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { MuiAppProvider } from "@/components/providers/mui-app-provider";
 import { PageLayout } from "@/components/smart/page-layout";
@@ -38,6 +39,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="no-margin">
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-71GQ1DXYJH"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-71GQ1DXYJH');
+          `}
+        </Script>
         <MuiAppProvider>
           <PageLayout>{children}</PageLayout>
         </MuiAppProvider>

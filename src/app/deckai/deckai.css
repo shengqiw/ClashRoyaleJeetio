@@ -1,0 +1,295 @@
+/* ── DeckAI page — mirrors stats.css blue theme ── */
+
+.deckai-bg {
+  min-height: 90vh;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  padding: 2rem 1rem;
+  background: rgba(11, 20, 55, 0.92);
+  border-radius: 4px;
+}
+
+.deckai-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.deckai-title {
+  font-weight: 900 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase;
+  color: #F1F5F9 !important;
+  text-shadow:
+    0 3px 0 rgba(0, 10, 60, 0.9),
+    0 0 22px rgba(59, 130, 246, 0.55),
+    0 0 50px rgba(30, 58, 138, 0.3) !important;
+  font-size: 2rem !important;
+}
+
+.deckai-subtitle {
+  color: #94A3B8 !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.18em;
+  font-family: monospace;
+  margin-top: 0.25rem !important;
+}
+
+/* ── Controls panel ── */
+.deckai-controls {
+  background: rgba(30, 58, 138, 0.22);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 0 0 1px rgba(30, 58, 138, 0.08) inset;
+}
+
+.deckai-input-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.deckai-tag-field {
+  flex: 1;
+  min-width: 160px;
+}
+
+.deckai-tag-field .MuiOutlinedInput-root {
+  color: #F1F5F9 !important;
+  background: rgba(11, 20, 55, 0.65) !important;
+  font-size: 0.85rem !important;
+}
+
+.deckai-tag-field .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.deckai-tag-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(99, 160, 255, 0.55) !important;
+}
+
+.deckai-tag-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #60A5FA !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.14);
+}
+
+.deckai-tag-field input::placeholder {
+  color: rgba(148, 163, 184, 0.4) !important;
+  opacity: 1 !important;
+}
+
+.deckai-btn-analyze {
+  background: linear-gradient(160deg, #1D4ED8 0%, #3B82F6 100%) !important;
+  color: #F1F5F9 !important;
+  font-weight: 800 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  border: 1px solid rgba(99, 160, 255, 0.5) !important;
+  border-bottom: 2px solid rgba(15, 40, 120, 0.8) !important;
+  white-space: nowrap;
+  padding: 6px 22px !important;
+  transition: all 0.15s !important;
+  min-width: 100px;
+  box-shadow: 0 2px 0 rgba(10, 30, 100, 0.6) !important;
+}
+
+.deckai-btn-analyze:hover {
+  background: linear-gradient(160deg, #2563EB 0%, #60A5FA 100%) !important;
+  box-shadow: 0 2px 0 rgba(10, 30, 100, 0.6), 0 0 14px rgba(59, 130, 246, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+.deckai-btn-analyze:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(10, 30, 100, 0.6) !important;
+}
+
+.deckai-btn-analyze.Mui-disabled {
+  opacity: 0.55 !important;
+}
+
+/* ── Results header bar ── */
+.deckai-summary-bar {
+  color: #94A3B8 !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.3em !important;
+  font-weight: 700 !important;
+  font-family: monospace !important;
+  text-align: center;
+  display: block !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* ── AI Analysis card ── */
+.deckai-analysis-card {
+  background: rgba(11, 20, 55, 0.97);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.deckai-analysis-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba(99, 160, 255, 0.55) 35%,
+    rgba(99, 160, 255, 0.55) 65%,
+    transparent 95%
+  );
+}
+
+.deckai-analysis-label {
+  color: #60A5FA !important;
+  font-weight: 700 !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.deckai-analysis-body {
+  color: #CBD5E1 !important;
+  font-size: 0.92rem !important;
+  line-height: 1.8 !important;
+}
+
+/* ── Section label above opp list ── */
+.deckai-section-heading {
+  color: #94A3B8 !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.3em !important;
+  font-weight: 700 !important;
+  font-family: monospace !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-bottom: 0.9rem !important;
+}
+
+/* ── Opp rows ── */
+.deckai-opp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.deckai-opp-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: linear-gradient(
+    145deg,
+    rgba(11, 20, 55, 0.98) 0%,
+    rgba(20, 40, 90, 0.98) 100%
+  );
+  border: 1px solid rgba(59, 130, 246, 0.12);
+  border-top-color: rgba(59, 130, 246, 0.22);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.deckai-opp-row:hover {
+  border-color: rgba(99, 160, 255, 0.32);
+  transform: translateX(3px);
+}
+
+.deckai-opp-rank {
+  color: #FFD93D;
+  font-family: monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  width: 2rem;
+  flex-shrink: 0;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 210, 60, 0.3);
+}
+
+.deckai-opp-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.deckai-opp-name {
+  color: #F1F5F9 !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.02em;
+}
+
+.deckai-loss-chip {
+  background: rgba(48, 36, 4, 0.95) !important;
+  color: #FFD93D !important;
+  font-weight: 800 !important;
+  font-family: monospace !important;
+  border: 1px solid rgba(255, 210, 60, 0.35) !important;
+  font-size: 0.67rem !important;
+  height: 20px !important;
+  text-shadow: 0 0 8px rgba(255, 210, 60, 0.25);
+}
+
+/* ── Frequency progress bar ── */
+.deckai-bar-track {
+  height: 4px;
+  background: rgba(30, 58, 138, 0.45);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 0.45rem;
+}
+
+.deckai-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1D4ED8 0%, #60A5FA 100%);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .deckai-bg {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .deckai-title {
+    font-size: 1.5rem !important;
+  }
+
+  .deckai-controls {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .deckai-input-row {
+    gap: 0.45rem;
+  }
+
+  .deckai-tag-field {
+    min-width: 120px;
+  }
+
+  .deckai-btn-analyze {
+    font-size: 0.65rem !important;
+    padding: 5px 12px !important;
+    min-width: unset !important;
+  }
+
+  .deckai-analysis-card {
+    padding: 1rem 1rem;
+  }
+
+  .deckai-opp-row {
+    padding: 0.65rem 0.75rem;
+  }
+}

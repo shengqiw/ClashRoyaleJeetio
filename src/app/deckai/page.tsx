@@ -1,104 +1,201 @@
 "use client";
+import {
+  Box,
+  Typography,
+  Container,
+  TextField,
+  Button,
+  CircularProgress,
+  Chip,
+} from "@mui/material";
+import { Person } from "@mui/icons-material";
+import { useState } from "react";
+import "./deckai.css";
 
-import { Box, Typography, Container } from "@mui/material";
-import { motion } from "framer-motion";
-import "../shared.css";
+type OppCard = {
+  card: string;
+  appearances: number;
+  lossRate: string;
+};
+
+type AnalysisData = {
+  tag: string;
+  battlesScanned: number;
+  losses: number;
+  biggestOpps: OppCard[];
+  analysis: string | null;
+};
 
 export default function DeckAIPage() {
-  return (
-    <Box className="game-bg" sx={{ background: "rgba(11, 20, 55, 0.92) !important" }}>
-      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{ textAlign: "center", marginBottom: "2rem" }}
-        >
-          <Typography
-            sx={{
-              fontWeight: 900,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "#F1F5F9",
-              textShadow:
-                "0 3px 0 rgba(0,10,60,0.9), 0 0 22px rgba(59,130,246,0.55), 0 0 50px rgba(30,58,138,0.3)",
-              fontSize: { xs: "1.5rem", md: "2rem" },
-            }}
-          >
-            Deck AI
-          </Typography>
-          <Typography
-            sx={{
-              color: "#94A3B8",
-              fontSize: { xs: "0.88rem", md: "1rem" },
-              mt: 1,
-              opacity: 0.88,
-            }}
-          >
-            AI-powered deck building — coming soon
-          </Typography>
-        </motion.div>
+  const [tagInput, setTagInput] = useState("");
+  const [activeTag, setActiveTag] = useState("");
+  const [data, setData] = useState<AnalysisData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.45 }}
-        >
-          <Box
-            sx={{
-              background: "rgba(11, 20, 55, 0.97)",
-              border: "1px solid rgba(59, 130, 246, 0.22)",
-              borderRadius: "10px",
-              padding: { xs: "1.5rem 1rem", md: "3rem" },
-              textAlign: "center",
-              position: "relative",
-              overflow: "hidden",
-              "&::before": {
-                content: "''",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "2px",
-                background:
-                  "linear-gradient(90deg, transparent 5%, rgba(99,160,255,0.55) 35%, rgba(99,160,255,0.55) 65%, transparent 95%)",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: { xs: "3rem", md: "5rem" },
-                lineHeight: 1,
-                mb: 2,
-              }}
+  async function handleSearch() {
+    const raw = tagInput.trim();
+    if (!raw) return;
+    const tag = raw.startsWith("#") ? raw : `#${raw}`;
+    setTagInput("");
+    setErrorMessage("");
+    setData(null);
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/biggest-opps/${encodeURIComponent(tag)}`
+      );
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(
+          payload?.message || payload?.reason || `HTTP ${res.status}`
+        );
+      }
+      const json: AnalysisData = await res.json();
+      setData(json);
+      setActiveTag(tag);
+    } catch (err) {
+      setErrorMessage((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const maxAppearances = data?.biggestOpps?.[0]?.appearances ?? 1;
+
+  return (
+    <Box className="deckai-bg">
+      {/* ── Header ── */}
+      <Box className="deckai-header">
+        <Typography className="deckai-title">Deck AI</Typography>
+        <Typography className="deckai-subtitle">
+          {activeTag
+            ? `Analyzing: ${activeTag}`
+            : "Scan your losses · find your kryptonite"}
+        </Typography>
+      </Box>
+
+      <Container maxWidth="md">
+        {/* ── Search controls ── */}
+        <Box className="deckai-controls">
+          <Box className="deckai-input-row">
+            <Person sx={{ color: "#94A3B8", fontSize: 20, flexShrink: 0 }} />
+            <TextField
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              placeholder="Player tag (e.g. #ABC123)"
+              size="small"
+              className="deckai-tag-field"
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            />
+            <Button
+              className="deckai-btn-analyze"
+              onClick={handleSearch}
+              disabled={loading}
             >
-              🤖
-            </Typography>
-            <Typography
-              sx={{
-                color: "#60A5FA",
-                fontWeight: 700,
-                fontSize: { xs: "1rem", md: "1.2rem" },
-                letterSpacing: "0.04em",
-                mb: 1,
-              }}
-            >
-              Intelligent Deck Recommendations
-            </Typography>
-            <Typography
-              sx={{
-                color: "#94A3B8",
-                fontSize: { xs: "0.85rem", md: "0.95rem" },
-                lineHeight: 1.7,
-                maxWidth: 480,
-                mx: "auto",
-              }}
-            >
-              Enter your player tag and our AI will analyze your card collection
-              to suggest optimal decks for your current trophy range.
-            </Typography>
+              Analyze
+            </Button>
           </Box>
-        </motion.div>
+        </Box>
+
+        {/* ── Loading ── */}
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
+            <CircularProgress sx={{ color: "#3B82F6" }} />
+          </Box>
+        )}
+
+        {/* ── Error ── */}
+        {errorMessage && !loading && (
+          <Typography
+            color="error"
+            sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}
+          >
+            {errorMessage}
+          </Typography>
+        )}
+
+        {/* ── Results ── */}
+        {data && !loading && (
+          <>
+            {/* Summary */}
+            <Typography className="deckai-summary-bar" sx={{ mb: 2.5 }}>
+              {data.battlesScanned} battles scanned · {data.losses} losses
+            </Typography>
+
+            {/* AI Analysis */}
+            {data.analysis && (
+              <Box className="deckai-analysis-card">
+                <Typography className="deckai-analysis-label">
+                  🤖 AI Analysis
+                </Typography>
+                <Typography className="deckai-analysis-body">
+                  {data.analysis}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Opp card list */}
+            {data.biggestOpps.length > 0 ? (
+              <>
+                <Typography className="deckai-section-heading" sx={{ mt: 0.5 }}>
+                  Biggest Opponents ({data.biggestOpps.length} cards)
+                </Typography>
+                <Box className="deckai-opp-list">
+                  {data.biggestOpps.map((item, i) => (
+                    <Box key={item.card} className="deckai-opp-row">
+                      {/* Rank */}
+                      <Box className="deckai-opp-rank">#{i + 1}</Box>
+
+                      {/* Card info + bar */}
+                      <Box className="deckai-opp-info">
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 0.5,
+                          }}
+                        >
+                          <Typography className="deckai-opp-name">
+                            {item.card}
+                          </Typography>
+                          <Chip
+                            label={item.lossRate + " losses"}
+                            size="small"
+                            className="deckai-loss-chip"
+                          />
+                        </Box>
+                        {/* Frequency bar */}
+                        <Box className="deckai-bar-track">
+                          <Box
+                            className="deckai-bar-fill"
+                            sx={{
+                              width: `${(item.appearances / maxAppearances) * 100}%`,
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </>
+            ) : (
+              <Typography
+                sx={{
+                  color: "#94A3B8",
+                  textAlign: "center",
+                  mt: 4,
+                  fontStyle: "italic",
+                  fontFamily: "monospace",
+                  fontSize: "0.9rem",
+                }}
+              >
+                No losses in recent battles — you&apos;re built different 💪
+              </Typography>
+            )}
+          </>
+        )}
       </Container>
     </Box>
   );
