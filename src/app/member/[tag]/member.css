@@ -150,10 +150,28 @@
   font-family: monospace !important;
 }
 
+.deck-section {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+/* 8 deck cards: 4 across, 2 rows */
 .deck-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Side column: tower troop on top, King Tower level on bottom */
+.deck-side {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.5rem;
+  width: 110px;
+  flex-shrink: 0;
 }
 
 .deck-card {
@@ -163,6 +181,24 @@
   padding: 0.55rem 0.65rem;
   text-align: center;
   transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.deck-card-img {
+  width: 100%;
+  max-width: 56px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 0.3rem;
+}
+
+.deck-king-icon {
+  font-size: 2.2rem !important;
+  line-height: 1 !important;
+  margin-bottom: 0.3rem;
 }
 
 .deck-card:hover {
@@ -204,8 +240,8 @@
     font-size: 1.35rem !important;
   }
 
-  .deck-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  .deck-side {
+    width: 84px;
   }
 }
 

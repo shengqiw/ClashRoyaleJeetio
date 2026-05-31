@@ -167,13 +167,53 @@ export default function MemberPage() {
               <>
                 <Divider className="player-divider" />
                 <Typography className="section-heading">Current Deck</Typography>
-                <Box className="deck-grid">
-                  {player.currentDeck.map((card: any) => (
-                    <Box key={card.id} className="deck-card">
-                      <Typography className="deck-card-name">{card.name}</Typography>
-                      <Typography className="deck-card-level">LVL {card.level}</Typography>
+                <Box className="deck-section">
+                  <Box className="deck-grid">
+                    {player.currentDeck.map((card: any) => (
+                      <Box key={card.id} className="deck-card">
+                        {card.iconUrls?.medium && (
+                          <Box
+                            component="img"
+                            src={card.iconUrls.medium}
+                            alt={card.name}
+                            className="deck-card-img"
+                          />
+                        )}
+                        <Typography className="deck-card-name">{card.name}</Typography>
+                        <Typography className="deck-card-level">LVL {card.level}</Typography>
+                      </Box>
+                    ))}
+                  </Box>
+
+                  {/* Side column: tower troop (top) + King Tower level (bottom) */}
+                  <Box className="deck-side">
+                    {player.currentDeckSupportCards?.[0] && (
+                      <Box className="deck-card">
+                        {player.currentDeckSupportCards[0].iconUrls?.medium && (
+                          <Box
+                            component="img"
+                            src={player.currentDeckSupportCards[0].iconUrls.medium}
+                            alt={player.currentDeckSupportCards[0].name}
+                            className="deck-card-img"
+                          />
+                        )}
+                        <Typography className="deck-card-name">
+                          {player.currentDeckSupportCards[0].name}
+                        </Typography>
+                        <Typography className="deck-card-level">
+                          LVL {player.currentDeckSupportCards[0].level}
+                        </Typography>
+                      </Box>
+                    )}
+
+                    <Box className="deck-card deck-king">
+                      <Typography className="deck-king-icon">👑</Typography>
+                      <Typography className="deck-card-name">King Tower</Typography>
+                      <Typography className="deck-card-level">
+                        LVL {player.expLevel}
+                      </Typography>
                     </Box>
-                  ))}
+                  </Box>
                 </Box>
               </>
             )}

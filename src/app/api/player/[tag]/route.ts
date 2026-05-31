@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const revalidate = 180;
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ tag: string }> }
@@ -15,7 +17,7 @@ export async function GET(
     );
   }
 
-  const url = `${apiBase}/player/${encodeURIComponent(tag)}`;
+  const url = `${apiBase}/clash/player/${encodeURIComponent(tag)}`;
   const response = await fetch(url, {
     headers: {
       'x-api-key': apiKey,
