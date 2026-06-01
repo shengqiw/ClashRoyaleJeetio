@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 
-// Cards rarely change — cache for a day.
-export const revalidate = 86400;
+// Proxy route — must run at request time, not during the build. Without this,
+// Next.js prerenders it at build and tries to reach the backend (which isn't
+// available in CI), failing the build. The upstream fetch below still caches
+// the card data for a day via `next: { revalidate }`.
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const apiBase = process.env.API_BASE_URL;
