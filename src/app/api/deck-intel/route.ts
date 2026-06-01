@@ -1,15 +1,9 @@
 import { NextResponse } from 'next/server';
 
-// Fire-and-forget: this just kicks off a background job on the backend and
-// returns a job id immediately, so it stays well under any serverless limit.
-// The admin page polls /api/jobs/[jobId] for progress and the final summary.
+// Live semantic search against the ingested Path of Legend matchups.
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ locationId: string }> }
-) {
-  const { locationId } = await params;
+export async function POST(request: Request) {
   const apiBase = process.env.API_BASE_URL;
   const apiKey = process.env.API_KEY;
 
@@ -21,9 +15,10 @@ export async function POST(
   }
 
   const body = await request.json().catch(() => ({}));
-  const limit = Number(body?.limit) || 50;
+  const query = typeof body?.query === 'string' ? body.query : '';
+  const topK = Number(body?.topK) || 6;
 
-  const url = `${apiBase}/intel/pathoflegend/${encodeURIComponent(locationId)}/ingest`;
+  const url = `${apiBase}/intel/deck-counters`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -31,7 +26,7 @@ export async function POST(
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ limit }),
+    body: JSON.stringify({ query, topK }),
   });
 
   const data = await response.json();

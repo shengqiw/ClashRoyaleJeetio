@@ -14,7 +14,7 @@ import {
   TableRow,
   Chip,
 } from "@mui/material";
-import { Leaderboard, CloudUpload } from "@mui/icons-material";
+import { Leaderboard, CloudUpload, Storage } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import "../shared.css";
@@ -40,6 +40,13 @@ type IngestSummary = {
   namespace: string;
 };
 
+type PineconeStats = {
+  index: string;
+  dimension: number;
+  totalVectorCount: number;
+  lastUpdated: string | null;
+};
+
 export default function AdminPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loadingTop, setLoadingTop] = useState(false);
@@ -48,6 +55,26 @@ export default function AdminPage() {
   const [summary, setSummary] = useState<IngestSummary | null>(null);
   const [ingesting, setIngesting] = useState(false);
   const [ingestError, setIngestError] = useState("");
+  const [progress, setProgress] = useState<Record<string, unknown> | null>(null);
+
+  const [stats, setStats] = useState<PineconeStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const [statsError, setStatsError] = useState("");
+
+  async function loadStats() {
+    setLoadingStats(true);
+    setStatsError("");
+    try {
+      const res = await fetch("/api/pinecone/stats", { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+      setStats(data);
+    } catch (err) {
+      setStatsError((err as Error).message);
+    } finally {
+      setLoadingStats(false);
+    }
+  }
 
   async function loadTop() {
     setLoadingTop(true);
@@ -68,20 +95,50 @@ export default function AdminPage() {
     setIngesting(true);
     setIngestError("");
     setSummary(null);
+    setProgress(null);
     try {
-      const res = await fetch(`/api/pathoflegend/${USA_LOCATION_ID}/ingest`, {
+      // 1) Kick off the background job — returns immediately with a job id.
+      const startRes = await fetch(`/api/pathoflegend/${USA_LOCATION_ID}/ingest`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ limit: 50 }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setSummary(data);
+      const start = await startRes.json();
+      if (!startRes.ok) throw new Error(start?.error || `HTTP ${startRes.status}`);
+
+      // 2) Poll the job until it finishes (cap at ~5 min as a safety net).
+      const jobId = start.jobId as string;
+      for (let i = 0; i < 150; i++) {
+        await new Promise((r) => setTimeout(r, 2000));
+        const jobRes = await fetch(`/api/jobs/${jobId}`);
+        const job = await jobRes.json();
+        if (!jobRes.ok) throw new Error(job?.error || `HTTP ${jobRes.status}`);
+
+        setProgress(job.progress || null);
+        if (job.status === "done") {
+          setSummary(job.summary);
+          return;
+        }
+        if (job.status === "error") {
+          throw new Error(job.error || "Ingest job failed");
+        }
+      }
+      throw new Error("Ingest timed out while polling (still running on the server)");
     } catch (err) {
       setIngestError((err as Error).message);
     } finally {
       setIngesting(false);
     }
+  }
+
+  function progressLabel(p: Record<string, unknown> | null): string {
+    if (!p) return "Starting…";
+    if (p.phase === "players") return `Fetched ${p.players} top players…`;
+    if (p.phase === "battlelogs")
+      return `Pulling battle logs (${p.logsFetched}/${p.players})…`;
+    if (p.phase === "embedding")
+      return `Embedding ${p.uniqueMatchups} unique matchups → Pinecone…`;
+    return "Working…";
   }
 
   const metricCards = summary
@@ -145,18 +202,82 @@ export default function AdminPage() {
               "Ingest Battle Logs → Pinecone"
             )}
           </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={loadingStats ? null : <Storage />}
+            onClick={loadStats}
+            disabled={loadingStats}
+            sx={{
+              color: "#cef870",
+              borderColor: "rgba(110,200,50,0.4)",
+              fontWeight: 700,
+              "&:hover": { borderColor: "#a0e840", background: "rgba(110,200,50,0.08)" },
+            }}
+          >
+            {loadingStats ? (
+              <CircularProgress size={22} sx={{ color: "#cef870" }} />
+            ) : (
+              "Pinecone Index Stats"
+            )}
+          </Button>
         </Box>
+
+        {/* Pinecone index stats */}
+        {stats && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 4, justifyContent: "center" }}>
+              <Grid size={{ xs: 6, md: 4 }}>
+                <Box className="game-panel" sx={{ textAlign: "center" }}>
+                  <Typography sx={{ color: "#cef870", fontWeight: 900, fontSize: "1.8rem" }}>
+                    {stats.totalVectorCount.toLocaleString()}
+                  </Typography>
+                  <Typography
+                    className="game-section-label"
+                    sx={{ mt: 1, justifyContent: "center" }}
+                  >
+                    Total Vectors
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 6, md: 4 }}>
+                <Box className="game-panel" sx={{ textAlign: "center" }}>
+                  <Typography sx={{ color: "#cef870", fontWeight: 900, fontSize: "1.05rem", lineHeight: 1.3 }}>
+                    {stats.lastUpdated
+                      ? new Date(stats.lastUpdated).toLocaleString()
+                      : "—"}
+                  </Typography>
+                  <Typography
+                    className="game-section-label"
+                    sx={{ mt: 1, justifyContent: "center" }}
+                  >
+                    Last Updated
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={12}>
+                <Typography sx={{ textAlign: "center", color: "#80b848", fontSize: "0.8rem" }}>
+                  Index <code style={{ color: "#cef870" }}>{stats.index}</code> · {stats.dimension} dims
+                </Typography>
+              </Grid>
+            </Grid>
+          </motion.div>
+        )}
 
         {ingesting && (
           <Typography sx={{ textAlign: "center", color: "#80b848", mb: 2, fontSize: "0.85rem" }}>
-            Scanning 50 players&apos; battle logs and embedding unique deck matchups — this can take ~30–60s.
+            {progressLabel(progress)}
           </Typography>
         )}
 
         {/* Errors */}
-        {(topError || ingestError) && (
+        {(topError || ingestError || statsError) && (
           <Typography color="error" sx={{ textAlign: "center", mb: 2, fontFamily: "monospace" }}>
-            {topError || ingestError}
+            {topError || ingestError || statsError}
           </Typography>
         )}
 

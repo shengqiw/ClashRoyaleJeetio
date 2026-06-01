@@ -11,6 +11,7 @@ import {
 import { Person } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import { useCardIcons } from "../../lib/useCardIcons";
+import { fetchDeckCounters, type DeckCounter } from "../../lib/deckIntel";
 import "./deckai.css";
 
 /**
@@ -170,6 +171,8 @@ export default function DeckAIPage() {
   const [analysis, setAnalysis] = useState("");
   const [analysisStreaming, setAnalysisStreaming] = useState(false);
   const [deckSuggestions, setDeckSuggestions] = useState<DeckSuggestion[]>([]);
+  const [metaCounters, setMetaCounters] = useState<DeckCounter[]>([]);
+  const [countersLoading, setCountersLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [recentTags, setRecentTags] = useState<string[]>([]);
   const [battles, setBattles] = useState<Battle[]>([]);
@@ -198,6 +201,8 @@ export default function DeckAIPage() {
     setAnalysis("");
     setAnalysisStreaming(false);
     setDeckSuggestions([]);
+    setMetaCounters([]);
+    setCountersLoading(false);
     setOppsLoading(true);
     setActiveTag(tag);
     setRecentTags((prev) => pushRecentTag(prev, tag));
@@ -218,9 +223,24 @@ export default function DeckAIPage() {
         `/api/biggest-opps/${encoded}?stream=true`,
         (event, payload) => {
           if (event === "opps") {
-            setOppsData(JSON.parse(payload));
+            const data: OppsData = JSON.parse(payload);
+            setOppsData(data);
             setOppsLoading(false);
             setAnalysisStreaming(true);
+
+            // Fire a deck-intel lookup from the biggest opponent cards — what
+            // the top 50 players beat similar decks with. Supplementary, so
+            // failures are swallowed and it never blocks the AI analysis.
+            const oppCards = (data.biggestOpps || []).map((o) => o.card);
+            if (oppCards.length > 0) {
+              setCountersLoading(true);
+              fetchDeckCounters(oppCards, controller.signal)
+                .then((counters) => setMetaCounters(counters))
+                .catch(() => {
+                  /* meta intel is optional — ignore (incl. AbortError) */
+                })
+                .finally(() => setCountersLoading(false));
+            }
           } else if (event === "analysis") {
             const { text } = JSON.parse(payload);
             if (text) setAnalysis((prev) => prev + text);
@@ -409,6 +429,65 @@ export default function DeckAIPage() {
                     </Box>
                   ))}
                 </Box>
+              </>
+            )}
+
+            {/* Meta counters — real decks the top 50 USA beat this archetype with */}
+            {(countersLoading || metaCounters.length > 0) && (
+              <>
+                <Typography className="deckai-section-heading">
+                  Meta Counters — what Top 50 USA beat this with
+                </Typography>
+                {countersLoading && metaCounters.length === 0 ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+                    <CircularProgress size={20} sx={{ color: "#3B82F6" }} />
+                  </Box>
+                ) : (
+                  <Box className="deckai-deck-list">
+                    {metaCounters.map((c, i) => (
+                      <Box key={i} className="deckai-deck-card">
+                        <Box className="deckai-deck-head">
+                          <Typography className="deckai-deck-tier">
+                            Won {c.occurrences ?? 1}× among top players
+                          </Typography>
+                          {typeof c.winnerAvgElixir === "number" && (
+                            <Chip
+                              label={`${c.winnerAvgElixir.toFixed(1)} avg`}
+                              size="small"
+                              className="deckai-elixir-chip"
+                            />
+                          )}
+                        </Box>
+                        <Box className="deckai-deck-cards">
+                          {c.winnerCards.map((name, j) => {
+                            // Stored names may be prefixed "Evo " for evolved
+                            // cards; the icon map is keyed by the plain name.
+                            const iconKey = name.replace(/^Evo /, "");
+                            const src = cardIcons[iconKey];
+                            return src ? (
+                              <Box
+                                component="img"
+                                key={`${name}-${j}`}
+                                src={src}
+                                alt={name}
+                                title={name}
+                                className="deckai-deck-card-img"
+                              />
+                            ) : (
+                              <Box
+                                key={`${name}-${j}`}
+                                className="deckai-deck-card-fallback"
+                                title={name}
+                              >
+                                {name}
+                              </Box>
+                            );
+                          })}
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
               </>
             )}
 
