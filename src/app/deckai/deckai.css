@@ -519,8 +519,32 @@
 
 .deckai-match-result {
   flex-shrink: 0;
-  width: 3rem;
+  width: 7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   text-align: center;
+}
+
+.deckai-match-mode {
+  font-size: 0.55rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.25 !important;
+  font-family: monospace !important;
+  color: #60A5FA !important;
+  text-transform: uppercase !important;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.deckai-match-time {
+  font-size: 0.55rem !important;
+  font-family: monospace !important;
+  color: #94A3B8 !important;
+  letter-spacing: 0.02em !important;
 }
 
 .deckai-match-score {
@@ -593,5 +617,23 @@
 
   .deckai-opp-name {
     font-size: 0.6rem !important;
+  }
+
+  /* Keep the three columns balanced on narrow phones */
+  .deckai-match-row {
+    gap: 0.45rem;
+    padding: 0.5rem 0.55rem;
+  }
+
+  .deckai-match-result {
+    width: 5.5rem;
+  }
+
+  .deckai-match-cards {
+    width: 104px;
+  }
+
+  .deckai-match-card {
+    max-width: 24px;
   }
 }

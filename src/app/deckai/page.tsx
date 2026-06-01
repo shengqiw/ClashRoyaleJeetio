@@ -122,9 +122,45 @@ type BattleSide = {
 
 type Battle = {
   battleTime: string;
+  type?: string;
+  arena?: { name?: string };
   team: BattleSide[];
   opponent: BattleSide[];
 };
+
+/**
+ * The CR API stamps battles as a compact ISO-ish string ("20260531T120000.000Z")
+ * that `Date` can't parse directly — split it into UTC components by hand.
+ */
+function parseBattleTime(bt?: string): Date | null {
+  if (!bt) return null;
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/.exec(bt);
+  if (m) {
+    const [, y, mo, d, h, mi, s] = m;
+    return new Date(Date.UTC(+y, +mo - 1, +d, +h, +mi, +s));
+  }
+  const fallback = new Date(bt);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
+/** Short relative timestamp ("5m ago", "3h ago", "Mar 12"). */
+function formatBattleTime(bt?: string): string {
+  const date = parseBattleTime(bt);
+  if (!date) return "";
+  const mins = Math.round((Date.now() - date.getTime()) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.round(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+/** Human-friendly game type from the arena, e.g. "Legendary_Arena" → "Legendary Arena". */
+function gameTypeLabel(b: Battle): string {
+  return (b.arena?.name || b.type || "").replace(/_/g, " ");
+}
 
 export default function DeckAIPage() {
   const [tagInput, setTagInput] = useState("");
@@ -486,12 +522,22 @@ export default function DeckAIPage() {
 
                         {/* Result */}
                         <Box className="deckai-match-result">
+                          {gameTypeLabel(b) && (
+                            <Typography className="deckai-match-mode">
+                              {gameTypeLabel(b)}
+                            </Typography>
+                          )}
                           <Typography className="deckai-match-score">
                             {myCrowns}–{oppCrowns}
                           </Typography>
                           <Typography className="deckai-match-label">
                             {result.toUpperCase()}
                           </Typography>
+                          {formatBattleTime(b.battleTime) && (
+                            <Typography className="deckai-match-time">
+                              {formatBattleTime(b.battleTime)}
+                            </Typography>
+                          )}
                         </Box>
 
                         {/* Opponent */}
