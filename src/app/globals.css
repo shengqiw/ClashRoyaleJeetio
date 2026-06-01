@@ -41,12 +41,20 @@ body {
 nav {
   width: 100%;
   padding: 6px 20px;
-  background: rgba(0, 0, 0, 0.45);
+  background: linear-gradient(
+    90deg,
+    rgba(38, 28, 92, 0.78) 0%,
+    rgba(58, 44, 138, 0.72) 50%,
+    rgba(30, 54, 132, 0.78) 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   flex-direction: row;
   position: relative;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(150, 130, 255, 0.22);
+  box-shadow: 0 2px 18px rgba(40, 30, 90, 0.35);
 }
 
 .nav-logo {
@@ -165,8 +173,13 @@ li {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: rgba(0, 0, 0, 0.28);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(
+    90deg,
+    rgba(30, 54, 132, 0.45) 0%,
+    rgba(48, 36, 116, 0.5) 50%,
+    rgba(38, 28, 92, 0.45) 100%
+  );
+  border-top: 1px solid rgba(150, 130, 255, 0.18);
   margin-top: auto;
 }
 
@@ -181,6 +194,23 @@ li {
 .site-footer-sep {
   color: rgba(255, 255, 255, 0.25);
   font-size: 0.75rem;
+}
+
+/* Secret admin button — hidden in plain sight next to the Jeetio mark */
+.site-footer-secret {
+  font-size: 0.78rem;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0.06;
+  filter: grayscale(0.7);
+  cursor: default;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+  user-select: none;
+}
+
+.site-footer-secret:hover {
+  opacity: 1;
+  filter: none;
 }
 
 .site-footer-copy {

@@ -38,6 +38,9 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
       {children}
       <footer className="site-footer">
         <span className="site-footer-name">Jeetio</span>
+        <Link href="/admin" className="site-footer-secret" aria-label="🍊" title="">
+          🍊
+        </Link>
         <span className="site-footer-sep">·</span>
         <span className="site-footer-copy">© {new Date().getFullYear()} Jeetio. All rights reserved.</span>
       </footer>
