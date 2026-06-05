@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
-import { useCardIcons } from "../../lib/useCardIcons";
+import { useCardIcons, resolveCardIcon } from "../../lib/useCardIcons";
 import { fetchDeckCounters, type DeckCounter } from "../../lib/deckIntel";
 import "./deckai.css";
 
@@ -400,12 +400,13 @@ export default function DeckAIPage() {
                         )}
                       </Box>
                       <Box className="deckai-deck-cards">
-                        {deck.cards?.map((name, j) =>
-                          cardIcons[name] ? (
+                        {deck.cards?.map((name, j) => {
+                          const src = resolveCardIcon(cardIcons, name);
+                          return src ? (
                             <Box
                               component="img"
                               key={`${name}-${j}`}
-                              src={cardIcons[name]}
+                              src={src}
                               alt={name}
                               title={name}
                               className="deckai-deck-card-img"
@@ -418,8 +419,8 @@ export default function DeckAIPage() {
                             >
                               {name}
                             </Box>
-                          )
-                        )}
+                          );
+                        })}
                       </Box>
                       {deck.reason && (
                         <Typography className="deckai-deck-reason">
@@ -460,10 +461,9 @@ export default function DeckAIPage() {
                         </Box>
                         <Box className="deckai-deck-cards">
                           {c.winnerCards.map((name, j) => {
-                            // Stored names may be prefixed "Evo " for evolved
-                            // cards; the icon map is keyed by the plain name.
-                            const iconKey = name.replace(/^Evo /, "");
-                            const src = cardIcons[iconKey];
+                            // Stored names may carry an "Evo " prefix; the
+                            // resolver normalizes that (and other variants).
+                            const src = resolveCardIcon(cardIcons, name);
                             return src ? (
                               <Box
                                 component="img"
@@ -504,10 +504,10 @@ export default function DeckAIPage() {
                       <Box className="deckai-opp-rank">#{i + 1}</Box>
 
                       {/* Card image */}
-                      {cardIcons[item.card] && (
+                      {resolveCardIcon(cardIcons, item.card) && (
                         <Box
                           component="img"
-                          src={cardIcons[item.card]}
+                          src={resolveCardIcon(cardIcons, item.card)}
                           alt={item.card}
                           className="deckai-opp-img"
                         />
@@ -574,7 +574,7 @@ export default function DeckAIPage() {
 
                     const renderCards = (cards: BattleCard[]) =>
                       cards.map((c, j) => {
-                        const src = c.iconUrls?.medium || cardIcons[c.name];
+                        const src = c.iconUrls?.medium || resolveCardIcon(cardIcons, c.name);
                         return src ? (
                           <Box
                             component="img"
