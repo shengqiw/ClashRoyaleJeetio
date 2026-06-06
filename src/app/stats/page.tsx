@@ -12,13 +12,30 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from "@mui/material";
-import { Groups, Person } from "@mui/icons-material";
+import { Groups, Person, EmojiEvents } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "./stats.css";
 
 const DEFAULT_TAG = "PRURJPJP";
+
+// USA location id for the Clash Royale Path of Legend leaderboard.
+const USA_LOCATION_ID = "57000249";
+
+type LeaderPlayer = {
+  rank: number;
+  tag: string;
+  name: string;
+  eloRating: number | null;
+  expLevel: number | null;
+  clan: string | null;
+};
 
 const ROLE_ORDER: Record<string, number> = {
   leader: 0,
@@ -49,7 +66,7 @@ function formatDate(raw: string): string {
 }
 
 type SortKey = "clanRank" | "role" | "donations";
-type SearchMode = "clan" | "player";
+type SearchMode = "clan" | "player" | "leaderboard";
 
 export default function Stats() {
   const router = useRouter();
@@ -60,6 +77,26 @@ export default function Stats() {
   const [activeTag, setActiveTag] = useState(DEFAULT_TAG);
   const [tagInput, setTagInput] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("clanRank");
+
+  // Top USA Path of Legend leaderboard (lazy-loaded when the tab is opened).
+  const [leaders, setLeaders] = useState<LeaderPlayer[]>([]);
+  const [leadersLoading, setLeadersLoading] = useState(false);
+  const [leadersError, setLeadersError] = useState("");
+
+  async function loadLeaders() {
+    setLeadersLoading(true);
+    setLeadersError("");
+    try {
+      const res = await fetch(`/api/pathoflegend/${USA_LOCATION_ID}/top?limit=50`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+      setLeaders(data.players || []);
+    } catch (err) {
+      setLeadersError((err as Error).message);
+    } finally {
+      setLeadersLoading(false);
+    }
+  }
 
   async function fetchMembers(tag: string, fromCache = false) {
     setLoading(true);
@@ -112,7 +149,11 @@ export default function Stats() {
       <Box className="stats-header">
         <Typography className="stats-title">Stats Lookup</Typography>
         <Typography className="stats-tag-display">
-          {mode === "clan" ? `Clan: #${activeTag}` : "Search any player by tag"}
+          {mode === "clan"
+            ? `Clan: #${activeTag}`
+            : mode === "player"
+            ? "Search any player by tag"
+            : "Top 50 · USA Path of Legend"}
         </Typography>
       </Box>
 
@@ -125,7 +166,12 @@ export default function Stats() {
               value={mode}
               exclusive
               onChange={(_, v) => {
-                if (v) { setMode(v); setTagInput(""); setErrorMessage(""); }
+                if (!v) return;
+                setMode(v);
+                setTagInput("");
+                setErrorMessage("");
+                // Lazy-load the leaderboard the first time it's opened.
+                if (v === "leaderboard" && leaders.length === 0) loadLeaders();
               }}
               size="small"
               className="stats-mode-group"
@@ -138,35 +184,54 @@ export default function Stats() {
                 <Person sx={{ fontSize: 16, mr: 0.6 }} />
                 Player
               </ToggleButton>
+              <ToggleButton value="leaderboard">
+                <EmojiEvents sx={{ fontSize: 16, mr: 0.6 }} />
+                Top USA
+              </ToggleButton>
             </ToggleButtonGroup>
           </Box>
 
-          {/* Search row */}
-          <Box className="stats-tag-input-row">
-            <TextField
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              placeholder={
-                mode === "clan"
-                  ? "Clan tag (e.g. PRURJPJP)"
-                  : "Player tag (e.g. #ABC123)"
-              }
-              size="small"
-              className="stats-tag-field"
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            />
-            <Button className="stats-btn-fetch" onClick={handleSearch}>
-              {mode === "clan" ? "Fetch Clan" : "Lookup Player"}
-            </Button>
-            {mode === "clan" && (
+          {/* Search row (clan / player only) */}
+          {mode !== "leaderboard" && (
+            <Box className="stats-tag-input-row">
+              <TextField
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                placeholder={
+                  mode === "clan"
+                    ? "Clan tag (e.g. PRURJPJP)"
+                    : "Player tag (e.g. #ABC123)"
+                }
+                size="small"
+                className="stats-tag-field"
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              />
+              <Button className="stats-btn-fetch" onClick={handleSearch}>
+                {mode === "clan" ? "Fetch Clan" : "Lookup Player"}
+              </Button>
+              {mode === "clan" && (
+                <Button
+                  className="stats-btn-default"
+                  onClick={() => fetchMembers(DEFAULT_TAG, true)}
+                >
+                  Default Clan
+                </Button>
+              )}
+            </Box>
+          )}
+
+          {/* Leaderboard refresh */}
+          {mode === "leaderboard" && (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Button
                 className="stats-btn-default"
-                onClick={() => fetchMembers(DEFAULT_TAG, true)}
+                onClick={loadLeaders}
+                disabled={leadersLoading}
               >
-                Default Clan
+                Refresh
               </Button>
-            )}
-          </Box>
+            </Box>
+          )}
 
           {/* Sort (clan mode only) */}
           {mode === "clan" && (
@@ -187,8 +252,108 @@ export default function Stats() {
           )}
         </Box>
 
-        {/* Content */}
-        {loading ? (
+        {/* Content — Leaderboard mode */}
+        {mode === "leaderboard" ? (
+          leadersLoading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
+              <CircularProgress sx={{ color: "#3B82F6" }} />
+            </Box>
+          ) : leadersError ? (
+            <Typography
+              color="error"
+              sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}
+            >
+              {leadersError}
+            </Typography>
+          ) : leaders.length > 0 ? (
+            <>
+              <Typography className="stats-member-count" sx={{ mb: 2.5 }}>
+                {leaders.length} players
+              </Typography>
+              <Box
+                sx={{
+                  background:
+                    "linear-gradient(145deg, rgba(11,20,55,0.98) 0%, rgba(20,40,90,0.98) 100%)",
+                  border: "1px solid rgba(59,130,246,0.18)",
+                  borderRadius: "8px",
+                  p: { xs: 1, md: 1.5 },
+                  overflowX: "auto",
+                }}
+              >
+                <Table
+                  size="small"
+                  sx={{ "& td, & th": { borderColor: "rgba(59,130,246,0.12)" } }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      {["Rank", "Player", "Elo", "Clan"].map((h) => (
+                        <TableCell
+                          key={h}
+                          sx={{
+                            color: "#94A3B8",
+                            fontWeight: 800,
+                            fontSize: "0.66rem",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {h}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {leaders.map((p) => (
+                      <TableRow
+                        key={p.tag}
+                        hover
+                        onClick={() =>
+                          router.push(`/member/${encodeURIComponent(p.tag)}`)
+                        }
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover": { background: "rgba(59,130,246,0.08)" },
+                        }}
+                      >
+                        <TableCell>
+                          <Chip
+                            label={`#${p.rank}`}
+                            size="small"
+                            className="rank-chip"
+                          />
+                        </TableCell>
+                        <TableCell sx={{ color: "#F1F5F9", fontWeight: 700 }}>
+                          {p.name}
+                        </TableCell>
+                        <TableCell
+                          sx={{ color: "#60A5FA", fontFamily: "monospace", fontWeight: 700 }}
+                        >
+                          {p.eloRating ?? "—"}
+                        </TableCell>
+                        <TableCell sx={{ color: "#94A3B8", fontSize: "0.8rem" }}>
+                          {p.clan ?? "—"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </>
+          ) : (
+            <Typography
+              sx={{
+                color: "#94A3B8",
+                textAlign: "center",
+                mt: 4,
+                fontStyle: "italic",
+                fontFamily: "monospace",
+                fontSize: "0.9rem",
+              }}
+            >
+              No leaderboard data.
+            </Typography>
+          )
+        ) : /* Content — Clan / Player mode */ loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
             <CircularProgress sx={{ color: "#3B82F6" }} />
           </Box>

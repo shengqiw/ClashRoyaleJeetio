@@ -6,30 +6,16 @@ import {
   Container,
   Grid,
   Button,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Chip,
+  CircularProgress,
 } from "@mui/material";
-import { Leaderboard, CloudUpload, Storage } from "@mui/icons-material";
+import { CloudUpload, Storage, Visibility } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import "../shared.css";
 
 // USA location id for the Clash Royale Path of Legend leaderboard.
 const USA_LOCATION_ID = "57000249";
-
-type Player = {
-  rank: number;
-  tag: string;
-  name: string;
-  eloRating: number | null;
-  expLevel: number | null;
-  clan: string | null;
-};
 
 type IngestSummary = {
   players: number;
@@ -40,54 +26,80 @@ type IngestSummary = {
   namespace: string;
 };
 
-type PineconeStats = {
+type NamespaceCount = { namespace: string; count: number; isMeta: boolean };
+type IndexOverview = {
   index: string;
-  dimension: number;
+  dimension: number | null;
   totalVectorCount: number;
   lastUpdated: string | null;
+  namespaces: NamespaceCount[];
+  error?: string;
 };
+type SampleRecord = { id: string; metadata: Record<string, unknown> | null };
+
+/** Key used to track samples/loading per (index, namespace). */
+const nsKey = (index: string, namespace: string) => `${index}|${namespace}`;
+const nsLabel = (namespace: string) => (namespace === "" ? "(default)" : namespace);
+
+/** One-line human summary of a sampled record's metadata. */
+function recordSummary(md: Record<string, unknown> | null): string {
+  if (!md) return "(no metadata)";
+  const w = md.winnerCards as string[] | undefined;
+  const l = md.loserCards as string[] | undefined;
+  if (Array.isArray(w) && Array.isArray(l)) {
+    const occ = md.occurrences ? `  ×${md.occurrences}` : "";
+    return `${w.join(", ")}  ⟶  beats  ⟶  ${l.join(", ")}${occ}`;
+  }
+  if (typeof md.text === "string") return md.text;
+  return JSON.stringify(md);
+}
 
 export default function AdminPage() {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [loadingTop, setLoadingTop] = useState(false);
-  const [topError, setTopError] = useState("");
-
   const [summary, setSummary] = useState<IngestSummary | null>(null);
   const [ingesting, setIngesting] = useState(false);
   const [ingestError, setIngestError] = useState("");
   const [progress, setProgress] = useState<Record<string, unknown> | null>(null);
 
-  const [stats, setStats] = useState<PineconeStats | null>(null);
-  const [loadingStats, setLoadingStats] = useState(false);
-  const [statsError, setStatsError] = useState("");
+  const [overview, setOverview] = useState<IndexOverview[] | null>(null);
+  const [loadingOverview, setLoadingOverview] = useState(false);
+  const [overviewError, setOverviewError] = useState("");
 
-  async function loadStats() {
-    setLoadingStats(true);
-    setStatsError("");
+  // Sampled records + which namespace is currently being sampled.
+  const [samples, setSamples] = useState<Record<string, SampleRecord[]>>({});
+  const [samplingKey, setSamplingKey] = useState<string | null>(null);
+  const [sampleError, setSampleError] = useState("");
+
+  async function loadOverview() {
+    setLoadingOverview(true);
+    setOverviewError("");
     try {
-      const res = await fetch("/api/pinecone/stats", { cache: "no-store" });
+      const res = await fetch("/api/pinecone/overview", { cache: "no-store" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setStats(data);
+      setOverview(data.indexes ?? []);
     } catch (err) {
-      setStatsError((err as Error).message);
+      setOverviewError((err as Error).message);
     } finally {
-      setLoadingStats(false);
+      setLoadingOverview(false);
     }
   }
 
-  async function loadTop() {
-    setLoadingTop(true);
-    setTopError("");
+  async function sampleNamespace(index: string, namespace: string) {
+    const key = nsKey(index, namespace);
+    setSamplingKey(key);
+    setSampleError("");
     try {
-      const res = await fetch(`/api/pathoflegend/${USA_LOCATION_ID}/top?limit=50`);
+      const qs = new URLSearchParams({ index, namespace, limit: "3" });
+      const res = await fetch(`/api/pinecone/sample?${qs.toString()}`, {
+        cache: "no-store",
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setPlayers(data.players || []);
+      setSamples((prev) => ({ ...prev, [key]: data.records ?? [] }));
     } catch (err) {
-      setTopError((err as Error).message);
+      setSampleError((err as Error).message);
     } finally {
-      setLoadingTop(false);
+      setSamplingKey(null);
     }
   }
 
@@ -178,16 +190,6 @@ export default function AdminPage() {
         >
           <Button
             variant="contained"
-            startIcon={loadingTop ? null : <Leaderboard />}
-            onClick={loadTop}
-            disabled={loadingTop}
-            sx={{ background: "#3B82F6", fontWeight: 700 }}
-          >
-            {loadingTop ? <CircularProgress size={22} sx={{ color: "#fff" }} /> : "Show Top 50 (USA)"}
-          </Button>
-
-          <Button
-            variant="contained"
             startIcon={ingesting ? null : <CloudUpload />}
             onClick={runIngest}
             disabled={ingesting}
@@ -205,9 +207,9 @@ export default function AdminPage() {
 
           <Button
             variant="outlined"
-            startIcon={loadingStats ? null : <Storage />}
-            onClick={loadStats}
-            disabled={loadingStats}
+            startIcon={loadingOverview ? null : <Storage />}
+            onClick={loadOverview}
+            disabled={loadingOverview}
             sx={{
               color: "#cef870",
               borderColor: "rgba(110,200,50,0.4)",
@@ -215,56 +217,167 @@ export default function AdminPage() {
               "&:hover": { borderColor: "#a0e840", background: "rgba(110,200,50,0.08)" },
             }}
           >
-            {loadingStats ? (
+            {loadingOverview ? (
               <CircularProgress size={22} sx={{ color: "#cef870" }} />
             ) : (
-              "Pinecone Index Stats"
+              "Load Index Metrics"
             )}
           </Button>
         </Box>
 
-        {/* Pinecone index stats */}
-        {stats && (
+        {/* Cross-index vector metrics */}
+        {overview && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 4, justifyContent: "center" }}>
-              <Grid size={{ xs: 6, md: 4 }}>
-                <Box className="game-panel" sx={{ textAlign: "center" }}>
-                  <Typography sx={{ color: "#cef870", fontWeight: 900, fontSize: "1.8rem" }}>
-                    {stats.totalVectorCount.toLocaleString()}
+            {overview.length === 0 && (
+              <Typography sx={{ textAlign: "center", color: "#80b848", mb: 3 }}>
+                No Pinecone indexes found yet.
+              </Typography>
+            )}
+
+            {overview.map((idx) => (
+              <Box key={idx.index} className="game-panel" sx={{ mb: 3, p: { xs: 2, md: 3 } }}>
+                {/* Index header */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 1,
+                    mb: 1.5,
+                  }}
+                >
+                  <Typography sx={{ color: "#cef870", fontWeight: 900, fontSize: "1.1rem" }}>
+                    <code>{idx.index}</code>
                   </Typography>
-                  <Typography
-                    className="game-section-label"
-                    sx={{ mt: 1, justifyContent: "center" }}
-                  >
-                    Total Vectors
+                  <Typography sx={{ color: "#80b848", fontSize: "0.8rem" }}>
+                    {idx.totalVectorCount.toLocaleString()} vectors
+                    {idx.dimension ? ` · ${idx.dimension} dims` : ""}
+                    {idx.lastUpdated
+                      ? ` · updated ${new Date(idx.lastUpdated).toLocaleString()}`
+                      : ""}
                   </Typography>
                 </Box>
-              </Grid>
-              <Grid size={{ xs: 6, md: 4 }}>
-                <Box className="game-panel" sx={{ textAlign: "center" }}>
-                  <Typography sx={{ color: "#cef870", fontWeight: 900, fontSize: "1.05rem", lineHeight: 1.3 }}>
-                    {stats.lastUpdated
-                      ? new Date(stats.lastUpdated).toLocaleString()
-                      : "—"}
+
+                {idx.error && (
+                  <Typography color="error" sx={{ fontFamily: "monospace", fontSize: "0.8rem" }}>
+                    {idx.error}
                   </Typography>
-                  <Typography
-                    className="game-section-label"
-                    sx={{ mt: 1, justifyContent: "center" }}
-                  >
-                    Last Updated
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid size={12}>
-                <Typography sx={{ textAlign: "center", color: "#80b848", fontSize: "0.8rem" }}>
-                  Index <code style={{ color: "#cef870" }}>{stats.index}</code> · {stats.dimension} dims
-                </Typography>
-              </Grid>
-            </Grid>
+                )}
+
+                {/* Per-namespace counts + sampling */}
+                {idx.namespaces.map((ns) => {
+                  const key = nsKey(idx.index, ns.namespace);
+                  const rows = samples[key];
+                  const isSampling = samplingKey === key;
+                  return (
+                    <Box
+                      key={key}
+                      sx={{
+                        borderTop: "1px solid rgba(110,200,50,0.15)",
+                        py: 1.25,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 1,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Typography sx={{ color: "#e8ffd0", fontWeight: 700 }}>
+                            {nsLabel(ns.namespace)}
+                          </Typography>
+                          {ns.isMeta && (
+                            <Chip
+                              label="meta"
+                              size="small"
+                              sx={{
+                                height: 18,
+                                fontSize: "0.6rem",
+                                background: "rgba(110,200,50,0.15)",
+                                color: "#80b848",
+                              }}
+                            />
+                          )}
+                          <Typography sx={{ color: "#80b848", fontSize: "0.85rem" }}>
+                            · {ns.count.toLocaleString()} vectors
+                          </Typography>
+                        </Box>
+
+                        <Button
+                          size="small"
+                          startIcon={isSampling ? null : <Visibility sx={{ fontSize: 16 }} />}
+                          onClick={() => sampleNamespace(idx.index, ns.namespace)}
+                          disabled={isSampling || ns.count === 0}
+                          sx={{
+                            color: "#cef870",
+                            fontSize: "0.7rem",
+                            minWidth: 0,
+                            textTransform: "none",
+                          }}
+                        >
+                          {isSampling ? (
+                            <CircularProgress size={14} sx={{ color: "#cef870" }} />
+                          ) : (
+                            "Sample"
+                          )}
+                        </Button>
+                      </Box>
+
+                      {/* Sampled records */}
+                      {rows && (
+                        <Box sx={{ mt: 1, pl: { xs: 0, md: 1 } }}>
+                          {rows.length === 0 && (
+                            <Typography sx={{ color: "#80b848", fontSize: "0.78rem" }}>
+                              (no records returned)
+                            </Typography>
+                          )}
+                          {rows.map((r) => (
+                            <Box
+                              key={r.id}
+                              sx={{
+                                background: "rgba(0,0,0,0.25)",
+                                borderRadius: 1,
+                                p: 1,
+                                mb: 0.75,
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: "#6e9a3c",
+                                  fontFamily: "monospace",
+                                  fontSize: "0.65rem",
+                                  wordBreak: "break-all",
+                                }}
+                              >
+                                {r.id}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  color: "#e8ffd0",
+                                  fontSize: "0.78rem",
+                                  lineHeight: 1.4,
+                                }}
+                              >
+                                {recordSummary(r.metadata)}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+            ))}
           </motion.div>
         )}
 
@@ -275,9 +388,9 @@ export default function AdminPage() {
         )}
 
         {/* Errors */}
-        {(topError || ingestError || statsError) && (
+        {(ingestError || overviewError || sampleError) && (
           <Typography color="error" sx={{ textAlign: "center", mb: 2, fontFamily: "monospace" }}>
-            {topError || ingestError || statsError}
+            {ingestError || overviewError || sampleError}
           </Typography>
         )}
 
@@ -312,49 +425,6 @@ export default function AdminPage() {
               </Typography>
             </Grid>
           </Grid>
-        )}
-
-        {/* Top 50 table */}
-        {players.length > 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
-            <Box className="game-panel" sx={{ overflowX: "auto" }}>
-              <Typography className="game-panel-title" sx={{ mb: 1.5 }}>
-                Top {players.length} · USA Path of Legend
-              </Typography>
-              <Table size="small" sx={{ "& td, & th": { borderColor: "rgba(110,200,50,0.13)" } }}>
-                <TableHead>
-                  <TableRow>
-                    {["Rank", "Player", "Elo", "Clan"].map((h) => (
-                      <TableCell key={h} sx={{ color: "#80b848", fontWeight: 800, fontSize: "0.72rem" }}>
-                        {h}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {players.map((p) => (
-                    <TableRow key={p.tag}>
-                      <TableCell>
-                        <Chip
-                          label={`#${p.rank}`}
-                          size="small"
-                          sx={{
-                            background: p.rank <= 3 ? "#a0e840" : "rgba(110,200,50,0.18)",
-                            color: p.rank <= 3 ? "#0a1a06" : "#c0e878",
-                            fontWeight: 800,
-                            height: 20,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell sx={{ color: "#d4f878", fontWeight: 600 }}>{p.name}</TableCell>
-                      <TableCell sx={{ color: "#c0e878" }}>{p.eloRating ?? "—"}</TableCell>
-                      <TableCell sx={{ color: "#80b848", fontSize: "0.8rem" }}>{p.clan ?? "—"}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </motion.div>
         )}
       </Container>
     </Box>
