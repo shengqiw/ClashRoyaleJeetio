@@ -17,10 +17,13 @@ export type DeckCounter = {
  * Given the opponent cards that are beating a player, fetch real top-player
  * decks that beat similar lineups.
  * @param oppCards — the troublesome opponent cards (e.g. biggest-opps)
+ * @param tag — player tag, so the backend reads their own cr-bg-<tag> index
+ *              (falling back to cr-bg-global) instead of a shared one
  * @param signal — optional abort signal to cancel in-flight requests
  */
 export async function fetchDeckCounters(
   oppCards: string[],
+  tag?: string,
   signal?: AbortSignal
 ): Promise<DeckCounter[]> {
   const cards = oppCards.filter(Boolean).slice(0, 6);
@@ -31,7 +34,7 @@ export async function fetchDeckCounters(
   const res = await fetch('/api/deck-intel', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, topK: 6 }),
+    body: JSON.stringify({ query, topK: 3, tag }),
     signal,
   });
 

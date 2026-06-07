@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
 
-// Live semantic search against the ingested Path of Legend matchups.
+// Fire-and-forget: kicks off the 3-layer battle-graph crawl on the backend and
+// returns a job id immediately. The admin page polls /api/jobs/[jobId] for
+// progress and the final summary (which includes the per-player index name).
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ tag: string }> }
+) {
+  const { tag } = await params;
   const apiBase = process.env.API_BASE_URL;
   const apiKey = process.env.API_KEY;
 
@@ -14,12 +20,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const body = await request.json().catch(() => ({}));
-  const query = typeof body?.query === 'string' ? body.query : '';
-  const topK = Number(body?.topK) || 6;
-  const tag = typeof body?.tag === 'string' ? body.tag : undefined;
-
-  const url = `${apiBase}/intel/deck-counters`;
+  const url = `${apiBase}/jeetio/meta-graph/${encodeURIComponent(tag)}/ingest`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -27,7 +28,6 @@ export async function POST(request: Request) {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ query, topK, tag }),
   });
 
   const data = await response.json();

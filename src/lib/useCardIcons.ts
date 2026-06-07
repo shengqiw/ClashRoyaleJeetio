@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-type CardIconMap = Record<string, string>;
+export type CardIconMap = Record<string, string>;
 
 // Shape of each card returned by the backend /clash/cards endpoint.
 type ApiCard = {
@@ -76,6 +76,19 @@ export function resolveCardIcon(
   if (wantsEvo(name)) {
     return icons[EVO_KEY_PREFIX + norm] ?? icons[name] ?? icons[norm];
   }
+  return icons[name] ?? icons[norm];
+}
+
+/**
+ * Resolve the *base* (non-evolution) icon for a name, ignoring any evolution
+ * art. Used as a runtime fallback when an evolutionMedium asset 404s — some
+ * newer evo cards ship a broken evolution URL, so we degrade to the normal art.
+ */
+export function resolveBaseCardIcon(
+  icons: CardIconMap,
+  name: string
+): string | undefined {
+  const norm = normalizeCardName(name);
   return icons[name] ?? icons[norm];
 }
 

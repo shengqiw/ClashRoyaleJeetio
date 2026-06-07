@@ -11,6 +11,8 @@ import {
 import { Person } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import { useCardIcons, resolveCardIcon } from "../../lib/useCardIcons";
+import { CardImage } from "../../lib/CardImage";
+import { renderInlineMarkdown } from "../../lib/inlineMarkdown";
 import { fetchDeckCounters, type DeckCounter } from "../../lib/deckIntel";
 import "./deckai.css";
 
@@ -110,6 +112,22 @@ const DECK_TIER_LABELS: Record<string, string> = {
   high: "High Elixir · Beatdown",
 };
 
+type DeckOptSuggestion = {
+  deck: string[];
+  avgElixir: number | null;
+  shared: number;
+  swaps: number;
+  remove: string[];
+  add: string[];
+  winCount: number;
+  avgCrownMargin: number;
+};
+
+type DeckOptimization = {
+  yourDeck: string[];
+  suggestions: DeckOptSuggestion[];
+};
+
 type BattleCard = {
   name: string;
   iconUrls?: { medium?: string };
@@ -171,6 +189,7 @@ export default function DeckAIPage() {
   const [analysis, setAnalysis] = useState("");
   const [analysisStreaming, setAnalysisStreaming] = useState(false);
   const [deckSuggestions, setDeckSuggestions] = useState<DeckSuggestion[]>([]);
+  const [deckOpt, setDeckOpt] = useState<DeckOptimization | null>(null);
   const [metaCounters, setMetaCounters] = useState<DeckCounter[]>([]);
   const [countersLoading, setCountersLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -201,6 +220,7 @@ export default function DeckAIPage() {
     setAnalysis("");
     setAnalysisStreaming(false);
     setDeckSuggestions([]);
+    setDeckOpt(null);
     setMetaCounters([]);
     setCountersLoading(false);
     setOppsLoading(true);
@@ -212,7 +232,7 @@ export default function DeckAIPage() {
     // ── Battle log: independent — renders whenever it's ready ──
     fetch(`/api/battlelog/${encoded}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("battlelog"))))
-      .then((log) => setBattles(Array.isArray(log) ? log.slice(0, 5) : []))
+      .then((log) => setBattles(Array.isArray(log) ? log.slice(0, 10) : []))
       .catch(() => {
         /* battlelog is supplementary — tolerate failure */
       });
@@ -234,7 +254,7 @@ export default function DeckAIPage() {
             const oppCards = (data.biggestOpps || []).map((o) => o.card);
             if (oppCards.length > 0) {
               setCountersLoading(true);
-              fetchDeckCounters(oppCards, controller.signal)
+              fetchDeckCounters(oppCards, tag, controller.signal)
                 .then((counters) => setMetaCounters(counters))
                 .catch(() => {
                   /* meta intel is optional — ignore (incl. AbortError) */
@@ -247,6 +267,11 @@ export default function DeckAIPage() {
           } else if (event === "decks") {
             const { decks } = JSON.parse(payload);
             if (Array.isArray(decks)) setDeckSuggestions(decks);
+          } else if (event === "deck-optimization") {
+            const data: DeckOptimization = JSON.parse(payload);
+            if (Array.isArray(data?.suggestions) && data.suggestions.length > 0) {
+              setDeckOpt(data);
+            }
           } else if (event === "done") {
             setAnalysisStreaming(false);
           } else if (event === "error") {
@@ -368,7 +393,7 @@ export default function DeckAIPage() {
 
               {analysis || analysisStreaming ? (
                 <Typography className="deckai-analysis-body">
-                  {analysis}
+                  {renderInlineMarkdown(analysis)}
                   {analysisStreaming && <span className="deckai-cursor" />}
                 </Typography>
               ) : errorMessage ? (
@@ -377,6 +402,116 @@ export default function DeckAIPage() {
                 </Typography>
               ) : null}
             </Box>
+
+            {/* Optimized Deck — the player's own deck, tuned by swapping 1–4
+                cards toward a similar high-win-rate meta deck. Single "best"
+                suggestion, shown right under the AI analysis. */}
+            {deckOpt && deckOpt.suggestions.length > 0 && (() => {
+              const s = deckOpt.suggestions[0];
+              const removeSet = new Set(s.remove);
+              const addSet = new Set(s.add);
+
+              const renderCard = (name: string, j: number, mark: string) => {
+                const src = resolveCardIcon(cardIcons, name);
+                const cls = mark ? ` ${mark}` : "";
+                return src ? (
+                  <CardImage
+                    key={`${name}-${j}`}
+                    icons={cardIcons}
+                    name={name}
+                    title={name}
+                    className={`deckai-deck-card-img${cls}`}
+                  />
+                ) : (
+                  <Box
+                    key={`${name}-${j}`}
+                    className={`deckai-deck-card-fallback${cls}`}
+                    title={name}
+                  >
+                    {name}
+                  </Box>
+                );
+              };
+
+              return (
+                <>
+                  <Typography className="deckai-section-heading">
+                    Optimized Deck — tune what you already run
+                  </Typography>
+                  <Box className="deckai-deck-list">
+                    <Box className="deckai-deck-card deckai-optimized-card">
+                      <Box className="deckai-deck-head">
+                        <Typography className="deckai-deck-tier">
+                          Keep {s.shared}/8 · swap {s.swaps} card
+                          {s.swaps > 1 ? "s" : ""}
+                        </Typography>
+                        <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
+                          <Chip
+                            label={`won ${s.winCount.toLocaleString()}×`}
+                            size="small"
+                            className="deckai-elixir-chip"
+                          />
+                          {s.avgCrownMargin > 0 && (
+                            <Chip
+                              label={`+${s.avgCrownMargin} crowns`}
+                              size="small"
+                              className="deckai-elixir-chip"
+                            />
+                          )}
+                          {typeof s.avgElixir === "number" && (
+                            <Chip
+                              label={`${s.avgElixir.toFixed(1)} avg`}
+                              size="small"
+                              className="deckai-elixir-chip"
+                            />
+                          )}
+                        </Box>
+                      </Box>
+
+                      {/* Current deck — cards leaving are ringed red */}
+                      <Typography className="deckai-deck-rowlabel">
+                        Your deck now
+                      </Typography>
+                      <Box className="deckai-deck-cards">
+                        {deckOpt.yourDeck.map((name, j) =>
+                          renderCard(
+                            name,
+                            j,
+                            removeSet.has(name) ? "deckai-card-removed" : ""
+                          )
+                        )}
+                      </Box>
+
+                      <Box className="deckai-swap-list">
+                        {s.remove.map((out, j) => (
+                          <Box key={`${out}-${j}`} className="deckai-swap-line">
+                            <span className="deckai-swap-out-text">{out}</span>
+                            <span className="deckai-swap-sep">→</span>
+                            <span className="deckai-swap-in-text">
+                              {s.add[j] ?? "?"}
+                            </span>
+                          </Box>
+                        ))}
+                      </Box>
+
+                      {/* Optimized deck — new cards ringed green */}
+                      <Typography className="deckai-deck-rowlabel">
+                        Optimized
+                      </Typography>
+                      <Box className="deckai-deck-cards">
+                        {s.deck.map((name, j) =>
+                          renderCard(
+                            name,
+                            j,
+                            addSet.has(name) ? "deckai-card-added" : ""
+                          )
+                        )}
+                      </Box>
+                    </Box>
+                  </Box>
+                </>
+              );
+            })()}
 
             {/* AI-recommended counter decks — low / medium / high elixir */}
             {deckSuggestions.length > 0 && (
@@ -403,12 +538,10 @@ export default function DeckAIPage() {
                         {deck.cards?.map((name, j) => {
                           const src = resolveCardIcon(cardIcons, name);
                           return src ? (
-                            <Box
-                              component="img"
+                            <CardImage
                               key={`${name}-${j}`}
-                              src={src}
-                              alt={name}
-                              title={name}
+                              icons={cardIcons}
+                              name={name}
                               className="deckai-deck-card-img"
                             />
                           ) : (
@@ -437,7 +570,7 @@ export default function DeckAIPage() {
             {(countersLoading || metaCounters.length > 0) && (
               <>
                 <Typography className="deckai-section-heading">
-                  Meta Counters — what Top 50 USA beat this with
+                  Top ranked decks that beat your biggest counters
                 </Typography>
                 {countersLoading && metaCounters.length === 0 ? (
                   <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
@@ -445,7 +578,7 @@ export default function DeckAIPage() {
                   </Box>
                 ) : (
                   <Box className="deckai-deck-list">
-                    {metaCounters.map((c, i) => (
+                    {metaCounters.slice(0, 3).map((c, i) => (
                       <Box key={i} className="deckai-deck-card">
                         <Box className="deckai-deck-head">
                           <Typography className="deckai-deck-tier">
@@ -465,12 +598,10 @@ export default function DeckAIPage() {
                             // resolver normalizes that (and other variants).
                             const src = resolveCardIcon(cardIcons, name);
                             return src ? (
-                              <Box
-                                component="img"
+                              <CardImage
                                 key={`${name}-${j}`}
-                                src={src}
-                                alt={name}
-                                title={name}
+                                icons={cardIcons}
+                                name={name}
                                 className="deckai-deck-card-img"
                               />
                             ) : (
@@ -504,14 +635,11 @@ export default function DeckAIPage() {
                       <Box className="deckai-opp-rank">#{i + 1}</Box>
 
                       {/* Card image */}
-                      {resolveCardIcon(cardIcons, item.card) && (
-                        <Box
-                          component="img"
-                          src={resolveCardIcon(cardIcons, item.card)}
-                          alt={item.card}
-                          className="deckai-opp-img"
-                        />
-                      )}
+                      <CardImage
+                        icons={cardIcons}
+                        name={item.card}
+                        className="deckai-opp-img"
+                      />
 
                       {/* Name + loss count */}
                       <Typography className="deckai-opp-name">

@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "index": "clash-royale-data",
+      "dimension": 768,
+      "totalVectorCount": 805,
+      "lastUpdated": "2026-06-07T16:50:32.723Z",
+      "namespaces": [
+        { "namespace": "pol-battles", "count": 805, "isMeta": false }
+      ]
+    }
+  ]
+}

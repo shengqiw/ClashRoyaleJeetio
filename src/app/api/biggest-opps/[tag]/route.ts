@@ -64,11 +64,13 @@ export async function GET(
             frame('error', { message: 'Malformed upstream response' })
           );
         } else {
-          const { analysis, deckSuggestions, ...opps } = json;
+          const { analysis, deckSuggestions, deckOptimization, ...opps } = json;
           controller.enqueue(frame('opps', opps));
           if (analysis) controller.enqueue(frame('analysis', { text: analysis }));
           if (deckSuggestions)
             controller.enqueue(frame('decks', { decks: deckSuggestions }));
+          if (deckOptimization?.suggestions?.length)
+            controller.enqueue(frame('deck-optimization', deckOptimization));
           controller.enqueue(frame('done', { ok: true }));
         }
         controller.close();
