@@ -28,6 +28,9 @@ export async function POST(
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
+    // The backend ignores the body, but Fastify rejects an empty body when the
+    // content-type is application/json (FST_ERR_CTP_EMPTY_JSON_BODY), so send {}.
+    body: '{}',
   });
 
   const data = await response.json();
