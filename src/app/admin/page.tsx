@@ -8,6 +8,7 @@ import {
   Button,
   Chip,
   CircularProgress,
+  LinearProgress,
   TextField,
   Tabs,
   Tab,
@@ -119,6 +120,9 @@ export default function AdminPage() {
   const [ingestKind, setIngestKind] = useState<"global" | "tag" | null>(null);
   const [ingestProgress, setIngestProgress] = useState<Record<string, unknown> | null>(null);
   const [ingestError, setIngestError] = useState("");
+  // True when this press attached to a crawl that was already running (the
+  // backend's one-at-a-time guard returned the in-flight job).
+  const [ingestAttached, setIngestAttached] = useState(false);
 
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
@@ -200,6 +204,7 @@ export default function AdminPage() {
     setIngestKind(kind);
     setIngestError("");
     setIngestProgress(null);
+    setIngestAttached(false);
     try {
       const startRes = await fetch(`/api/meta-graph/${encodeURIComponent(seed)}/ingest`, {
         method: "POST",
@@ -207,6 +212,9 @@ export default function AdminPage() {
       });
       const start = await startRes.json();
       if (!startRes.ok) throw new Error(start?.error || `HTTP ${startRes.status}`);
+      // The backend returns alreadyRunning when our request attached to an
+      // in-flight crawl instead of starting a new one.
+      setIngestAttached(Boolean(start.alreadyRunning));
 
       // The crawl is heavy (50 seeds × 3 layers for global) — poll up to ~20 min.
       const jobId = start.jobId as string;
@@ -259,18 +267,55 @@ export default function AdminPage() {
     if (!p) return "Starting…";
     if (p.phase === "crawling") {
       const seeds = Number(p.seeds) || 0;
-      const ub = seeds
-        ? ` (≤ ${(seeds * 25 * 25 * 25).toLocaleString()})`
-        : "";
+      const layers = Number(p.layers) || 0;
+      // Ceiling is the SUM of per-layer fan-out (seeds·25^0 + … + seeds·25^(L-1)),
+      // not seeds·25^L — layers add, they don't compound an extra level. Geometric
+      // series with branch factor 25: seeds·(25^L − 1)/24. For 50 seeds × 3 layers
+      // that's ~32.5k, not the ~781k the old multiply implied.
+      const ub =
+        seeds && layers
+          ? ` (≤ ${Math.round(
+              (seeds * (25 ** layers - 1)) / 24
+            ).toLocaleString()})`
+          : "";
       return `Crawling layer ${p.layer}/${p.layers} · ${Number(
         p.playersCrawled
       ).toLocaleString()} players${ub} · ${Number(
         p.battlesCollected
       ).toLocaleString()} battles…`;
     }
+    if (p.phase === "clustering")
+      return `Grouping matchups · ${Number(p.processed).toLocaleString()}/${Number(
+        p.total
+      ).toLocaleString()} battles · ${Number(
+        p.uniqueMatchups
+      ).toLocaleString()} unique so far…`;
     if (p.phase === "embedding")
       return `Embedding ${Number(p.uniqueMatchups).toLocaleString()} unique matchups → Pinecone…`;
     return "Working…";
+  }
+
+  /**
+   * Percent complete for the progress bar, or null to render an indeterminate
+   * bar (phases without a known denominator). Crawling is measured per layer —
+   * how many of THIS layer's frontier players have been fetched — so the bar
+   * fills 0→100% once for each layer (the label shows "layer X/Y"). This avoids
+   * the dedup gap of measuring against a never-reached theoretical ceiling.
+   */
+  function progressPercent(p: Record<string, unknown> | null): number | null {
+    if (!p) return null;
+    if (p.phase === "crawling") {
+      const frontierSize = Number(p.frontierSize) || 0;
+      if (!frontierSize) return null;
+      const fetched = Number(p.playersFetched) || 0;
+      return Math.max(0, Math.min(100, (fetched / frontierSize) * 100));
+    }
+    if (p.phase === "clustering") {
+      const total = Number(p.total) || 0;
+      if (!total) return null;
+      return Math.max(0, Math.min(100, (Number(p.processed) || 0) / total * 100));
+    }
+    return null; // embedding / startup → indeterminate
   }
 
   const tabSx = {
@@ -337,13 +382,38 @@ export default function AdminPage() {
               </Button>
             </Box>
 
-            {/* Shared ingest status */}
+            {/* Shared ingest status + progress bar */}
             {ingesting && (
-              <Typography
-                sx={{ textAlign: "center", color: "#80b848", mb: 2, fontSize: "0.85rem" }}
-              >
-                {progressLabel(ingestProgress)}
-              </Typography>
+              <Box sx={{ maxWidth: 560, mx: "auto", mb: 2 }}>
+                {ingestAttached && (
+                  <Typography
+                    sx={{ textAlign: "center", color: "#cef870", fontSize: "0.78rem", mb: 0.5 }}
+                  >
+                    A crawl is already running — showing its live progress.
+                  </Typography>
+                )}
+                <Typography
+                  sx={{ textAlign: "center", color: "#80b848", mb: 0.75, fontSize: "0.85rem" }}
+                >
+                  {progressLabel(ingestProgress)}
+                  {(() => {
+                    const pct = progressPercent(ingestProgress);
+                    return pct != null ? `  ·  ${pct.toFixed(0)}%` : "";
+                  })()}
+                </Typography>
+                <LinearProgress
+                  variant={
+                    progressPercent(ingestProgress) != null ? "determinate" : "indeterminate"
+                  }
+                  value={progressPercent(ingestProgress) ?? undefined}
+                  sx={{
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: "rgba(110,200,50,0.15)",
+                    "& .MuiLinearProgress-bar": { backgroundColor: "#a0e840" },
+                  }}
+                />
+              </Box>
             )}
             {ingestError && (
               <Typography

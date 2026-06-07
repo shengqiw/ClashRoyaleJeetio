@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { proxyJson } from '@/lib/proxyJson';
 
 // Job status is live state — never cache it.
 export const dynamic = 'force-dynamic';
@@ -18,15 +19,7 @@ export async function GET(
     );
   }
 
-  const url = `${apiBase}/intel/jobs/${encodeURIComponent(jobId)}`;
-  const response = await fetch(url, {
-    headers: {
-      'x-api-key': apiKey,
-      Accept: 'application/json',
-    },
-    cache: 'no-store',
+  return proxyJson(`${apiBase}/intel/jobs/${encodeURIComponent(jobId)}`, {
+    headers: { 'x-api-key': apiKey, Accept: 'application/json' },
   });
-
-  const data = await response.json();
-  return NextResponse.json(data, { status: response.status });
 }

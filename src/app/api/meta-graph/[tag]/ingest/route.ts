@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { proxyJson } from '@/lib/proxyJson';
 
 // Fire-and-forget: kicks off the 3-layer battle-graph crawl on the backend and
 // returns a job id immediately. The admin page polls /api/jobs/[jobId] for
@@ -20,8 +21,7 @@ export async function POST(
     );
   }
 
-  const url = `${apiBase}/jeetio/meta-graph/${encodeURIComponent(tag)}/ingest`;
-  const response = await fetch(url, {
+  return proxyJson(`${apiBase}/jeetio/meta-graph/${encodeURIComponent(tag)}/ingest`, {
     method: 'POST',
     headers: {
       'x-api-key': apiKey,
@@ -32,7 +32,4 @@ export async function POST(
     // content-type is application/json (FST_ERR_CTP_EMPTY_JSON_BODY), so send {}.
     body: '{}',
   });
-
-  const data = await response.json();
-  return NextResponse.json(data, { status: response.status });
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { proxyJson } from '@/lib/proxyJson';
 
 // Delete a Pinecone index by exact name. Proxies to backend
 // DELETE /intel/pinecone/index/:name.
@@ -19,12 +20,8 @@ export async function DELETE(
     );
   }
 
-  const url = `${apiBase}/intel/pinecone/index/${encodeURIComponent(name)}`;
-  const response = await fetch(url, {
+  return proxyJson(`${apiBase}/intel/pinecone/index/${encodeURIComponent(name)}`, {
     method: 'DELETE',
     headers: { 'x-api-key': apiKey, Accept: 'application/json' },
   });
-
-  const data = await response.json();
-  return NextResponse.json(data, { status: response.status });
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { proxyJson } from '@/lib/proxyJson';
 
 // Proxy route — sample a few records (id + metadata) from an index/namespace.
 export const dynamic = 'force-dynamic';
@@ -28,15 +29,7 @@ export async function GET(request: Request) {
   if (incoming.has('namespace')) qs.set('namespace', incoming.get('namespace') ?? '');
   if (incoming.get('limit')) qs.set('limit', incoming.get('limit') as string);
 
-  const url = `${apiBase}/intel/pinecone/sample?${qs.toString()}`;
-  const response = await fetch(url, {
-    headers: {
-      'x-api-key': apiKey,
-      Accept: 'application/json',
-    },
-    cache: 'no-store',
+  return proxyJson(`${apiBase}/intel/pinecone/sample?${qs.toString()}`, {
+    headers: { 'x-api-key': apiKey, Accept: 'application/json' },
   });
-
-  const data = await response.json();
-  return NextResponse.json(data, { status: response.status });
 }
