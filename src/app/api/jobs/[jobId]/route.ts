@@ -19,7 +19,12 @@ export async function GET(
     );
   }
 
-  return proxyJson(`${apiBase}/intel/jobs/${encodeURIComponent(jobId)}`, {
-    headers: { 'x-api-key': apiKey, Accept: 'application/json' },
-  });
+  // A job lookup is a cheap map read; if the backend can't answer in 8s it's
+  // momentarily busy (e.g. mid layer-3 crawl). Fail fast with a clean JSON 504
+  // so the client can treat it as a transient blip and keep polling.
+  return proxyJson(
+    `${apiBase}/intel/jobs/${encodeURIComponent(jobId)}`,
+    { headers: { 'x-api-key': apiKey, Accept: 'application/json' } },
+    { timeoutMs: 8000 }
+  );
 }

@@ -216,13 +216,41 @@ export default function AdminPage() {
       // in-flight crawl instead of starting a new one.
       setIngestAttached(Boolean(start.alreadyRunning));
 
-      // The crawl is heavy (50 seeds × 3 layers for global) — poll up to ~20 min.
+      // The crawl is heavy (50 seeds × 3 layers for global) — poll up to ~50 min.
       const jobId = start.jobId as string;
-      for (let i = 0; i < 600; i++) {
+      // A single poll can fail transiently (gateway 504 while the backend is busy
+      // crawling layer 3, a network blip, a non-JSON error page). The JOB keeps
+      // running server-side, so we must NOT abort on one bad poll — tolerate a
+      // run of consecutive failures and keep polling.
+      let consecutiveFailures = 0;
+      const MAX_CONSECUTIVE_FAILURES = 20; // ~40s of uninterrupted poll failures
+      for (let i = 0; i < 1500; i++) {
         await new Promise((r) => setTimeout(r, 2000));
-        const jobRes = await fetch(`/api/jobs/${jobId}`);
-        const job = await jobRes.json();
-        if (!jobRes.ok) throw new Error(job?.error || `HTTP ${jobRes.status}`);
+
+        let job: {
+          status?: string;
+          progress?: Record<string, unknown> | null;
+          summary?: GraphSummary;
+          error?: string;
+        };
+        try {
+          const jobRes = await fetch(`/api/jobs/${jobId}`);
+          // Read as text so an HTML error page (Vercel/gateway 504) can't throw
+          // a cryptic "Unexpected token" — we detect the failure ourselves.
+          const text = await jobRes.text();
+          if (!jobRes.ok) throw new Error(`HTTP ${jobRes.status}`);
+          job = text ? JSON.parse(text) : {};
+        } catch {
+          // Transient — the crawl is still going. Retry until we lose contact
+          // for too long, then surface that the job may still be running.
+          if (++consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+            throw new Error(
+              "Lost contact with the server while polling. The crawl may still be running — hit Refresh in a bit to see the result."
+            );
+          }
+          continue;
+        }
+        consecutiveFailures = 0;
 
         setIngestProgress(job.progress || null);
         if (job.status === "done") {
