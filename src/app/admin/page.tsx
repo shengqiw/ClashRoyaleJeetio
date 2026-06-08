@@ -327,8 +327,17 @@ export default function AdminPage() {
       ).toLocaleString()} battles · ${Number(
         p.uniqueMatchups
       ).toLocaleString()} unique so far…`;
-    if (p.phase === "embedding")
-      return `Embedding ${Number(p.uniqueMatchups).toLocaleString()} unique matchups → Pinecone…`;
+    if (p.phase === "embedding") {
+      const total = Number(p.total) || Number(p.uniqueMatchups) || 0;
+      const embedded = Number(p.embedded) || 0;
+      return total
+        ? `${batchPrefix}Embedding ${embedded.toLocaleString()}/${total.toLocaleString()} matchups → Pinecone…`
+        : `${batchPrefix}Embedding…`;
+    }
+    if (p.phase === "upserting")
+      return `${batchPrefix}Upserting ${Number(p.upserted).toLocaleString()}/${Number(
+        p.total
+      ).toLocaleString()} → Pinecone…`;
     return "Working…";
   }
 
@@ -352,7 +361,17 @@ export default function AdminPage() {
       if (!total) return null;
       return Math.max(0, Math.min(100, (Number(p.processed) || 0) / total * 100));
     }
-    return null; // embedding / startup → indeterminate
+    if (p.phase === "embedding") {
+      const total = Number(p.total) || 0;
+      if (!total) return null;
+      return Math.max(0, Math.min(100, (Number(p.embedded) || 0) / total * 100));
+    }
+    if (p.phase === "upserting") {
+      const total = Number(p.total) || 0;
+      if (!total) return null;
+      return Math.max(0, Math.min(100, (Number(p.upserted) || 0) / total * 100));
+    }
+    return null; // startup → indeterminate
   }
 
   const tabSx = {
