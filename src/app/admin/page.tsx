@@ -296,14 +296,17 @@ export default function AdminPage() {
     if (p.phase === "crawling") {
       const seeds = Number(p.seeds) || 0;
       const layers = Number(p.layers) || 0;
-      // Ceiling is the SUM of per-layer fan-out (seeds·25^0 + … + seeds·25^(L-1)),
-      // not seeds·25^L — layers add, they don't compound an extra level. Geometric
-      // series with branch factor 25: seeds·(25^L − 1)/24. For 50 seeds × 3 layers
-      // that's ~32.5k, not the ~781k the old multiply implied.
+      // Branch factor = battles used per player (max opponents discoverable);
+      // sent by the backend so this estimate tracks the cap. Defaults to 25.
+      const branch = Number(p.branch) || 25;
+      // Ceiling is the SUM of per-layer fan-out (seeds·b^0 + … + seeds·b^(L-1)),
+      // not seeds·b^L — layers add, they don't compound an extra level. Geometric
+      // series: seeds·(b^L − 1)/(b − 1). For 50 seeds × 3 layers at b=15 that's
+      // ~12k.
       const ub =
-        seeds && layers
+        seeds && layers && branch > 1
           ? ` (≤ ${Math.round(
-              (seeds * (25 ** layers - 1)) / 24
+              (seeds * (branch ** layers - 1)) / (branch - 1)
             ).toLocaleString()})`
           : "";
       return `Crawling layer ${p.layer}/${p.layers} · ${Number(

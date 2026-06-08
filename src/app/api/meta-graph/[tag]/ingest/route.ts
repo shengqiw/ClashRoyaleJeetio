@@ -7,7 +7,7 @@ import { proxyJson } from '@/lib/proxyJson';
 export const dynamic = 'force-dynamic';
 
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ tag: string }> }
 ) {
   const { tag } = await params;
@@ -21,15 +21,21 @@ export async function POST(
     );
   }
 
-  return proxyJson(`${apiBase}/jeetio/meta-graph/${encodeURIComponent(tag)}/ingest`, {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+  // Route through proxyJson so a busy/down backend (which can happen mid-crawl)
+  // returns a clean JSON error instead of a non-JSON page that makes the
+  // client's startRes.json() throw "Unexpected token 'A'…".
+  return proxyJson(
+    `${apiBase}/jeetio/meta-graph/${encodeURIComponent(tag)}/ingest`,
+    {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      // Backend ignores the body, but Fastify rejects an empty JSON body, so {}.
+      body: '{}',
     },
-    // The backend ignores the body, but Fastify rejects an empty body when the
-    // content-type is application/json (FST_ERR_CTP_EMPTY_JSON_BODY), so send {}.
-    body: '{}',
-  });
+    { timeoutMs: 15000 }
+  );
 }
