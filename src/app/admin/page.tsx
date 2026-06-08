@@ -293,6 +293,12 @@ export default function AdminPage() {
 
   function progressLabel(p: Record<string, unknown> | null): string {
     if (!p) return "Starting…";
+    // Global runs crawl the seeds in batches; show which batch we're on.
+    const batchPrefix = p.batch ? `Batch ${p.batch}/${p.batches} · ` : "";
+    if (p.phase === "batch-done")
+      return `${batchPrefix}done · ${Number(p.playersCrawled).toLocaleString()} players · ${Number(
+        p.upserted
+      ).toLocaleString()} vectors so far…`;
     if (p.phase === "crawling") {
       const seeds = Number(p.seeds) || 0;
       const layers = Number(p.layers) || 0;
@@ -309,7 +315,7 @@ export default function AdminPage() {
               (seeds * (branch ** layers - 1)) / (branch - 1)
             ).toLocaleString()})`
           : "";
-      return `Crawling layer ${p.layer}/${p.layers} · ${Number(
+      return `${batchPrefix}Crawling layer ${p.layer}/${p.layers} · ${Number(
         p.playersCrawled
       ).toLocaleString()} players${ub} · ${Number(
         p.battlesCollected
