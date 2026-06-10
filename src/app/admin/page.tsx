@@ -221,9 +221,12 @@ export default function AdminPage() {
       // A single poll can fail transiently (gateway 504 while the backend is busy
       // crawling layer 3, a network blip, a non-JSON error page). The JOB keeps
       // running server-side, so we must NOT abort on one bad poll — tolerate a
-      // run of consecutive failures and keep polling.
+      // run of consecutive failures. But a SUSTAINED run means the backend is
+      // overloaded/wedged: after 10 in a row (~20s) ask it to restart itself
+      // (Docker recreates the process). The in-memory job won't survive that, so
+      // we stop polling and tell the user to re-run once it's back.
       let consecutiveFailures = 0;
-      const MAX_CONSECUTIVE_FAILURES = 20; // ~40s of uninterrupted poll failures
+      const RESTART_AFTER_FAILURES = 10;
       for (let i = 0; i < 1500; i++) {
         await new Promise((r) => setTimeout(r, 2000));
 
@@ -241,11 +244,18 @@ export default function AdminPage() {
           if (!jobRes.ok) throw new Error(`HTTP ${jobRes.status}`);
           job = text ? JSON.parse(text) : {};
         } catch {
-          // Transient — the crawl is still going. Retry until we lose contact
-          // for too long, then surface that the job may still be running.
-          if (++consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+          // Transient — the crawl may still be going. But once we hit a long run
+          // of failures, treat the backend as overloaded and trigger a restart.
+          if (++consecutiveFailures >= RESTART_AFTER_FAILURES) {
+            try {
+              // Best-effort: if the box is too wedged to even accept this, the
+              // short proxy timeout lets us fall through to the message anyway.
+              await fetch("/api/admin/restart", { method: "POST" });
+            } catch {
+              /* nothing more we can do from the client */
+            }
             throw new Error(
-              "Lost contact with the server while polling. The crawl may still be running — hit Refresh in a bit to see the result."
+              "Server looked overloaded — 10 polls failed in a row, so I triggered a self-restart. It should be back in ~30s; the crawl was dropped, so re-run it once the box recovers."
             );
           }
           continue;
