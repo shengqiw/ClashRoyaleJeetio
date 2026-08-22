@@ -549,7 +549,7 @@ export default function AdminPage() {
               type="password"
               size="small"
               placeholder="••••••••"
-              autoComplete="off"
+              autoComplete="one-time-code"
               sx={{
                 width: "100%",
                 "& .MuiOutlinedInput-root": { color: "#e8ffd0" },

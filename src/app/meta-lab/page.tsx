@@ -165,7 +165,10 @@ export default function MetaLabPage() {
               size="small"
               placeholder="••••••••"
               className="metalab-field metalab-gate-field"
-              autoComplete="off"
+              // "one-time-code" is the one hint password managers actually
+              // respect — plain "off" still summons their overlay on
+              // type="password", which hijacks clicks over the form.
+              autoComplete="one-time-code"
             />
             <Button className="metalab-btn" onClick={submitKey} disabled={!keyInput.trim()}>
               Enter

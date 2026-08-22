@@ -64,6 +64,9 @@ export function CardPicker({
         }}
         onChange={(_, v) => add(v)}
         disabled={disabled || full}
+        // Enter commits the top match — without this, typing "Hog Rider" and
+        // hitting Enter selects nothing and the text just accumulates.
+        autoHighlight
         blurOnSelect
         clearOnBlur
         size="small"
