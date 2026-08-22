@@ -7,13 +7,26 @@ import {
   Button,
   CircularProgress,
   Chip,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import { useCardIcons, resolveCardIcon } from "../../lib/useCardIcons";
 import { CardImage } from "../../lib/CardImage";
+import { CardPicker } from "../../lib/CardPicker";
+import { CopyDeckButton } from "../../lib/CopyDeckButton";
 import { renderInlineMarkdown } from "../../lib/inlineMarkdown";
-import { fetchDeckCounters, type DeckCounter } from "../../lib/deckIntel";
+import {
+  fetchDeckCounters,
+  fetchCountersForDeck,
+  bandParam,
+  BAND_CHOICES,
+  BAND_LABELS,
+  type BandChoice,
+  type DeckCounter,
+  type TrophyBand,
+} from "../../lib/deckIntel";
 import "./deckai.css";
 
 /**
@@ -61,6 +74,11 @@ async function consumeSSE(
 
 const RECENT_TAGS_KEY = "deckai:recentTags";
 const RECENT_TAGS_MAX = 5;
+const MATCHUP_CARDS_KEY = "deckai:matchupCards";
+
+/** Matchup mode needs at least this many cards to be worth a query. */
+const MATCHUP_MIN = 3;
+const MATCHUP_MAX = 8;
 
 function loadRecentTags(): string[] {
   if (typeof window === "undefined") return [];
@@ -86,6 +104,29 @@ function pushRecentTag(prev: string[], tag: string): string[] {
   return next;
 }
 
+function loadMatchupCards(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(MATCHUP_CARDS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((c) => typeof c === "string").slice(0, MATCHUP_MAX)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMatchupCards(cards: string[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(MATCHUP_CARDS_KEY, JSON.stringify(cards));
+  } catch {
+    // storage unavailable / quota — ignore
+  }
+}
+
 type OppCard = {
   card: string;
   appearances: number;
@@ -97,6 +138,9 @@ type OppsData = {
   battlesScanned: number;
   losses: number;
   biggestOpps: OppCard[];
+  /** Ladder bracket the backend detected (or the one we forced via ?band=). */
+  trophyBand?: TrophyBand;
+  myTrophies?: number | null;
 };
 
 type DeckSuggestion = {
@@ -110,6 +154,15 @@ const DECK_TIER_LABELS: Record<string, string> = {
   low: "Low Elixir · Fast Cycle",
   medium: "Medium Elixir · Balanced",
   high: "High Elixir · Beatdown",
+};
+
+/** Terse label for the band <select>. "auto" = whatever the backend detects. */
+const BAND_CHOICE_LABELS: Record<BandChoice, string> = {
+  auto: "AUTO",
+  low: "LOW",
+  mid: "MID",
+  high: "HIGH",
+  top: "TOP",
 };
 
 type DeckOptSuggestion = {
@@ -127,6 +180,9 @@ type DeckOptimization = {
   yourDeck: string[];
   suggestions: DeckOptSuggestion[];
 };
+
+/** How many optimizer variants we surface (the backend may send more). */
+const MAX_OPT_SUGGESTIONS = 3;
 
 type BattleCard = {
   name: string;
@@ -182,31 +238,49 @@ function gameTypeLabel(b: Battle): string {
 }
 
 export default function DeckAIPage() {
+  const [mode, setMode] = useState<"scan" | "counter">("scan");
   const [tagInput, setTagInput] = useState("");
   const [activeTag, setActiveTag] = useState("");
+  const [bandChoice, setBandChoice] = useState<BandChoice>("auto");
   const [oppsData, setOppsData] = useState<OppsData | null>(null);
   const [oppsLoading, setOppsLoading] = useState(false);
   const [analysis, setAnalysis] = useState("");
   const [analysisStreaming, setAnalysisStreaming] = useState(false);
   const [deckSuggestions, setDeckSuggestions] = useState<DeckSuggestion[]>([]);
   const [deckOpt, setDeckOpt] = useState<DeckOptimization | null>(null);
+  const [optVariant, setOptVariant] = useState(0);
   const [metaCounters, setMetaCounters] = useState<DeckCounter[]>([]);
   const [countersLoading, setCountersLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [recentTags, setRecentTags] = useState<string[]>([]);
   const [battles, setBattles] = useState<Battle[]>([]);
+
+  // ── Matchup mode ──
+  const [matchupCards, setMatchupCards] = useState<string[]>([]);
+  const [matchupCounters, setMatchupCounters] = useState<DeckCounter[]>([]);
+  const [matchupLoading, setMatchupLoading] = useState(false);
+  const [matchupError, setMatchupError] = useState("");
+  const [matchupRan, setMatchupRan] = useState(false);
+
   const cardIcons = useCardIcons();
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     setRecentTags(loadRecentTags());
+    setMatchupCards(loadMatchupCards());
     return () => abortRef.current?.abort();
   }, []);
 
-  async function runSearch(rawInput: string) {
+  function updateMatchupCards(next: string[]) {
+    setMatchupCards(next);
+    saveMatchupCards(next);
+  }
+
+  async function runSearch(rawInput: string, bandOverride?: BandChoice) {
     const raw = rawInput.trim();
     if (!raw) return;
     const tag = raw.startsWith("#") ? raw : `#${raw}`;
+    const band = bandParam(bandOverride ?? bandChoice);
 
     // Cancel any search already in flight.
     abortRef.current?.abort();
@@ -221,6 +295,7 @@ export default function DeckAIPage() {
     setAnalysisStreaming(false);
     setDeckSuggestions([]);
     setDeckOpt(null);
+    setOptVariant(0);
     setMetaCounters([]);
     setCountersLoading(false);
     setOppsLoading(true);
@@ -228,6 +303,7 @@ export default function DeckAIPage() {
     setRecentTags((prev) => pushRecentTag(prev, tag));
 
     const encoded = encodeURIComponent(tag);
+    const bandQs = band ? `&band=${encodeURIComponent(band)}` : "";
 
     // ── Battle log: independent — renders whenever it's ready ──
     fetch(`/api/battlelog/${encoded}`, { signal: controller.signal })
@@ -240,7 +316,7 @@ export default function DeckAIPage() {
     // ── Opps + AI analysis: streamed piece-by-piece over SSE ──
     try {
       await consumeSSE(
-        `/api/biggest-opps/${encoded}?stream=true`,
+        `/api/biggest-opps/${encoded}?stream=true${bandQs}`,
         (event, payload) => {
           if (event === "opps") {
             const data: OppsData = JSON.parse(payload);
@@ -251,10 +327,14 @@ export default function DeckAIPage() {
             // Fire a deck-intel lookup from the biggest opponent cards — what
             // the top 50 players beat similar decks with. Supplementary, so
             // failures are swallowed and it never blocks the AI analysis.
+            // Scope it to the same band the opps came back tagged with, so the
+            // counters are decks from comparable ladder.
             const oppCards = (data.biggestOpps || []).map((o) => o.card);
+            const counterBand =
+              band ?? (data.trophyBand && data.trophyBand !== "unknown" ? data.trophyBand : undefined);
             if (oppCards.length > 0) {
               setCountersLoading(true);
-              fetchDeckCounters(oppCards, tag, controller.signal)
+              fetchDeckCounters(oppCards, tag, controller.signal, counterBand)
                 .then((counters) => setMetaCounters(counters))
                 .catch(() => {
                   /* meta intel is optional — ignore (incl. AbortError) */
@@ -271,6 +351,7 @@ export default function DeckAIPage() {
             const data: DeckOptimization = JSON.parse(payload);
             if (Array.isArray(data?.suggestions) && data.suggestions.length > 0) {
               setDeckOpt(data);
+              setOptVariant(0);
             }
           } else if (event === "done") {
             setAnalysisStreaming(false);
@@ -298,8 +379,98 @@ export default function DeckAIPage() {
     return runSearch(tagInput);
   }
 
+  /** Counter mode: no SSE — one deck-intel call for the picked lineup. */
+  async function runMatchup(bandOverride?: BandChoice) {
+    if (matchupCards.length < MATCHUP_MIN) return;
+    const band = bandParam(bandOverride ?? bandChoice);
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setMatchupError("");
+    setMatchupCounters([]);
+    setMatchupLoading(true);
+    setMatchupRan(true);
+    try {
+      const counters = await fetchCountersForDeck(matchupCards, controller.signal, band);
+      setMatchupCounters(counters);
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        setMatchupError((err as Error).message);
+      }
+    } finally {
+      if (abortRef.current === controller) setMatchupLoading(false);
+    }
+  }
+
+  /** Band change re-runs whatever the active mode was already showing. */
+  function handleBandChange(next: BandChoice) {
+    setBandChoice(next);
+    if (mode === "scan") {
+      if (activeTag) runSearch(activeTag, next);
+    } else if (matchupRan && matchupCards.length >= MATCHUP_MIN) {
+      runMatchup(next);
+    }
+  }
+
   const busy = oppsLoading || analysisStreaming;
   const maxAppearances = oppsData?.biggestOpps?.[0]?.appearances ?? 1;
+
+  /** One deck row of 8 card icons, with a text fallback for unknown names. */
+  const renderDeckRow = (cards: string[]) => (
+    <Box className="deckai-deck-cards">
+      {cards.map((name, j) => {
+        // Stored names may carry an "Evo " prefix; the resolver normalizes
+        // that (and other variants).
+        const src = resolveCardIcon(cardIcons, name);
+        return src ? (
+          <CardImage
+            key={`${name}-${j}`}
+            icons={cardIcons}
+            name={name}
+            className="deckai-deck-card-img"
+          />
+        ) : (
+          <Box key={`${name}-${j}`} className="deckai-deck-card-fallback" title={name}>
+            {name}
+          </Box>
+        );
+      })}
+    </Box>
+  );
+
+  /** A meta-counter result card — shared by scan mode and matchup mode. */
+  const renderCounterCard = (c: DeckCounter, i: number) => (
+    <Box key={i} className="deckai-deck-card">
+      <Box className="deckai-deck-head">
+        <Typography className="deckai-deck-tier">
+          Won {c.occurrences ?? 1}× among top players
+        </Typography>
+        <Box className="deckai-deck-actions">
+          {typeof c.winnerAvgElixir === "number" && (
+            <Chip
+              label={`${c.winnerAvgElixir.toFixed(1)} avg`}
+              size="small"
+              className="deckai-elixir-chip"
+            />
+          )}
+          <CopyDeckButton names={c.winnerCards} />
+        </Box>
+      </Box>
+      {renderDeckRow(c.winnerCards)}
+    </Box>
+  );
+
+  const detectedBand = oppsData?.trophyBand;
+  const bandChipLabel = (() => {
+    if (!detectedBand) return "";
+    const trophies =
+      typeof oppsData?.myTrophies === "number"
+        ? `~${oppsData.myTrophies.toLocaleString()} · `
+        : "";
+    return `${trophies}${BAND_LABELS[detectedBand] ?? String(detectedBand).toUpperCase()}`;
+  })();
 
   return (
     <Box className="deckai-bg">
@@ -307,7 +478,9 @@ export default function DeckAIPage() {
       <Box className="deckai-header">
         <Typography className="deckai-title">Deck AI</Typography>
         <Typography className="deckai-subtitle">
-          {activeTag
+          {mode === "counter"
+            ? "Name their deck · get the answer"
+            : activeTag
             ? `Analyzing: ${activeTag}`
             : "Scan your losses · find your kryptonite"}
         </Typography>
@@ -316,355 +489,158 @@ export default function DeckAIPage() {
       <Container maxWidth="md">
         {/* ── Search controls ── */}
         <Box className="deckai-controls">
-          <Box className="deckai-input-row">
-            <Person sx={{ color: "#94A3B8", fontSize: 20, flexShrink: 0 }} />
-            <TextField
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              placeholder="Player tag (e.g. #ABC123)"
-              size="small"
-              className="deckai-tag-field"
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            />
-            <Button
-              className="deckai-btn-analyze"
-              onClick={handleSearch}
-              disabled={busy}
-            >
-              Analyze
-            </Button>
+          {/* Mode toggle */}
+          <Box className="deckai-mode-row">
+            {(
+              [
+                ["scan", "Scan Losses"],
+                ["counter", "Counter a Deck"],
+              ] as const
+            ).map(([value, label]) => (
+              <Button
+                key={value}
+                className={`deckai-mode-btn${
+                  mode === value ? " deckai-mode-btn-active" : ""
+                }`}
+                onClick={() => setMode(value)}
+              >
+                {label}
+              </Button>
+            ))}
           </Box>
 
-          {recentTags.length > 0 && (
-            <Box className="deckai-recent-row">
-              <Typography className="deckai-recent-label">Recent</Typography>
-              {recentTags.map((t) => (
-                <Chip
-                  key={t}
-                  label={t}
+          {mode === "scan" ? (
+            <>
+              <Box className="deckai-input-row">
+                <Person sx={{ color: "#94A3B8", fontSize: 20, flexShrink: 0 }} />
+                <TextField
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  placeholder="Player tag (e.g. #ABC123)"
                   size="small"
-                  className="deckai-recent-chip"
-                  onClick={() => runSearch(t)}
-                  disabled={busy}
+                  className="deckai-tag-field"
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 />
-              ))}
-            </Box>
-          )}
-        </Box>
-
-        {/* ── Loading (waiting for the first piece) ── */}
-        {oppsLoading && (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
-            <CircularProgress sx={{ color: "#3B82F6" }} />
-          </Box>
-        )}
-
-        {/* ── Top-level error (nothing rendered yet) ── */}
-        {errorMessage && !oppsData && !oppsLoading && (
-          <Typography
-            color="error"
-            sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}
-          >
-            {errorMessage}
-          </Typography>
-        )}
-
-        {/* ── AI Analysis — streams in like a chat bot ── */}
-        {oppsData && (
-          <>
-            {/* Summary */}
-            <Typography className="deckai-summary-bar" sx={{ mb: 2.5 }}>
-              {oppsData.battlesScanned} battles scanned · {oppsData.losses} losses
-            </Typography>
-
-            <Box className="deckai-analysis-card">
-              <Box className="deckai-analysis-header">
-                <Typography className="deckai-analysis-label">
-                  🤖 AI Analysis
-                </Typography>
-                {analysisStreaming && (
-                  <CircularProgress
-                    size={14}
-                    thickness={5}
-                    className="deckai-analysis-spinner"
-                  />
-                )}
+                <Button
+                  className="deckai-btn-analyze"
+                  onClick={handleSearch}
+                  disabled={busy}
+                >
+                  Analyze
+                </Button>
               </Box>
 
-              {analysis || analysisStreaming ? (
-                <Typography className="deckai-analysis-body">
-                  {renderInlineMarkdown(analysis)}
-                  {analysisStreaming && <span className="deckai-cursor" />}
-                </Typography>
-              ) : errorMessage ? (
-                <Typography className="deckai-analysis-error">
-                  {errorMessage}
-                </Typography>
-              ) : null}
-            </Box>
-
-            {/* Optimized Deck — the player's own deck, tuned by swapping 1–4
-                cards toward a similar high-win-rate meta deck. Single "best"
-                suggestion, shown right under the AI analysis. */}
-            {deckOpt && deckOpt.suggestions.length > 0 && (() => {
-              const s = deckOpt.suggestions[0];
-              const removeSet = new Set(s.remove);
-              const addSet = new Set(s.add);
-
-              const renderCard = (name: string, j: number, mark: string) => {
-                const src = resolveCardIcon(cardIcons, name);
-                const cls = mark ? ` ${mark}` : "";
-                return src ? (
-                  <CardImage
-                    key={`${name}-${j}`}
-                    icons={cardIcons}
-                    name={name}
-                    title={name}
-                    className={`deckai-deck-card-img${cls}`}
-                  />
-                ) : (
-                  <Box
-                    key={`${name}-${j}`}
-                    className={`deckai-deck-card-fallback${cls}`}
-                    title={name}
+              {recentTags.length > 0 && (
+                <Box className="deckai-recent-row">
+                  <Typography className="deckai-recent-label">Recent</Typography>
+                  {recentTags.map((t) => (
+                    <Chip
+                      key={t}
+                      label={t}
+                      size="small"
+                      className="deckai-recent-chip"
+                      onClick={() => runSearch(t)}
+                      disabled={busy}
+                    />
+                  ))}
+                </Box>
+              )}
+            </>
+          ) : (
+            <>
+              <Typography className="deckai-picker-label">
+                Their deck — {MATCHUP_MIN}–{MATCHUP_MAX} cards
+              </Typography>
+              <CardPicker
+                value={matchupCards}
+                onChange={updateMatchupCards}
+                max={MATCHUP_MAX}
+                showEmptySlots
+                placeholder="Add a card they play…"
+                fieldClassName="deckai-tag-field"
+                disabled={matchupLoading}
+              />
+              <Box className="deckai-input-row" sx={{ mt: 1.25 }}>
+                <Button
+                  className="deckai-btn-analyze"
+                  onClick={() => runMatchup()}
+                  disabled={matchupLoading || matchupCards.length < MATCHUP_MIN}
+                >
+                  {matchupLoading ? "Searching…" : "Find Counters"}
+                </Button>
+                {matchupCards.length > 0 && (
+                  <Button
+                    className="deckai-clear-btn"
+                    onClick={() => updateMatchupCards([])}
+                    disabled={matchupLoading}
                   >
-                    {name}
-                  </Box>
-                );
-              };
-
-              return (
-                <>
-                  <Typography className="deckai-section-heading">
-                    Optimized Deck — tune what you already run
+                    Clear
+                  </Button>
+                )}
+                {matchupCards.length < MATCHUP_MIN && (
+                  <Typography className="deckai-hint">
+                    pick at least {MATCHUP_MIN}
                   </Typography>
-                  <Box className="deckai-deck-list">
-                    <Box className="deckai-deck-card deckai-optimized-card">
-                      <Box className="deckai-deck-head">
-                        <Typography className="deckai-deck-tier">
-                          Keep {s.shared}/8 · swap {s.swaps} card
-                          {s.swaps > 1 ? "s" : ""}
-                        </Typography>
-                        <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
-                          <Chip
-                            label={`won ${s.winCount.toLocaleString()}×`}
-                            size="small"
-                            className="deckai-elixir-chip"
-                          />
-                          {s.avgCrownMargin > 0 && (
-                            <Chip
-                              label={`+${s.avgCrownMargin} crowns`}
-                              size="small"
-                              className="deckai-elixir-chip"
-                            />
-                          )}
-                          {typeof s.avgElixir === "number" && (
-                            <Chip
-                              label={`${s.avgElixir.toFixed(1)} avg`}
-                              size="small"
-                              className="deckai-elixir-chip"
-                            />
-                          )}
-                        </Box>
-                      </Box>
+                )}
+              </Box>
+            </>
+          )}
 
-                      {/* Current deck — cards leaving are ringed red */}
-                      <Typography className="deckai-deck-rowlabel">
-                        Your deck now
-                      </Typography>
-                      <Box className="deckai-deck-cards">
-                        {deckOpt.yourDeck.map((name, j) =>
-                          renderCard(
-                            name,
-                            j,
-                            removeSet.has(name) ? "deckai-card-removed" : ""
-                          )
-                        )}
-                      </Box>
+          {/* Trophy band — detected chip + manual override */}
+          <Box className="deckai-band-row">
+            <Typography className="deckai-recent-label">Band</Typography>
+            {mode === "scan" && bandChipLabel && (
+              <Chip label={bandChipLabel} size="small" className="deckai-band-chip" />
+            )}
+            <Select
+              value={bandChoice}
+              onChange={(e) => handleBandChange(e.target.value as BandChoice)}
+              size="small"
+              className="deckai-band-select"
+              disabled={busy || matchupLoading}
+            >
+              {BAND_CHOICES.map((b) => (
+                <MenuItem key={b} value={b} className="deckai-band-item">
+                  {BAND_CHOICE_LABELS[b]}
+                </MenuItem>
+              ))}
+            </Select>
+            {bandChoice !== "auto" && (
+              <Typography className="deckai-hint">forced · re-runs on change</Typography>
+            )}
+          </Box>
+        </Box>
 
-                      <Box className="deckai-swap-list">
-                        {s.remove.map((out, j) => (
-                          <Box key={`${out}-${j}`} className="deckai-swap-line">
-                            <span className="deckai-swap-out-text">{out}</span>
-                            <span className="deckai-swap-sep">→</span>
-                            <span className="deckai-swap-in-text">
-                              {s.add[j] ?? "?"}
-                            </span>
-                          </Box>
-                        ))}
-                      </Box>
+        {/* ─────────────── Counter-a-deck results ─────────────── */}
+        {mode === "counter" && (
+          <>
+            {matchupLoading && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+                <CircularProgress sx={{ color: "#3B82F6" }} />
+              </Box>
+            )}
 
-                      {/* Optimized deck — new cards ringed green */}
-                      <Typography className="deckai-deck-rowlabel">
-                        Optimized
-                      </Typography>
-                      <Box className="deckai-deck-cards">
-                        {s.deck.map((name, j) =>
-                          renderCard(
-                            name,
-                            j,
-                            addSet.has(name) ? "deckai-card-added" : ""
-                          )
-                        )}
-                      </Box>
-                    </Box>
-                  </Box>
-                </>
-              );
-            })()}
+            {matchupError && !matchupLoading && (
+              <Typography
+                color="error"
+                sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}
+              >
+                {matchupError}
+              </Typography>
+            )}
 
-            {/* AI-recommended counter decks — low / medium / high elixir */}
-            {deckSuggestions.length > 0 && (
+            {!matchupLoading && matchupCounters.length > 0 && (
               <>
                 <Typography className="deckai-section-heading">
-                  AI Deck Picks — best decks to run vs your last 25 games
+                  Decks that beat that lineup
                 </Typography>
                 <Box className="deckai-deck-list">
-                  {deckSuggestions.map((deck, i) => (
-                    <Box key={deck.tier ?? i} className="deckai-deck-card">
-                      <Box className="deckai-deck-head">
-                        <Typography className="deckai-deck-tier">
-                          {DECK_TIER_LABELS[deck.tier] ?? deck.tier}
-                        </Typography>
-                        {typeof deck.avgElixir === "number" && (
-                          <Chip
-                            label={`${deck.avgElixir.toFixed(1)} avg`}
-                            size="small"
-                            className="deckai-elixir-chip"
-                          />
-                        )}
-                      </Box>
-                      <Box className="deckai-deck-cards">
-                        {deck.cards?.map((name, j) => {
-                          const src = resolveCardIcon(cardIcons, name);
-                          return src ? (
-                            <CardImage
-                              key={`${name}-${j}`}
-                              icons={cardIcons}
-                              name={name}
-                              className="deckai-deck-card-img"
-                            />
-                          ) : (
-                            <Box
-                              key={`${name}-${j}`}
-                              className="deckai-deck-card-fallback"
-                              title={name}
-                            >
-                              {name}
-                            </Box>
-                          );
-                        })}
-                      </Box>
-                      {deck.reason && (
-                        <Typography className="deckai-deck-reason">
-                          {deck.reason}
-                        </Typography>
-                      )}
-                    </Box>
-                  ))}
+                  {matchupCounters.map(renderCounterCard)}
                 </Box>
               </>
             )}
 
-            {/* Meta counters — real decks the top 50 USA beat this archetype with */}
-            {(countersLoading || metaCounters.length > 0) && (
-              <>
-                <Typography className="deckai-section-heading">
-                  Top ranked decks that beat your biggest counters
-                </Typography>
-                {countersLoading && metaCounters.length === 0 ? (
-                  <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
-                    <CircularProgress size={20} sx={{ color: "#3B82F6" }} />
-                  </Box>
-                ) : (
-                  <Box className="deckai-deck-list">
-                    {metaCounters.slice(0, 3).map((c, i) => (
-                      <Box key={i} className="deckai-deck-card">
-                        <Box className="deckai-deck-head">
-                          <Typography className="deckai-deck-tier">
-                            Won {c.occurrences ?? 1}× among top players
-                          </Typography>
-                          {typeof c.winnerAvgElixir === "number" && (
-                            <Chip
-                              label={`${c.winnerAvgElixir.toFixed(1)} avg`}
-                              size="small"
-                              className="deckai-elixir-chip"
-                            />
-                          )}
-                        </Box>
-                        <Box className="deckai-deck-cards">
-                          {c.winnerCards.map((name, j) => {
-                            // Stored names may carry an "Evo " prefix; the
-                            // resolver normalizes that (and other variants).
-                            const src = resolveCardIcon(cardIcons, name);
-                            return src ? (
-                              <CardImage
-                                key={`${name}-${j}`}
-                                icons={cardIcons}
-                                name={name}
-                                className="deckai-deck-card-img"
-                              />
-                            ) : (
-                              <Box
-                                key={`${name}-${j}`}
-                                className="deckai-deck-card-fallback"
-                                title={name}
-                              >
-                                {name}
-                              </Box>
-                            );
-                          })}
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                )}
-              </>
-            )}
-
-            {/* Opp card list */}
-            {oppsData.biggestOpps.length > 0 ? (
-              <>
-                <Typography className="deckai-section-heading" sx={{ mt: 0.5 }}>
-                  Losses from past 25 battles (loss rate playing against card)
-                </Typography>
-                <Box className="deckai-opp-grid">
-                  {oppsData.biggestOpps.map((item, i) => (
-                    <Box key={item.card} className="deckai-opp-tile">
-                      {/* Rank */}
-                      <Box className="deckai-opp-rank">#{i + 1}</Box>
-
-                      {/* Card image */}
-                      <CardImage
-                        icons={cardIcons}
-                        name={item.card}
-                        className="deckai-opp-img"
-                      />
-
-                      {/* Name + loss count */}
-                      <Typography className="deckai-opp-name">
-                        {item.card}
-                      </Typography>
-                      <Chip
-                        label={item.lossRate}
-                        size="small"
-                        className="deckai-loss-chip"
-                      />
-
-                      {/* Frequency bar */}
-                      <Box className="deckai-bar-track">
-                        <Box
-                          className="deckai-bar-fill"
-                          sx={{
-                            width: `${(item.appearances / maxAppearances) * 100}%`,
-                          }}
-                        />
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-              </>
-            ) : (
+            {!matchupLoading && matchupRan && !matchupError && matchupCounters.length === 0 && (
               <Typography
                 sx={{
                   color: "#94A3B8",
@@ -675,15 +651,320 @@ export default function DeckAIPage() {
                   fontSize: "0.9rem",
                 }}
               >
-                No losses in recent battles — you&apos;re built different 💪
+                No matchups on record for that lineup — try fewer cards.
               </Typography>
             )}
           </>
         )}
 
-        {/* ── Last matches — independent, renders whenever it's ready ── */}
-        {battles.length > 0 && (
+        {/* ─────────────── Scan-losses results ─────────────── */}
+        {mode === "scan" && (
           <>
+            {/* ── Loading (waiting for the first piece) ── */}
+            {oppsLoading && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
+                <CircularProgress sx={{ color: "#3B82F6" }} />
+              </Box>
+            )}
+
+            {/* ── Top-level error (nothing rendered yet) ── */}
+            {errorMessage && !oppsData && !oppsLoading && (
+              <Typography
+                color="error"
+                sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}
+              >
+                {errorMessage}
+              </Typography>
+            )}
+
+            {/* ── AI Analysis — streams in like a chat bot ── */}
+            {oppsData && (
+              <>
+                {/* Summary */}
+                <Typography className="deckai-summary-bar" sx={{ mb: 2.5 }}>
+                  {oppsData.battlesScanned} battles scanned · {oppsData.losses} losses
+                </Typography>
+
+                <Box className="deckai-analysis-card">
+                  <Box className="deckai-analysis-header">
+                    <Typography className="deckai-analysis-label">
+                      🤖 AI Analysis
+                    </Typography>
+                    {analysisStreaming && (
+                      <CircularProgress
+                        size={14}
+                        thickness={5}
+                        className="deckai-analysis-spinner"
+                      />
+                    )}
+                  </Box>
+
+                  {analysis || analysisStreaming ? (
+                    <Typography className="deckai-analysis-body">
+                      {renderInlineMarkdown(analysis)}
+                      {analysisStreaming && <span className="deckai-cursor" />}
+                    </Typography>
+                  ) : errorMessage ? (
+                    <Typography className="deckai-analysis-error">
+                      {errorMessage}
+                    </Typography>
+                  ) : null}
+                </Box>
+
+                {/* Optimized Deck — the player's own deck, tuned by swapping 1–4
+                    cards toward a similar high-win-rate meta deck. The backend
+                    ranks the variants; we show up to 3, variant 0 first. */}
+                {deckOpt && deckOpt.suggestions.length > 0 && (() => {
+                  const variants = deckOpt.suggestions.slice(0, MAX_OPT_SUGGESTIONS);
+                  const active = Math.min(optVariant, variants.length - 1);
+                  const s = variants[active];
+                  const removeSet = new Set(s.remove);
+                  const addSet = new Set(s.add);
+
+                  const renderCard = (name: string, j: number, mark: string) => {
+                    const src = resolveCardIcon(cardIcons, name);
+                    const cls = mark ? ` ${mark}` : "";
+                    return src ? (
+                      <CardImage
+                        key={`${name}-${j}`}
+                        icons={cardIcons}
+                        name={name}
+                        title={name}
+                        className={`deckai-deck-card-img${cls}`}
+                      />
+                    ) : (
+                      <Box
+                        key={`${name}-${j}`}
+                        className={`deckai-deck-card-fallback${cls}`}
+                        title={name}
+                      >
+                        {name}
+                      </Box>
+                    );
+                  };
+
+                  return (
+                    <>
+                      <Typography className="deckai-section-heading">
+                        Optimized Deck — tune what you already run
+                      </Typography>
+
+                      {/* Variant tabs — only when the backend sent more than one */}
+                      {variants.length > 1 && (
+                        <Box className="deckai-variant-row">
+                          {variants.map((v, i) => (
+                            <Button
+                              key={i}
+                              className={`deckai-variant-tab${
+                                i === active ? " deckai-variant-tab-active" : ""
+                              }${i === 0 ? " deckai-variant-tab-primary" : ""}`}
+                              onClick={() => setOptVariant(i)}
+                            >
+                              {i === 0 ? "Best" : `Alt ${i}`}
+                              <span className="deckai-variant-sub">
+                                {v.swaps} swap{v.swaps > 1 ? "s" : ""}
+                              </span>
+                            </Button>
+                          ))}
+                        </Box>
+                      )}
+
+                      <Box className="deckai-deck-list">
+                        <Box
+                          className={`deckai-deck-card deckai-optimized-card${
+                            active === 0 ? "" : " deckai-optimized-card-alt"
+                          }`}
+                        >
+                          <Box className="deckai-deck-head">
+                            <Typography className="deckai-deck-tier">
+                              Keep {s.shared}/8 · swap {s.swaps} card
+                              {s.swaps > 1 ? "s" : ""}
+                            </Typography>
+                            <Box className="deckai-deck-actions">
+                              <Chip
+                                label={`won ${s.winCount.toLocaleString()}×`}
+                                size="small"
+                                className="deckai-elixir-chip"
+                              />
+                              {s.avgCrownMargin > 0 && (
+                                <Chip
+                                  label={`+${s.avgCrownMargin} crowns`}
+                                  size="small"
+                                  className="deckai-elixir-chip"
+                                />
+                              )}
+                              {typeof s.avgElixir === "number" && (
+                                <Chip
+                                  label={`${s.avgElixir.toFixed(1)} avg`}
+                                  size="small"
+                                  className="deckai-elixir-chip"
+                                />
+                              )}
+                              <CopyDeckButton names={s.deck} />
+                            </Box>
+                          </Box>
+
+                          {/* Current deck — cards leaving are ringed red */}
+                          <Typography className="deckai-deck-rowlabel">
+                            Your deck now
+                          </Typography>
+                          <Box className="deckai-deck-cards">
+                            {deckOpt.yourDeck.map((name, j) =>
+                              renderCard(
+                                name,
+                                j,
+                                removeSet.has(name) ? "deckai-card-removed" : ""
+                              )
+                            )}
+                          </Box>
+
+                          <Box className="deckai-swap-list">
+                            {s.remove.map((out, j) => (
+                              <Box key={`${out}-${j}`} className="deckai-swap-line">
+                                <span className="deckai-swap-out-text">{out}</span>
+                                <span className="deckai-swap-sep">→</span>
+                                <span className="deckai-swap-in-text">
+                                  {s.add[j] ?? "?"}
+                                </span>
+                              </Box>
+                            ))}
+                          </Box>
+
+                          {/* Optimized deck — new cards ringed green */}
+                          <Typography className="deckai-deck-rowlabel">
+                            Optimized
+                          </Typography>
+                          <Box className="deckai-deck-cards">
+                            {s.deck.map((name, j) =>
+                              renderCard(
+                                name,
+                                j,
+                                addSet.has(name) ? "deckai-card-added" : ""
+                              )
+                            )}
+                          </Box>
+                        </Box>
+                      </Box>
+                    </>
+                  );
+                })()}
+
+                {/* AI-recommended counter decks — low / medium / high elixir */}
+                {deckSuggestions.length > 0 && (
+                  <>
+                    <Typography className="deckai-section-heading">
+                      AI Deck Picks — best decks to run vs your last 25 games
+                    </Typography>
+                    <Box className="deckai-deck-list">
+                      {deckSuggestions.map((deck, i) => (
+                        <Box key={deck.tier ?? i} className="deckai-deck-card">
+                          <Box className="deckai-deck-head">
+                            <Typography className="deckai-deck-tier">
+                              {DECK_TIER_LABELS[deck.tier] ?? deck.tier}
+                            </Typography>
+                            <Box className="deckai-deck-actions">
+                              {typeof deck.avgElixir === "number" && (
+                                <Chip
+                                  label={`${deck.avgElixir.toFixed(1)} avg`}
+                                  size="small"
+                                  className="deckai-elixir-chip"
+                                />
+                              )}
+                              <CopyDeckButton names={deck.cards} />
+                            </Box>
+                          </Box>
+                          {renderDeckRow(deck.cards ?? [])}
+                          {deck.reason && (
+                            <Typography className="deckai-deck-reason">
+                              {deck.reason}
+                            </Typography>
+                          )}
+                        </Box>
+                      ))}
+                    </Box>
+                  </>
+                )}
+
+                {/* Meta counters — real decks the top 50 USA beat this archetype with */}
+                {(countersLoading || metaCounters.length > 0) && (
+                  <>
+                    <Typography className="deckai-section-heading">
+                      Top ranked decks that beat your biggest counters
+                    </Typography>
+                    {countersLoading && metaCounters.length === 0 ? (
+                      <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+                        <CircularProgress size={20} sx={{ color: "#3B82F6" }} />
+                      </Box>
+                    ) : (
+                      <Box className="deckai-deck-list">
+                        {metaCounters.slice(0, 3).map(renderCounterCard)}
+                      </Box>
+                    )}
+                  </>
+                )}
+
+                {/* Opp card list */}
+                {oppsData.biggestOpps.length > 0 ? (
+                  <>
+                    <Typography className="deckai-section-heading" sx={{ mt: 0.5 }}>
+                      Losses from past 25 battles (loss rate playing against card)
+                    </Typography>
+                    <Box className="deckai-opp-grid">
+                      {oppsData.biggestOpps.map((item, i) => (
+                        <Box key={item.card} className="deckai-opp-tile">
+                          {/* Rank */}
+                          <Box className="deckai-opp-rank">#{i + 1}</Box>
+
+                          {/* Card image */}
+                          <CardImage
+                            icons={cardIcons}
+                            name={item.card}
+                            className="deckai-opp-img"
+                          />
+
+                          {/* Name + loss count */}
+                          <Typography className="deckai-opp-name">
+                            {item.card}
+                          </Typography>
+                          <Chip
+                            label={item.lossRate}
+                            size="small"
+                            className="deckai-loss-chip"
+                          />
+
+                          {/* Frequency bar */}
+                          <Box className="deckai-bar-track">
+                            <Box
+                              className="deckai-bar-fill"
+                              sx={{
+                                width: `${(item.appearances / maxAppearances) * 100}%`,
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  </>
+                ) : (
+                  <Typography
+                    sx={{
+                      color: "#94A3B8",
+                      textAlign: "center",
+                      mt: 4,
+                      fontStyle: "italic",
+                      fontFamily: "monospace",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    No losses in recent battles — you&apos;re built different 💪
+                  </Typography>
+                )}
+              </>
+            )}
+
+            {/* ── Last matches — independent, renders whenever it's ready ── */}
+            {battles.length > 0 && (
+              <>
                 <Typography className="deckai-section-heading" sx={{ mt: 3 }}>
                   Last {battles.length} Matches
                 </Typography>
@@ -702,7 +983,8 @@ export default function DeckAIPage() {
 
                     const renderCards = (cards: BattleCard[]) =>
                       cards.map((c, j) => {
-                        const src = c.iconUrls?.medium || resolveCardIcon(cardIcons, c.name);
+                        const src =
+                          c.iconUrls?.medium || resolveCardIcon(cardIcons, c.name);
                         return src ? (
                           <Box
                             component="img"
@@ -762,8 +1044,9 @@ export default function DeckAIPage() {
                 </Box>
               </>
             )}
+          </>
+        )}
       </Container>
     </Box>
   );
 }
-

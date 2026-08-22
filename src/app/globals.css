@@ -256,3 +256,171 @@ li {
     margin: 0;
   }
 }
+/* ── Copy-deck button (shared: /deckai, /meta-lab) ─────────────────────────
+   Terse mono pill. Collapsed it reads "COPY"; on hover it slides out the
+   "open in Clash Royale" hint so the double action (clipboard + deep link)
+   is never a surprise. */
+.copy-deck-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  background: rgba(76, 29, 149, 0.4);
+  border: 1px solid rgba(194, 147, 248, 0.45);
+  border-radius: 4px;
+  color: #e9d5ff;
+  font-family: monospace;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.copy-deck-btn:hover {
+  background: rgba(103, 45, 190, 0.6);
+  border-color: #c293f8;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(194, 147, 248, 0.35);
+}
+
+.copy-deck-btn:active {
+  transform: translateY(1px);
+}
+
+.copy-deck-btn-label {
+  flex: 0 0 auto;
+}
+
+/* Hint slides open on hover — max-width keeps the collapse animatable. */
+.copy-deck-btn-hint {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  text-transform: none;
+  transition: max-width 0.22s ease, opacity 0.18s ease, margin-left 0.22s ease;
+}
+
+.copy-deck-btn:hover .copy-deck-btn-hint,
+.copy-deck-btn:focus-visible .copy-deck-btn-hint {
+  max-width: 12rem;
+  opacity: 0.85;
+  margin-left: 0.45rem;
+}
+
+/* Prominent variant — the meta-lab hero deck. */
+.copy-deck-btn-lg {
+  padding: 7px 16px;
+  font-size: 0.72rem;
+  background: linear-gradient(160deg, #6d28d9 0%, #a855f7 100%);
+  border-color: rgba(194, 147, 248, 0.7);
+  color: #fff;
+  box-shadow: 0 2px 0 rgba(46, 16, 101, 0.8);
+}
+
+.copy-deck-btn-lg:hover {
+  background: linear-gradient(160deg, #7c3aed 0%, #c293f8 100%);
+  box-shadow: 0 2px 0 rgba(46, 16, 101, 0.8), 0 0 18px rgba(194, 147, 248, 0.45);
+}
+
+/* ── Card picker (shared: /deckai matchup mode, /meta-lab focus cards) ──── */
+.card-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.card-picker-option-img {
+  width: 26px;
+  height: auto;
+  object-fit: contain;
+}
+
+.card-picker-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.card-picker-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 62px;
+  padding: 4px 3px 3px;
+  background: rgba(11, 20, 55, 0.7);
+  border: 1px solid rgba(150, 130, 255, 0.28);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.card-picker-slot:hover {
+  border-color: rgba(194, 147, 248, 0.75);
+  background: rgba(48, 36, 116, 0.6);
+}
+
+.card-picker-slot-img {
+  width: 100%;
+  max-width: 44px;
+  height: auto;
+  object-fit: contain;
+}
+
+.card-picker-slot-name {
+  color: #cbd5e1 !important;
+  font-family: monospace !important;
+  font-size: 0.5rem !important;
+  line-height: 1.15 !important;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.card-picker-slot-x {
+  position: absolute;
+  top: 1px;
+  right: 4px;
+  color: rgba(248, 113, 113, 0.85);
+  font-family: monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.card-picker-slot:hover .card-picker-slot-x {
+  opacity: 1;
+}
+
+.card-picker-slot-empty {
+  cursor: default;
+  border-style: dashed;
+  border-color: rgba(150, 130, 255, 0.18);
+  min-height: 60px;
+  justify-content: center;
+}
+
+.card-picker-slot-empty:hover {
+  border-color: rgba(150, 130, 255, 0.18);
+  background: rgba(11, 20, 55, 0.7);
+}
+
+.card-picker-slot-plus {
+  color: rgba(148, 163, 184, 0.4);
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 800;
+}

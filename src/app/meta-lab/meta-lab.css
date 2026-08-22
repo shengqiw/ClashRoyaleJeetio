@@ -1,0 +1,534 @@
+/* ── META LAB — premium page. Same dark chassis as deckai, but the accent is
+   the site's purple (#c293f8) instead of deckai blue, so "paid lane" reads at
+   a glance without a second design language. ── */
+
+.metalab-bg {
+  min-height: 90vh;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  padding: 2rem 1rem;
+  background: rgba(22, 12, 48, 0.93);
+}
+
+.metalab-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.metalab-title {
+  font-weight: 900 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase;
+  color: #F5F1FF !important;
+  text-shadow:
+    0 3px 0 rgba(30, 8, 70, 0.9),
+    0 0 22px rgba(194, 147, 248, 0.5),
+    0 0 50px rgba(124, 58, 237, 0.28) !important;
+  font-size: 2rem !important;
+}
+
+.metalab-crown-inline {
+  font-size: 1.3rem;
+  vertical-align: middle;
+  text-shadow: none;
+}
+
+.metalab-tagline {
+  color: #A78BFA !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.18em;
+  font-family: monospace;
+  margin-top: 0.25rem !important;
+}
+
+/* ── Gate ─────────────────────────────────────────────────────────────── */
+.metalab-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: 22rem;
+  margin: 4rem auto 0;
+  padding: 2rem 1.75rem;
+  background: rgba(30, 16, 62, 0.9);
+  border: 1px solid rgba(150, 130, 255, 0.28);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.metalab-crown {
+  font-size: 1.8rem !important;
+  line-height: 1 !important;
+}
+
+.metalab-gate-label {
+  color: #A78BFA !important;
+  font-family: monospace !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.28em !important;
+  text-transform: uppercase !important;
+  margin-top: 0.75rem !important;
+}
+
+.metalab-gate-field {
+  width: 100%;
+}
+
+.metalab-gate-field input {
+  text-align: center;
+  letter-spacing: 0.35em;
+}
+
+.metalab-gate-error {
+  color: #F87171 !important;
+  font-family: monospace !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+}
+
+.metalab-shake {
+  animation: metalab-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes metalab-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+
+/* ── Controls ─────────────────────────────────────────────────────────── */
+.metalab-controls {
+  background: rgba(48, 26, 96, 0.28);
+  border: 1px solid rgba(150, 130, 255, 0.26);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.metalab-control-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.metalab-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metalab-control-block {
+  margin-top: 1rem;
+}
+
+.metalab-label {
+  color: #A78BFA !important;
+  font-family: monospace !important;
+  font-size: 0.6rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 0.4rem !important;
+  display: block !important;
+}
+
+.metalab-field .MuiOutlinedInput-root,
+.metalab-select {
+  color: #F5F1FF !important;
+  background: rgba(22, 12, 48, 0.7) !important;
+  font-size: 0.85rem !important;
+}
+
+.metalab-field .MuiOutlinedInput-notchedOutline,
+.metalab-select .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(150, 130, 255, 0.32) !important;
+}
+
+.metalab-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
+.metalab-select:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(194, 147, 248, 0.65) !important;
+}
+
+.metalab-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #c293f8 !important;
+  box-shadow: 0 0 0 2px rgba(194, 147, 248, 0.16);
+}
+
+.metalab-field input::placeholder {
+  color: rgba(167, 139, 250, 0.45) !important;
+  opacity: 1 !important;
+}
+
+.metalab-select {
+  font-family: monospace !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+  height: 32px;
+  min-width: 96px;
+}
+
+.metalab-select .MuiSelect-icon {
+  color: #c293f8 !important;
+}
+
+.metalab-menu-item {
+  font-family: monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+}
+
+.metalab-switch .MuiSwitch-switchBase.Mui-checked {
+  color: #c293f8 !important;
+}
+
+.metalab-switch .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+  background-color: #7c3aed !important;
+}
+
+.metalab-btn {
+  background: linear-gradient(160deg, #6d28d9 0%, #a855f7 100%) !important;
+  color: #F5F1FF !important;
+  font-weight: 800 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  border: 1px solid rgba(194, 147, 248, 0.5) !important;
+  border-bottom: 2px solid rgba(46, 16, 101, 0.85) !important;
+  padding: 6px 22px !important;
+  min-width: 110px;
+  white-space: nowrap;
+  box-shadow: 0 2px 0 rgba(30, 8, 70, 0.7) !important;
+  transition: all 0.15s !important;
+}
+
+.metalab-btn:hover {
+  background: linear-gradient(160deg, #7c3aed 0%, #c293f8 100%) !important;
+  box-shadow: 0 2px 0 rgba(30, 8, 70, 0.7), 0 0 16px rgba(194, 147, 248, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.metalab-btn.Mui-disabled {
+  opacity: 0.5 !important;
+  color: rgba(245, 241, 255, 0.6) !important;
+}
+
+.metalab-forget {
+  color: #6D5A9C !important;
+  font-family: monospace !important;
+  font-size: 0.58rem !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  min-width: 0 !important;
+  padding: 2px 6px !important;
+  margin-top: 0.75rem !important;
+}
+
+.metalab-forget:hover {
+  color: #F87171 !important;
+}
+
+/* ── Messages ─────────────────────────────────────────────────────────── */
+.metalab-note,
+.metalab-error {
+  text-align: center !important;
+  font-family: monospace !important;
+  font-size: 0.85rem !important;
+  margin-top: 2rem !important;
+}
+
+.metalab-note {
+  color: #A78BFA !important;
+}
+
+.metalab-error {
+  color: #F87171 !important;
+}
+
+/* ── Loading skeleton (shimmer, same rhythm as deckai's spinners) ──────── */
+.metalab-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(30, 16, 62, 0.75);
+  border: 1px solid rgba(150, 130, 255, 0.2);
+  border-radius: 10px;
+}
+
+.metalab-skel {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(76, 45, 140, 0.35) 0%,
+    rgba(140, 100, 220, 0.45) 50%,
+    rgba(76, 45, 140, 0.35) 100%
+  );
+  background-size: 200% 100%;
+  animation: metalab-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes metalab-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.metalab-skel-head {
+  height: 20px;
+  width: 45%;
+}
+
+.metalab-skel-deck {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.5rem;
+}
+
+.metalab-skel-card {
+  aspect-ratio: 3 / 4;
+}
+
+.metalab-skel-line {
+  height: 12px;
+}
+
+.metalab-skel-line-short {
+  width: 65%;
+}
+
+/* ── Hero deck ────────────────────────────────────────────────────────── */
+.metalab-hero {
+  background: linear-gradient(145deg, rgba(30, 16, 62, 0.98) 0%, rgba(56, 30, 110, 0.98) 100%);
+  border: 1px solid rgba(194, 147, 248, 0.4);
+  border-top-color: rgba(194, 147, 248, 0.65);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.metalab-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba(194, 147, 248, 0.7) 35%,
+    rgba(194, 147, 248, 0.7) 65%,
+    transparent 95%
+  );
+}
+
+.metalab-hero-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.metalab-hero-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.metalab-chip {
+  background: rgba(76, 29, 149, 0.55) !important;
+  color: #E9D5FF !important;
+  font-weight: 800 !important;
+  font-family: monospace !important;
+  border: 1px solid rgba(194, 147, 248, 0.5) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.1em !important;
+  height: 21px !important;
+}
+
+.metalab-hero-deck {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.6rem;
+}
+
+.metalab-hero-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.metalab-hero-card-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.metalab-hero-card-name {
+  color: #CBBEEB !important;
+  font-family: monospace !important;
+  font-size: 0.52rem !important;
+  line-height: 1.15 !important;
+  text-align: center;
+}
+
+/* ── Sections / panels ────────────────────────────────────────────────── */
+.metalab-section {
+  color: #A78BFA !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.3em !important;
+  font-weight: 700 !important;
+  font-family: monospace !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  margin-bottom: 0.9rem !important;
+}
+
+.metalab-panel {
+  background: rgba(30, 16, 62, 0.85);
+  border: 1px solid rgba(150, 130, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.metalab-body {
+  color: #DCD3F5 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.75 !important;
+}
+
+/* ── Swaps ────────────────────────────────────────────────────────────── */
+.metalab-swap + .metalab-swap {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(150, 130, 255, 0.14);
+}
+
+.metalab-swap-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: monospace;
+  font-size: 0.84rem;
+}
+
+.metalab-swap-out {
+  color: #FCA5A5;
+  font-weight: 700;
+  text-decoration: line-through;
+  text-decoration-color: rgba(248, 113, 113, 0.6);
+}
+
+.metalab-swap-sep {
+  color: #6D5A9C;
+  font-weight: 800;
+}
+
+.metalab-swap-in {
+  color: #C4B5FD;
+  font-weight: 800;
+}
+
+.metalab-swap-why {
+  color: #9C8CC4 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.5 !important;
+  margin-top: 0.25rem !important;
+  font-style: italic;
+}
+
+/* ── Evidence ─────────────────────────────────────────────────────────── */
+.metalab-evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 2rem;
+}
+
+.metalab-evidence {
+  background: rgba(30, 16, 62, 0.85);
+  border: 1px solid rgba(150, 130, 255, 0.16);
+  border-radius: 8px;
+  padding: 0.85rem 1.1rem;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.metalab-evidence:hover {
+  border-color: rgba(194, 147, 248, 0.4);
+  transform: translateY(-2px);
+}
+
+.metalab-evidence-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.metalab-evidence-stat {
+  color: #C4B5FD !important;
+  font-family: monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+.metalab-evidence-cards {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.45rem;
+  max-width: 80%;
+}
+
+.metalab-evidence-card-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ── Mobile ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .metalab-bg {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .metalab-title {
+    font-size: 1.5rem !important;
+  }
+
+  .metalab-controls {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .metalab-control-row {
+    gap: 0.75rem;
+  }
+
+  .metalab-hero {
+    padding: 1rem;
+  }
+
+  .metalab-hero-deck {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.45rem;
+  }
+
+  .metalab-evidence-cards {
+    max-width: 100%;
+    gap: 0.3rem;
+  }
+}

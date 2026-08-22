@@ -19,7 +19,7 @@ import {
   Hub,
   DeleteOutlined,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../shared.css";
 
 type NamespaceCount = { namespace: string; count: number; isMeta: boolean };
@@ -99,6 +99,38 @@ function saveHistory(list: HistoryEntry[]) {
   }
 }
 
+// ── Admin passcode ──
+// Stored in the browser and sent as x-admin-key on every admin call. The
+// backend owns the check; this page just holds the key and reacts to 401.
+const ADMIN_KEY_STORAGE = "admin:key";
+
+function loadAdminKey(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return window.localStorage.getItem(ADMIN_KEY_STORAGE) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function storeAdminKey(key: string) {
+  if (typeof window === "undefined") return;
+  try {
+    if (key) window.localStorage.setItem(ADMIN_KEY_STORAGE, key);
+    else window.localStorage.removeItem(ADMIN_KEY_STORAGE);
+  } catch {
+    // storage unavailable / quota — the key just won't persist
+  }
+}
+
+/** Thrown after a 401 so callers stop; the gate already took over the UI. */
+const UNAUTHORIZED = "unauthorized";
+
+/** Consecutive failed job polls before we even OFFER a backend restart. */
+const RESTART_AFTER_FAILURES = 20;
+/** Seconds the operator gets to cancel that restart. */
+const RESTART_COUNTDOWN_SECONDS = 10;
+
 export default function AdminPage() {
   const [tab, setTab] = useState(0);
 
@@ -126,17 +158,63 @@ export default function AdminPage() {
 
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
+  // ── Passcode gate ──
+  const [adminKey, setAdminKey] = useState("");
+  const [keyLoaded, setKeyLoaded] = useState(false);
+  const [keyInput, setKeyInput] = useState("");
+  const [keyError, setKeyError] = useState("");
+
+  // ── Restart countdown (the operator can call it off) ──
+  const [restartCountdown, setRestartCountdown] = useState<number | null>(null);
+  const restartCancelRef = useRef(false);
+
   useEffect(() => {
     setHistory(loadHistory());
+    setAdminKey(loadAdminKey());
+    setKeyLoaded(true);
+  }, []);
+
+  // Load the overview once we actually hold a key (and again after re-auth).
+  useEffect(() => {
+    if (!adminKey) return;
     loadOverview();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [adminKey]);
+
+  /** Auth header for every admin call. */
+  function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+    return { "x-admin-key": adminKey, ...extra };
+  }
+
+  /** A 401 means the stored key is wrong/stale — drop it and re-show the gate. */
+  function rejectKey() {
+    storeAdminKey("");
+    setAdminKey("");
+    setKeyInput("");
+    setOverview(null);
+    setKeyError("invalid key");
+  }
+
+  function submitKey() {
+    const key = keyInput.trim();
+    if (!key) return;
+    storeAdminKey(key);
+    setKeyError("");
+    setAdminKey(key);
+  }
 
   async function loadOverview() {
     setLoadingOverview(true);
     setOverviewError("");
     try {
-      const res = await fetch("/api/pinecone/overview", { cache: "no-store" });
+      const res = await fetch("/api/pinecone/overview", {
+        cache: "no-store",
+        headers: authHeaders(),
+      });
+      if (res.status === 401) {
+        rejectKey();
+        return;
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
       setOverview(data.indexes ?? []);
@@ -155,7 +233,12 @@ export default function AdminPage() {
       const qs = new URLSearchParams({ index, namespace, limit: "3" });
       const res = await fetch(`/api/pinecone/sample?${qs.toString()}`, {
         cache: "no-store",
+        headers: authHeaders(),
       });
+      if (res.status === 401) {
+        rejectKey();
+        return;
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
       setSamples((prev) => ({ ...prev, [key]: data.records ?? [] }));
@@ -179,7 +262,12 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/pinecone/index/${encodeURIComponent(name)}`, {
         method: "DELETE",
+        headers: authHeaders(),
       });
+      if (res.status === 401) {
+        rejectKey();
+        return;
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
       await loadOverview();
@@ -208,8 +296,12 @@ export default function AdminPage() {
     try {
       const startRes = await fetch(`/api/meta-graph/${encodeURIComponent(seed)}/ingest`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders({ "Content-Type": "application/json" }),
       });
+      if (startRes.status === 401) {
+        rejectKey();
+        throw new Error(UNAUTHORIZED);
+      }
       const start = await startRes.json();
       if (!startRes.ok) throw new Error(start?.error || `HTTP ${startRes.status}`);
       // The backend returns alreadyRunning when our request attached to an
@@ -221,12 +313,11 @@ export default function AdminPage() {
       // A single poll can fail transiently (gateway 504 while the backend is busy
       // crawling layer 3, a network blip, a non-JSON error page). The JOB keeps
       // running server-side, so we must NOT abort on one bad poll — tolerate a
-      // run of consecutive failures. But a SUSTAINED run means the backend is
-      // overloaded/wedged: after 10 in a row (~20s) ask it to restart itself
-      // (Docker recreates the process). The in-memory job won't survive that, so
-      // we stop polling and tell the user to re-run once it's back.
+      // run of consecutive failures. Only a LONG run (20 in a row, ~40s) means
+      // the backend is genuinely wedged, and even then we don't restart behind
+      // the operator's back: a countdown notice appears with a Cancel button,
+      // and cancelling just resumes polling. Restarting drops the in-memory job.
       let consecutiveFailures = 0;
-      const RESTART_AFTER_FAILURES = 10;
       for (let i = 0; i < 1500; i++) {
         await new Promise((r) => setTimeout(r, 2000));
 
@@ -244,18 +335,32 @@ export default function AdminPage() {
           if (!jobRes.ok) throw new Error(`HTTP ${jobRes.status}`);
           job = text ? JSON.parse(text) : {};
         } catch {
-          // Transient — the crawl may still be going. But once we hit a long run
-          // of failures, treat the backend as overloaded and trigger a restart.
+          // Transient — the crawl may still be going. Only a long run of
+          // failures suggests the backend is wedged, and then we ASK first.
           if (++consecutiveFailures >= RESTART_AFTER_FAILURES) {
+            const proceed = await confirmRestart();
+            if (!proceed) {
+              // Operator called it off — keep polling, the job may still land.
+              consecutiveFailures = 0;
+              continue;
+            }
             try {
               // Best-effort: if the box is too wedged to even accept this, the
               // short proxy timeout lets us fall through to the message anyway.
-              await fetch("/api/admin/restart", { method: "POST" });
-            } catch {
+              const restartRes = await fetch("/api/admin/restart", {
+                method: "POST",
+                headers: authHeaders(),
+              });
+              if (restartRes.status === 401) {
+                rejectKey();
+                throw new Error(UNAUTHORIZED);
+              }
+            } catch (restartErr) {
+              if ((restartErr as Error).message === UNAUTHORIZED) throw restartErr;
               /* nothing more we can do from the client */
             }
             throw new Error(
-              "Server looked overloaded — 10 polls failed in a row, so I triggered a self-restart. It should be back in ~30s; the crawl was dropped, so re-run it once the box recovers."
+              `Server looked overloaded — ${RESTART_AFTER_FAILURES} polls failed in a row and the restart wasn't cancelled, so I triggered a self-restart. It should be back in ~30s; the crawl was dropped, so re-run it once the box recovers.`
             );
           }
           continue;
@@ -289,11 +394,34 @@ export default function AdminPage() {
       }
       throw new Error("Ingest timed out while polling (still running on the server)");
     } catch (err) {
-      setIngestError((err as Error).message);
+      // A 401 already swapped the page back to the passcode gate — showing
+      // "unauthorized" under a form that says "invalid key" is just noise.
+      if ((err as Error).message !== UNAUTHORIZED) {
+        setIngestError((err as Error).message);
+      }
     } finally {
       setIngesting(false);
       setIngestKind(null);
+      setRestartCountdown(null);
     }
+  }
+
+  /**
+   * Show a cancellable countdown before restarting the backend. Resolves true
+   * if it ran out (fire the restart), false if the operator hit Cancel.
+   */
+  async function confirmRestart(): Promise<boolean> {
+    restartCancelRef.current = false;
+    for (let s = RESTART_COUNTDOWN_SECONDS; s > 0; s--) {
+      setRestartCountdown(s);
+      await new Promise((r) => setTimeout(r, 1000));
+      if (restartCancelRef.current) {
+        setRestartCountdown(null);
+        return false;
+      }
+    }
+    setRestartCountdown(null);
+    return true;
   }
 
   function clearHistory() {
@@ -391,6 +519,68 @@ export default function AdminPage() {
     "&.Mui-selected": { color: "#cef870" },
   };
 
+  // ── Passcode gate ──
+  // Nothing renders until localStorage has been read, so a stored key doesn't
+  // flash the form on every load.
+  if (!keyLoaded) return <Box className="game-bg" />;
+
+  if (!adminKey) {
+    return (
+      <Box className="game-bg">
+        <Container maxWidth="sm" sx={{ py: { xs: 6, md: 10 } }}>
+          <Box
+            className="game-panel"
+            sx={{
+              maxWidth: 340,
+              mx: "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1.5,
+              textAlign: "center",
+            }}
+          >
+            <Typography className="game-panel-title">Admin</Typography>
+            <Typography className="game-section-label">Passcode</Typography>
+            <TextField
+              value={keyInput}
+              onChange={(e) => setKeyInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && submitKey()}
+              type="password"
+              size="small"
+              placeholder="••••••••"
+              autoComplete="off"
+              sx={{
+                width: "100%",
+                "& .MuiOutlinedInput-root": { color: "#e8ffd0" },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(110,200,50,0.4)",
+                },
+                "& input": { textAlign: "center", letterSpacing: "0.35em" },
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={submitKey}
+              disabled={!keyInput.trim()}
+              sx={{ background: "#a0e840", color: "#0a1a06", fontWeight: 800 }}
+            >
+              Enter
+            </Button>
+            {keyError && (
+              <Typography
+                color="error"
+                sx={{ fontFamily: "monospace", fontSize: "0.78rem", letterSpacing: "0.14em" }}
+              >
+                {keyError}
+              </Typography>
+            )}
+          </Box>
+        </Container>
+      </Box>
+    );
+  }
+
   return (
     <Box className="game-bg">
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
@@ -481,6 +671,48 @@ export default function AdminPage() {
                 />
               </Box>
             )}
+            {/* Restart is a footgun — it drops the in-flight crawl — so it
+                never fires silently. This notice is the last chance to stop it. */}
+            {restartCountdown != null && (
+              <Box
+                sx={{
+                  maxWidth: 560,
+                  mx: "auto",
+                  mb: 2,
+                  p: 1.5,
+                  border: "1px solid rgba(255,154,154,0.5)",
+                  borderRadius: 1,
+                  background: "rgba(60,10,10,0.35)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 1.5,
+                  flexWrap: "wrap",
+                }}
+              >
+                <Typography sx={{ color: "#ff9a9a", fontSize: "0.8rem", lineHeight: 1.45 }}>
+                  {RESTART_AFTER_FAILURES} polls failed in a row. Restarting the
+                  backend in <strong>{restartCountdown}s</strong> — this drops the
+                  running crawl.
+                </Typography>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    restartCancelRef.current = true;
+                  }}
+                  sx={{
+                    color: "#cef870",
+                    border: "1px solid rgba(110,200,50,0.5)",
+                    textTransform: "none",
+                    fontWeight: 800,
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  Cancel restart
+                </Button>
+              </Box>
+            )}
+
             {ingestError && (
               <Typography
                 color="error"

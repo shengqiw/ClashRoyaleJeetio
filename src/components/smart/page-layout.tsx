@@ -3,6 +3,7 @@ import Link from "next/link";
 import navLogo from "@/assets/logo.png";
 import { ReactNode } from "react";
 import { NavText } from "../dumb/nav-text";
+import { MetaLabNav } from "../dumb/meta-lab-nav";
 
 export const PageLayout = ({ children }: { children: ReactNode }) => {
   return (
@@ -33,6 +34,8 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
           <li>
             <NavText href="/deckai">Deck AI</NavText>
           </li>
+          {/* Only appears once this browser holds a Meta Lab passcode. */}
+          <MetaLabNav />
         </ul>
       </nav>
       {children}
@@ -40,6 +43,11 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
         <span className="site-footer-name">Jeetio</span>
         <Link href="/admin" className="site-footer-secret" aria-label="🍊" title="">
           🍊
+        </Link>
+        {/* Same hidden-in-plain-sight treatment as the admin 🍊 — the way into
+            Meta Lab for anyone who was given the passcode. */}
+        <Link href="/meta-lab" className="site-footer-secret" aria-label="👑" title="">
+          👑
         </Link>
         <span className="site-footer-sep">·</span>
         <span className="site-footer-copy">© {new Date().getFullYear()} Jeetio. All rights reserved.</span>

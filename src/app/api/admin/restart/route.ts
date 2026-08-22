@@ -6,7 +6,7 @@ import { proxyJson } from '@/lib/proxyJson';
 // run of failed polls suggests the backend is overloaded/wedged.
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(request: Request) {
   const apiBase = process.env.API_BASE_URL;
   const apiKey = process.env.API_KEY;
 
@@ -23,7 +23,12 @@ export async function POST() {
     `${apiBase}/jeetio/restart`,
     {
       method: 'POST',
-      headers: { 'x-api-key': apiKey, Accept: 'application/json' },
+      headers: {
+        'x-api-key': apiKey,
+        // Admin passcode from the browser — restarting is gated on it (401).
+        'x-admin-key': request.headers.get('x-admin-key') ?? '',
+        Accept: 'application/json',
+      },
     },
     { timeoutMs: 5000 }
   );

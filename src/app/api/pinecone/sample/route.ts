@@ -29,7 +29,12 @@ export async function GET(request: Request) {
   if (incoming.has('namespace')) qs.set('namespace', incoming.get('namespace') ?? '');
   if (incoming.get('limit')) qs.set('limit', incoming.get('limit') as string);
 
+  // Forward the browser's admin passcode — the backend gates on it (401).
   return proxyJson(`${apiBase}/intel/pinecone/sample?${qs.toString()}`, {
-    headers: { 'x-api-key': apiKey, Accept: 'application/json' },
+    headers: {
+      'x-api-key': apiKey,
+      'x-admin-key': request.headers.get('x-admin-key') ?? '',
+      Accept: 'application/json',
+    },
   });
 }

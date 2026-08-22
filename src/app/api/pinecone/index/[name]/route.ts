@@ -20,8 +20,13 @@ export async function DELETE(
     );
   }
 
+  // Forward the browser's admin passcode — the backend gates on it (401).
   return proxyJson(`${apiBase}/intel/pinecone/index/${encodeURIComponent(name)}`, {
     method: 'DELETE',
-    headers: { 'x-api-key': apiKey, Accept: 'application/json' },
+    headers: {
+      'x-api-key': apiKey,
+      'x-admin-key': request.headers.get('x-admin-key') ?? '',
+      Accept: 'application/json',
+    },
   });
 }

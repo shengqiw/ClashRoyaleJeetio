@@ -28,6 +28,8 @@ export async function POST(
     method: 'POST',
     headers: {
       'x-api-key': apiKey,
+      // Admin passcode from the browser — the backend gates ingest on it.
+      'x-admin-key': request.headers.get('x-admin-key') ?? '',
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },

@@ -17,8 +17,12 @@ export async function GET(
     );
   }
 
-  const wantsStream =
-    new URL(request.url).searchParams.get('stream') === 'true';
+  const incoming = new URL(request.url).searchParams;
+  const wantsStream = incoming.get('stream') === 'true';
+  // Optional trophy-band override — forwarded verbatim so the backend scopes
+  // its meta data to that ladder bracket instead of auto-detecting.
+  const band = incoming.get('band');
+  const bandQs = band ? `&band=${encodeURIComponent(band)}` : '';
 
   // ── Streaming (SSE) — used by the Deck AI page ──
   if (wantsStream) {
@@ -31,7 +35,7 @@ export async function GET(
 
     const url = `${apiBase}/jeetio/biggest-opps/${encodeURIComponent(
       tag
-    )}?limit=25&stream=true`;
+    )}?limit=25&stream=true${bandQs}`;
     const upstream = await fetch(url, {
       headers: { 'x-api-key': apiKey, Accept: 'text/event-stream' },
       cache: 'no-store',
@@ -81,7 +85,7 @@ export async function GET(
   }
 
   // ── Default: buffered JSON (unchanged contract) ──
-  const url = `${apiBase}/jeetio/biggest-opps/${encodeURIComponent(tag)}?limit=25`;
+  const url = `${apiBase}/jeetio/biggest-opps/${encodeURIComponent(tag)}?limit=25${bandQs}`;
   console.log(`Fetching biggest opportunities for tag: ${tag} from ${url}`);
   const response = await fetch(url, {
     headers: {

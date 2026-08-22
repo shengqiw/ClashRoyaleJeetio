@@ -3,14 +3,28 @@ import { useEffect, useState } from "react";
 
 export type CardIconMap = Record<string, string>;
 
+/** Normalized card name → numeric Supercell card id (for deck deep links). */
+export type CardIdMap = Record<string, number>;
+
+/** Everything one /api/cards fetch yields: icons, deep-link ids, display names. */
+export type CardCatalog = {
+  icons: CardIconMap;
+  ids: CardIdMap;
+  /** Display names, de-duplicated and sorted — used by card pickers. */
+  names: string[];
+};
+
+const EMPTY_CATALOG: CardCatalog = { icons: {}, ids: {}, names: [] };
+
 // Shape of each card returned by the backend /clash/cards endpoint.
 type ApiCard = {
   name: string;
+  id?: number;
   iconUrls?: { medium?: string; evolutionMedium?: string };
 };
 
 // Fetched once per page load and shared across all hook consumers.
-let cachePromise: Promise<CardIconMap> | null = null;
+let cachePromise: Promise<CardCatalog> | null = null;
 
 // Evolution icons are indexed under this prefix so an "Evo "/"Evolved " name
 // can opt into the distinct evolution art (api .../cardevolutions/...) rather
@@ -35,7 +49,7 @@ export function normalizeCardName(name: string): string {
     .replace(/[^a-z0-9]/g, "");
 }
 
-async function loadCardIcons(): Promise<CardIconMap> {
+async function loadCardCatalog(): Promise<CardCatalog> {
   const res = await fetch("/api/cards");
   if (!res.ok) throw new Error(`Failed to load cards: HTTP ${res.status}`);
   const data = await res.json();
@@ -44,6 +58,8 @@ async function loadCardIcons(): Promise<CardIconMap> {
     ...(data?.supportItems ?? []),
   ];
   const map: CardIconMap = {};
+  const ids: CardIdMap = {};
+  const names: string[] = [];
   for (const card of cards) {
     if (!card.name) continue;
     const norm = normalizeCardName(card.name);
@@ -57,8 +73,15 @@ async function loadCardIcons(): Promise<CardIconMap> {
     }
     // Index the evolution art separately so evo-tagged names get the right icon.
     if (evo && norm) map[EVO_KEY_PREFIX + norm] = evo;
+    // Deck deep links address cards by their numeric id. Index under the
+    // normalized key only — "Evo Knight" and "Knight" copy the same card.
+    if (norm && typeof card.id === "number" && !(norm in ids)) {
+      ids[norm] = card.id;
+      names.push(card.name);
+    }
   }
-  return map;
+  names.sort((a, b) => a.localeCompare(b));
+  return { icons: map, ids, names };
 }
 
 /**
@@ -93,22 +116,22 @@ export function resolveBaseCardIcon(
 }
 
 /**
- * Returns a map of card name -> medium icon URL, fetched once from /api/cards.
- * Use `icons[cardName]` to get an image src (may be undefined until loaded
- * or if a name has no match).
+ * Returns the whole card catalog (icons + deep-link ids + display names) from
+ * one shared /api/cards fetch. Every consumer on the page shares the same
+ * in-flight promise, so this stays one request per page load.
  */
-export function useCardIcons(): CardIconMap {
-  const [icons, setIcons] = useState<CardIconMap>({});
+export function useCardCatalog(): CardCatalog {
+  const [catalog, setCatalog] = useState<CardCatalog>(EMPTY_CATALOG);
 
   useEffect(() => {
     let active = true;
-    if (!cachePromise) cachePromise = loadCardIcons();
+    if (!cachePromise) cachePromise = loadCardCatalog();
     cachePromise
-      .then((map) => {
-        if (active) setIcons(map);
+      .then((loaded) => {
+        if (active) setCatalog(loaded);
       })
       .catch(() => {
-        // On failure, reset so a later mount can retry; leave icons empty.
+        // On failure, reset so a later mount can retry; leave the catalog empty.
         cachePromise = null;
       });
     return () => {
@@ -116,5 +139,14 @@ export function useCardIcons(): CardIconMap {
     };
   }, []);
 
-  return icons;
+  return catalog;
+}
+
+/**
+ * Returns a map of card name -> medium icon URL, fetched once from /api/cards.
+ * Use `icons[cardName]` to get an image src (may be undefined until loaded
+ * or if a name has no match).
+ */
+export function useCardIcons(): CardIconMap {
+  return useCardCatalog().icons;
 }

@@ -7,7 +7,7 @@ import { proxyJson } from '@/lib/proxyJson';
 export const dynamic = 'force-dynamic';
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ tag: string }> }
 ) {
   const { tag } = await params;
@@ -30,6 +30,8 @@ export async function POST(
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
+        // Admin passcode from the browser — the backend gates ingest on it.
+        'x-admin-key': request.headers.get('x-admin-key') ?? '',
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },

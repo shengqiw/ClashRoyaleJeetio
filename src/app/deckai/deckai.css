@@ -738,3 +738,191 @@
     max-width: 24px;
   }
 }
+
+/* ── Mode toggle: SCAN LOSSES | COUNTER A DECK ──────────────────────────── */
+.deckai-mode-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.deckai-mode-btn {
+  color: #94A3B8 !important;
+  background: rgba(11, 20, 55, 0.65) !important;
+  border: 1px solid rgba(59, 130, 246, 0.22) !important;
+  border-radius: 6px !important;
+  font-family: monospace !important;
+  font-weight: 800 !important;
+  font-size: 0.64rem !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  padding: 4px 14px !important;
+  min-width: 0 !important;
+  transition: color 0.15s, background 0.15s, border-color 0.15s !important;
+}
+
+.deckai-mode-btn:hover {
+  color: #CBD5E1 !important;
+  border-color: rgba(99, 160, 255, 0.45) !important;
+}
+
+.deckai-mode-btn-active {
+  color: #F1F5F9 !important;
+  background: rgba(30, 58, 138, 0.65) !important;
+  border-color: #60A5FA !important;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.25) !important;
+}
+
+/* ── Trophy band row ─────────────────────────────────────────────────────── */
+.deckai-band-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.85rem;
+}
+
+/* Detected band ("~14,000 · TOP LADDER") — purple, distinct from the blue UI. */
+.deckai-band-chip {
+  background: rgba(76, 29, 149, 0.5) !important;
+  color: #E9D5FF !important;
+  font-family: monospace !important;
+  font-weight: 800 !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.12em !important;
+  border: 1px solid rgba(194, 147, 248, 0.5) !important;
+  height: 21px !important;
+}
+
+.deckai-band-select {
+  color: #CBD5E1 !important;
+  background: rgba(11, 20, 55, 0.65) !important;
+  font-family: monospace !important;
+  font-size: 0.66rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+  height: 26px;
+  min-width: 88px;
+}
+
+.deckai-band-select .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.deckai-band-select:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(99, 160, 255, 0.55) !important;
+}
+
+.deckai-band-select .MuiSelect-icon {
+  color: #60A5FA !important;
+}
+
+.deckai-band-item {
+  font-family: monospace !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+}
+
+/* Small muted note next to a control ("forced · re-runs on change"). */
+.deckai-hint {
+  color: #64748B !important;
+  font-family: monospace !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+.deckai-picker-label {
+  color: #94A3B8 !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.25em !important;
+  font-weight: 700 !important;
+  font-family: monospace !important;
+  text-transform: uppercase !important;
+  margin-bottom: 0.55rem !important;
+  display: block !important;
+}
+
+.deckai-clear-btn {
+  color: #94A3B8 !important;
+  font-family: monospace !important;
+  font-size: 0.64rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  min-width: 0 !important;
+  padding: 4px 10px !important;
+}
+
+.deckai-clear-btn:hover {
+  color: #F87171 !important;
+}
+
+/* Right-hand cluster in a deck header: stat chips + the COPY button. */
+.deckai-deck-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* ── Optimizer variant tabs (up to 3 suggestions) ───────────────────────── */
+.deckai-variant-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.deckai-variant-tab {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  color: #94A3B8 !important;
+  background: rgba(11, 20, 55, 0.65) !important;
+  border: 1px solid rgba(74, 222, 128, 0.16) !important;
+  border-radius: 6px !important;
+  font-family: monospace !important;
+  font-weight: 800 !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  padding: 3px 14px !important;
+  line-height: 1.25 !important;
+  min-width: 0 !important;
+}
+
+.deckai-variant-tab:hover {
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: #CBD5E1 !important;
+}
+
+/* The backend's top pick stays visually primary even when unselected. */
+.deckai-variant-tab-primary {
+  color: #86EFAC !important;
+  border-color: rgba(74, 222, 128, 0.35) !important;
+}
+
+.deckai-variant-tab-active {
+  color: #F1F5F9 !important;
+  background: rgba(22, 78, 44, 0.6) !important;
+  border-color: rgba(74, 222, 128, 0.75) !important;
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.22) !important;
+}
+
+.deckai-variant-sub {
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  opacity: 0.7;
+}
+
+/* An alternate (non-primary) variant reads cooler than the green "best" one. */
+.deckai-optimized-card-alt {
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  border-top-color: rgba(99, 160, 255, 0.45) !important;
+}

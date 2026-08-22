@@ -18,6 +18,9 @@ export async function POST(request: Request) {
   const query = typeof body?.query === 'string' ? body.query : '';
   const topK = Number(body?.topK) || 6;
   const tag = typeof body?.tag === 'string' ? body.tag : undefined;
+  // Trophy band ("low"|"mid"|"high"|"top") — optional; omitted means the
+  // backend picks/ignores it. Passed straight through.
+  const band = typeof body?.band === 'string' && body.band ? body.band : undefined;
 
   const url = `${apiBase}/intel/deck-counters`;
   const response = await fetch(url, {
@@ -27,7 +30,7 @@ export async function POST(request: Request) {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ query, topK, tag }),
+    body: JSON.stringify({ query, topK, tag, band }),
   });
 
   const data = await response.json();
