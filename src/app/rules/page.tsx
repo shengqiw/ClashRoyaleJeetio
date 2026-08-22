@@ -140,8 +140,8 @@ export default function RulesPage() {
               {[
                 'Missing more than 2 war weeks in a row',
                 'Inactive for 1 month',
-                'Toxic behavior or harassment of clan members',
-                'Promoting other clans in chat'
+                'Extreme Toxic behavior or Harassment',
+                'Promoting other clans'
               ].map((item, index) => (
                 <ListItem key={index} sx={{ py: 0.75 }}>
                   <ListItemIcon sx={{ minWidth: 36 }}>

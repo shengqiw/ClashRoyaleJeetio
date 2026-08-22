@@ -25,8 +25,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# local env files — the trailing-* matters: .env.local.bak holds live keys and the
+# bare `.env*.local` pattern does NOT match it.
 .env*.local
+.env*.local.*
+*.env.bak
+
+# scratch / staging areas that must never ship
+_to_delete/
+
+# Claude<->Claude mailbox: local-only by design, see CLAUDE.md
+COMMS.md
 
 # vercel
 .vercel

@@ -1,6 +1,5 @@
 import { Clan } from "@/types/Clan";
 import { Grid2 as Grid, Typography } from "@mui/material";
-// import { MemberList } from "./member-list";
 import clanWar from "@/assets/clan-war.jpg";
 import Image from "next/image";
 

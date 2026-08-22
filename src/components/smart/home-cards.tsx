@@ -1,26 +1,22 @@
 import { Grid2 as Grid } from "@mui/material";
 import { MyCard } from "../dumb/card";
-import explorer from "@/assets/explorer.jpg";
-import pekka from "@/assets/pekka.jpg";
-import battleHealer from "@/assets/battle-healer.jpg";
+import { cardFeatures } from "@/lib/features";
 
+/** Home tiles come from the feature registry — see src/lib/features.ts to add one. */
 export const HomeCards = () => {
+  const features = cardFeatures();
   return (
     <Grid container spacing={8} paddingX={8}>
-      <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={explorer.src} title="Rules" href="/rules" />
-      </Grid>
-      <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={pekka.src} title="Stats" href="/stats" />
-      </Grid>
-      <Grid size={{xs: 12, md:4}}>
-        <MyCard
-          bgImage={battleHealer.src}
-          title="Promotions"
-          href="/promotions"
-          styleProps={{'backgroundPosition': "25%" }}
-        />
-      </Grid>
+      {features.map((f) => (
+        <Grid key={f.key} size={{ xs: 12, md: 12 / Math.min(features.length, 3) }}>
+          <MyCard
+            bgImage={f.card!.image.src}
+            title={f.title}
+            href={f.href}
+            styleProps={f.card!.styleProps}
+          />
+        </Grid>
+      ))}
     </Grid>
   );
 };

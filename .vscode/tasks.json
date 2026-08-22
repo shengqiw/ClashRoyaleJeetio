@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ui: jeetio (next dev :3000)",
+      "type": "shell",
+      "command": "lsof -ti:3000 | xargs kill -9 2>/dev/null; npm run dev",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "jeetio-servers",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": { "runOn": "folderOpen" }
+    },
+    {
+      "label": "api: clash lambdas (:4000)",
+      "type": "shell",
+      "command": "lsof -ti:4000 | xargs kill -9 2>/dev/null; node dev-server.mjs",
+      "options": { "cwd": "${workspaceFolder}/../clash-royale-apis" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "jeetio-servers",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": { "runOn": "folderOpen" }
+    },
+    {
+      "label": "dev: all",
+      "dependsOn": ["ui: jeetio (next dev :3000)", "api: clash lambdas (:4000)"],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
+    }
+  ]
+}
