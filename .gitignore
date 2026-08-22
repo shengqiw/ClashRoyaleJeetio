@@ -18,13 +18,22 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# local env files. Deliberately broad: `.env*.local` required the name to END in
+# .local, so .env.local.bak — which holds real API keys — slipped straight through.
+*.env*
+# ...but the template must stay committable, or a fresh clone has no env reference.
+!.env.example
 
 # editor
 *.code-workspace
 .vscode/
 .idea/
+
+# scratch / staging areas that must never ship
+_to_delete/
+
+# Claude<->Claude mailbox: local-only by design, see CLAUDE.md
+COMMS.md
 
 # vercel
 .vercel
