@@ -594,6 +594,29 @@
   align-items: flex-end;
 }
 
+/* Name + COPY pill on one line above each side's card grid. */
+.deckai-match-namerow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.deckai-match-side-right .deckai-match-namerow {
+  justify-content: flex-end;
+}
+
+/* Compact copy variant for dense match rows: no slide-out hover hint. */
+.copy-deck-btn-sm .copy-deck-btn-hint {
+  display: none;
+}
+
+.copy-deck-btn-sm {
+  padding: 2px 7px;
+  font-size: 0.55rem;
+}
+
 .deckai-match-name {
   font-size: 0.62rem !important;
   color: #94A3B8 !important;

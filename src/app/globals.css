@@ -265,6 +265,7 @@ nav li {
    "open in Clash Royale" hint so the double action (clipboard + deep link)
    is never a surprise. */
 .copy-deck-btn {
+  text-decoration: none; /* it's an <a> now — keep the pill look */
   display: inline-flex;
   align-items: center;
   gap: 0;

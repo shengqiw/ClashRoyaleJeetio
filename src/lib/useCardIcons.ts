@@ -32,7 +32,7 @@ let cachePromise: Promise<CardCatalog> | null = null;
 const EVO_KEY_PREFIX = "evo::";
 
 /** True when a name asks for the evolution variant ("Evo Knight", "Evolved Knight"). */
-function wantsEvo(name: string): boolean {
+export function wantsEvo(name: string): boolean {
   return /^\s*(evo|evolved)\s+/i.test(name);
 }
 

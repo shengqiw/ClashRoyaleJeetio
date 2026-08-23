@@ -193,6 +193,8 @@ type BattleSide = {
   name?: string;
   crowns: number;
   cards: BattleCard[];
+  /** Tower troop(s), when the backend battlelog carries them. */
+  supportCards?: BattleCard[];
 };
 
 type Battle = {
@@ -1003,7 +1005,14 @@ export default function DeckAIPage() {
                       >
                         {/* Player */}
                         <Box className="deckai-match-side">
-                          <Typography className="deckai-match-name">You</Typography>
+                          <Box className="deckai-match-namerow">
+                            <Typography className="deckai-match-name">You</Typography>
+                            <CopyDeckButton
+                              names={me?.cards?.map((c) => c.name)}
+                              towerTroop={me?.supportCards?.[0]?.name}
+                              className="copy-deck-btn-sm"
+                            />
+                          </Box>
                           <Box className="deckai-match-cards">
                             {renderCards(me?.cards ?? [])}
                           </Box>
@@ -1031,9 +1040,16 @@ export default function DeckAIPage() {
 
                         {/* Opponent */}
                         <Box className="deckai-match-side deckai-match-side-right">
-                          <Typography className="deckai-match-name">
-                            {opp?.name ?? "Opponent"}
-                          </Typography>
+                          <Box className="deckai-match-namerow">
+                            <CopyDeckButton
+                              names={opp?.cards?.map((c) => c.name)}
+                              towerTroop={opp?.supportCards?.[0]?.name}
+                              className="copy-deck-btn-sm"
+                            />
+                            <Typography className="deckai-match-name">
+                              {opp?.name ?? "Opponent"}
+                            </Typography>
+                          </Box>
                           <Box className="deckai-match-cards">
                             {renderCards(opp?.cards ?? [])}
                           </Box>

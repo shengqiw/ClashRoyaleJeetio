@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { CopyDeckButton } from "../../../lib/CopyDeckButton";
 import "./member.css";
 
 const getRoleColor = (role: string) => {
@@ -166,7 +167,13 @@ export default function MemberPage() {
             {player.currentDeck?.length > 0 && (
               <>
                 <Divider className="player-divider" />
-                <Typography className="section-heading">Current Deck</Typography>
+                <Box className="section-heading-row">
+                  <Typography className="section-heading">Current Deck</Typography>
+                  <CopyDeckButton
+                    names={player.currentDeck.map((c: any) => c.name)}
+                    towerTroop={player.currentDeckSupportCards?.[0]?.name}
+                  />
+                </Box>
                 <Box className="deck-section">
                   <Box className="deck-grid">
                     {player.currentDeck.map((card: any) => (

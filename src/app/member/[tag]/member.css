@@ -104,6 +104,14 @@
   font-weight: 700;
 }
 
+/* Heading + inline action (e.g. Current Deck's COPY pill) on one line. */
+.section-heading-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
 .section-heading {
   font-size: 0.68rem !important;
   text-transform: uppercase !important;
