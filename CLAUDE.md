@@ -67,6 +67,11 @@ something twice, add it to `warnings` so the third time is free.
   that environment. `.env.local` on Shen's Mac does NOT have them, so local dev cannot reach
   the backend without them; `/api/health` says so explicitly.
 - Client hangs with "Unexpected end of JSON input" → a route bypassed `proxyJson.ts`.
+- MUI renders inside `@layer mui` (`enableCssLayer: true` in `mui-app-provider.tsx`), so
+  ANY unlayered element selector in a global stylesheet beats MUI's own styles regardless
+  of specificity. A bare `li { display: inline }` in globals.css flattened the card-picker
+  Autocomplete into an inline soup this way (fixed 2026-08-23 by scoping to `nav li`).
+  Never add bare element selectors to global CSS — scope them.
 - `npm run lint` reports `react-hooks/set-state-in-effect` in `admin`, `deckai`, `stats`.
   **These are false positives — do not "fix" them.** The effects load `localStorage` state
   on mount via helpers that guard `typeof window === "undefined"`. Moving them into a lazy
