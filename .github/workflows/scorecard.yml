@@ -1,0 +1,50 @@
+# The scorecard: play the 18-hole Deck AI eval against production and commit
+# the round. Runs on every master push (after Vercel finishes deploying it),
+# weekly to catch data drift, and on demand.
+name: scorecard
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 8am America/Chicago (13:00 UTC)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scorecard
+  cancel-in-progress: false
+
+jobs:
+  round:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # A push landed a new build — give Vercel time to promote it so the
+      # round is played against what just shipped.
+      - name: Wait for Vercel deploy
+        if: github.event_name == 'push'
+        run: sleep 150
+
+      - name: Play the round
+        run: node eval/scorecard.mjs
+
+      # [skip ci] keeps Vercel from redeploying over a docs-only commit;
+      # pushes made with GITHUB_TOKEN never retrigger workflows.
+      - name: Commit the round
+        run: |
+          git config user.name "jeetio-scorecard"
+          git config user.email "actions@users.noreply.github.com"
+          git pull --rebase origin master
+          git add eval/scorecard.md eval/scorecard-history.json
+          git diff --cached --quiet || git commit -m "scorecard: round $(date -u +%F) [skip ci]"
+          git push origin master

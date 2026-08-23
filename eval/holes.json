@@ -1,0 +1,23 @@
+{
+  "comment": "The 18 holes: fixed archetype lineups scored against /api/deck-intel on every round. Don't edit casually — the handicap trend is only meaningful against a stable course. expectAnyOf = golden answer: at least one of these counters should appear somewhere in the returned winner decks.",
+  "holes": [
+    { "name": "Hog 2.6 Cycle", "band": "top", "cards": ["Hog Rider", "Ice Golem", "Musketeer", "Cannon", "Skeletons", "Ice Spirit"], "expectAnyOf": ["Cannon", "Tesla", "Bomb Tower", "Tornado", "Goblin Cage", "P.E.K.K.A", "Mini P.E.K.K.A"] },
+    { "name": "Golem Beatdown", "band": "high", "cards": ["Golem", "Night Witch", "Baby Dragon", "Lightning"], "expectAnyOf": ["Inferno Tower", "Inferno Dragon", "P.E.K.K.A", "Mighty Miner", "Hunter", "Fisherman", "Mini P.E.K.K.A"] },
+    { "name": "LavaLoon", "band": "high", "cards": ["Lava Hound", "Balloon", "Mega Minion", "Tombstone"], "expectAnyOf": ["Musketeer", "Archers", "Tesla", "Inferno Dragon", "Mega Minion", "Hunter", "Archer Queen", "Rocket", "Firecracker"] },
+    { "name": "X-Bow 2.9 Siege", "band": "top", "cards": ["X-Bow", "Tesla", "Archers", "The Log", "Fireball", "Skeletons"], "expectAnyOf": ["Royal Giant", "Golem", "Giant", "Rocket", "Lightning", "Earthquake", "Mega Knight"] },
+    { "name": "Classic Log Bait", "band": "top", "cards": ["Goblin Barrel", "Princess", "Goblin Gang", "Rocket", "Knight", "Inferno Tower"], "expectAnyOf": ["The Log", "Barbarian Barrel", "Arrows", "Zap", "Giant Snowball"] },
+    { "name": "Mega Knight Bridge Spam", "band": "mid", "cards": ["Mega Knight", "Bandit", "Battle Ram", "Royal Ghost"], "expectAnyOf": ["P.E.K.K.A", "Inferno Tower", "Mini P.E.K.K.A", "Hunter", "Fisherman", "Bowler"] },
+    { "name": "Royal Giant Cycle", "band": "high", "cards": ["Royal Giant", "Fisherman", "Lightning", "Hunter"], "expectAnyOf": ["P.E.K.K.A", "Inferno Tower", "Mini P.E.K.K.A", "Cannon", "Bomb Tower", "Mighty Miner"] },
+    { "name": "Graveyard Freeze", "band": "high", "cards": ["Graveyard", "Ice Wizard", "Freeze", "Knight"], "expectAnyOf": ["Valkyrie", "Ice Wizard", "Bowler", "Poison", "Executioner", "Dark Prince", "Mother Witch"] },
+    { "name": "Miner Poison Control", "band": "top", "cards": ["Miner", "Poison", "Valkyrie", "Wall Breakers"], "expectAnyOf": ["Bomb Tower", "Tesla", "Cannon", "Tornado", "Valkyrie", "Knight"] },
+    { "name": "P.E.K.K.A Bridge Spam", "band": "high", "cards": ["P.E.K.K.A", "Battle Ram", "Bandit", "Electro Wizard"], "expectAnyOf": ["Inferno Tower", "Skeleton Army", "Guards", "Goblin Cage", "Mega Knight", "Minion Horde"] },
+    { "name": "Elixir Golem Heal", "band": "mid", "cards": ["Elixir Golem", "Battle Healer", "Skeleton Dragons", "Heal Spirit"], "expectAnyOf": ["Inferno Tower", "Inferno Dragon", "P.E.K.K.A", "Fisherman", "Tornado", "Mighty Miner"] },
+    { "name": "LumberLoon Freeze", "band": "high", "cards": ["Balloon", "Lumberjack", "Freeze", "Ice Golem"], "expectAnyOf": ["Tesla", "Musketeer", "Mega Minion", "Hunter", "Rocket", "Archers", "Inferno Dragon", "Firecracker"] },
+    { "name": "Mortar Bait", "band": "top", "cards": ["Mortar", "Miner", "Goblin Gang", "The Log"], "expectAnyOf": ["Valkyrie", "Mega Knight", "Bowler", "Arrows", "Royal Delivery", "Dark Prince"] },
+    { "name": "Three Musketeers Pump", "band": "high", "cards": ["Three Musketeers", "Elixir Collector", "Battle Ram", "Ice Golem"], "expectAnyOf": ["Fireball", "Lightning", "Rocket", "Poison"] },
+    { "name": "Hog Earthquake", "band": "mid", "cards": ["Hog Rider", "Earthquake", "Mother Witch", "Cannon"], "expectAnyOf": ["Tornado", "Cannon", "Tesla", "Bomb Tower", "Knight"] },
+    { "name": "Splashyard", "band": "high", "cards": ["Graveyard", "Bowler", "Tornado", "Baby Dragon"], "expectAnyOf": ["Poison", "Valkyrie", "Executioner", "Ice Wizard", "Mother Witch"] },
+    { "name": "Mid-ladder Menace", "band": "mid", "cards": ["Mega Knight", "Witch", "Sparky", "Elite Barbarians"], "expectAnyOf": ["Zap", "Rocket", "P.E.K.K.A", "Inferno Tower", "Lightning", "Mini P.E.K.K.A"] },
+    { "name": "Sparky Royal Giant", "band": "mid", "cards": ["Sparky", "Royal Giant", "Dark Prince", "Goblin Gang"], "expectAnyOf": ["Zap", "Lightning", "Rocket", "Electro Dragon", "P.E.K.K.A", "Inferno Tower"] }
+  ]
+}
