@@ -89,14 +89,18 @@ nav {
   border: 1px solid #000;
 }
 
-ul {
+/* Scoped to the nav — bare `ul`/`li` selectors here used to leak into every
+   list on the site, including MUI's Autocomplete/Select popups (which render
+   inside @layer mui and lose to any unlayered element selector). That's what
+   flattened the card-picker dropdown into an inline soup. Keep these scoped. */
+nav ul {
   margin-left: auto;
   margin-right: 1.25rem;
   list-style: none;
   padding: 0;
 }
 
-li {
+nav li {
   display: inline;
   margin: 0 2px;
   padding: 0.4rem 0.7rem;
@@ -232,7 +236,7 @@ li {
     height: 36px !important;
   }
 
-  ul {
+  nav ul {
     margin-left: 0;
     margin-right: 0;
     display: flex;
@@ -240,7 +244,7 @@ li {
     width: 100%;
   }
 
-  li {
+  nav li {
     padding: 0.25rem 0.45rem;
     margin: 0 1px;
   }
@@ -251,7 +255,7 @@ li {
     height: 30px !important;
   }
 
-  li {
+  nav li {
     padding: 0.2rem 0.3rem;
     margin: 0;
   }
@@ -341,6 +345,20 @@ li {
   width: 26px;
   height: auto;
   object-fit: contain;
+}
+
+/* One option per row, always — belt and braces against any future global
+   selector leaking into MUI's portal-rendered listbox. */
+ul.MuiAutocomplete-listbox {
+  display: block;
+  margin: 0;
+  padding: 8px 0;
+}
+
+ul.MuiAutocomplete-listbox li.MuiAutocomplete-option {
+  display: flex;
+  margin: 0;
+  padding: 6px 16px;
 }
 
 .card-picker-slots {

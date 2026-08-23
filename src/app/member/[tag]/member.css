@@ -156,10 +156,12 @@
   align-items: stretch;
 }
 
-/* 8 deck cards: 4 across, 2 rows */
+/* 8 deck cards: 4 across, 2 rows. minmax(0, 1fr) lets tiles shrink below
+   their content width on narrow phones — with bare 1fr, a long card name
+   forces the column wider and the grid bleeds under the side column. */
 .deck-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
@@ -211,6 +213,8 @@
   color: #F1F5F9 !important;
   line-height: 1.3 !important;
   font-weight: 600;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .deck-card-level {
@@ -242,6 +246,23 @@
 
   .deck-side {
     width: 84px;
+  }
+
+  .deck-card {
+    padding: 0.45rem 0.35rem;
+  }
+}
+
+/* Narrow phones: side column drops below the deck grid instead of squeezing it */
+@media (max-width: 480px) {
+  .deck-section {
+    flex-direction: column;
+  }
+
+  .deck-side {
+    width: 100%;
+    grid-template-rows: none;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
