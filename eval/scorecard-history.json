@@ -43,5 +43,14 @@
     "par": 54,
     "aces": 6,
     "blowups": 2
+  },
+  {
+    "date": "2026-09-07",
+    "sha": "d288d9a",
+    "base": "https://www.jeetio.com",
+    "strokes": 30,
+    "par": 54,
+    "aces": 8,
+    "blowups": 0
   }
 ]

@@ -15,26 +15,27 @@ don't edit by hand.
 | 2026-08-24 | 6de1396 | 30 | -24 | 8 | 0 |
 | 2026-08-31 | bfb78a9 | 30 | -24 | 8 | 0 |
 | 2026-09-07 | 77001dc | 42 | -12 | 6 | 2 |
+| 2026-09-07 | d288d9a | 30 | -24 | 8 | 0 |
 
-## Last round — 2026-09-07 (77001dc) vs https://www.jeetio.com
+## Last round — 2026-09-07 (d288d9a) vs https://www.jeetio.com
 
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
-| 1 | Hog 2.6 Cycle | top | 7 | 10633ms | answered, valid, relevant, evidence, golden, fast |
-| 2 | Golem Beatdown | high | 1 | 1622ms | — |
-| 3 | LavaLoon | high | 1 | 641ms | — |
-| 4 | X-Bow 2.9 Siege | top | 1 | 605ms | — |
-| 5 | Classic Log Bait | top | 1 | 405ms | — |
-| 6 | Mega Knight Bridge Spam | mid | 2 | 478ms | relevant |
-| 7 | Royal Giant Cycle | high | 3 | 614ms | relevant, golden |
-| 8 | Graveyard Freeze | high | 1 | 499ms | — |
-| 9 | Miner Poison Control | top | 1 | 461ms | — |
-| 10 | P.E.K.K.A Bridge Spam | high | 2 | 1031ms | golden |
-| 11 | Elixir Golem Heal | mid | 3 | 518ms | relevant, golden |
-| 12 | LumberLoon Freeze | high | 7 | 10110ms | answered, valid, relevant, evidence, golden, fast |
-| 13 | Mortar Bait | top | 2 | 929ms | relevant |
-| 14 | Three Musketeers Pump | high | 2 | 449ms | relevant |
-| 15 | Hog Earthquake | mid | 2 | 490ms | relevant |
-| 16 | Splashyard | high | 2 | 402ms | relevant |
-| 17 | Mid-ladder Menace | mid | 2 | 405ms | relevant |
-| 18 | Sparky Royal Giant | mid | 2 | 454ms | relevant |
+| 1 | Hog 2.6 Cycle | top | 1 | 1857ms | — |
+| 2 | Golem Beatdown | high | 1 | 531ms | — |
+| 3 | LavaLoon | high | 1 | 492ms | — |
+| 4 | X-Bow 2.9 Siege | top | 1 | 447ms | — |
+| 5 | Classic Log Bait | top | 1 | 466ms | — |
+| 6 | Mega Knight Bridge Spam | mid | 2 | 593ms | relevant |
+| 7 | Royal Giant Cycle | high | 3 | 528ms | relevant, golden |
+| 8 | Graveyard Freeze | high | 1 | 504ms | — |
+| 9 | Miner Poison Control | top | 1 | 494ms | — |
+| 10 | P.E.K.K.A Bridge Spam | high | 2 | 409ms | golden |
+| 11 | Elixir Golem Heal | mid | 3 | 418ms | relevant, golden |
+| 12 | LumberLoon Freeze | high | 1 | 520ms | — |
+| 13 | Mortar Bait | top | 2 | 458ms | relevant |
+| 14 | Three Musketeers Pump | high | 2 | 410ms | relevant |
+| 15 | Hog Earthquake | mid | 2 | 427ms | relevant |
+| 16 | Splashyard | high | 2 | 397ms | relevant |
+| 17 | Mid-ladder Menace | mid | 2 | 393ms | relevant |
+| 18 | Sparky Royal Giant | mid | 2 | 464ms | relevant |
