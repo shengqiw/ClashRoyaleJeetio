@@ -478,7 +478,7 @@ export default function DeckAIPage() {
     <Box className="deckai-bg">
       {/* ── Header ── */}
       <Box className="deckai-header">
-        <Typography className="deckai-title">Deck AI</Typography>
+        <Typography component="h1" className="deckai-title">Deck AI</Typography>
         <Typography className="deckai-subtitle">
           {mode === "counter"
             ? "Name their deck · get the answer"

@@ -586,7 +586,7 @@ export default function AdminPage() {
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
         {/* Header */}
         <Box sx={{ textAlign: "center", mb: 3 }}>
-          <Typography className="game-title">Admin · Embeddings</Typography>
+          <Typography component="h1" className="game-title">Admin · Embeddings</Typography>
           <Typography className="game-subtitle" sx={{ mt: 1 }}>
             Battle-graph deck-matchup vectors (cr-bg-*)
           </Typography>

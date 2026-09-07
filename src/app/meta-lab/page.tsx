@@ -152,7 +152,7 @@ export default function MetaLabPage() {
         <Container maxWidth="sm">
           <Box className={`metalab-gate${shake ? " metalab-shake" : ""}`}>
             <Typography className="metalab-crown">👑</Typography>
-            <Typography className="metalab-title">Meta Lab</Typography>
+            <Typography component="h1" className="metalab-title">Meta Lab</Typography>
             <Typography className="metalab-tagline">
               the p2w edge, earned with data
             </Typography>

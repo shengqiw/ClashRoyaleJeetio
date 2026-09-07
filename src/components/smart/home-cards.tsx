@@ -8,13 +8,13 @@ export const HomeCards = () => {
   return (
     <Grid container spacing={8} sx={{ px: 8 }}>
       <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={monkBg.src} title="Clan Info" href="/clan-info" />
+        <MyCard image={monkBg} title="Clan Info" href="/clan-info" priority />
       </Grid>
       <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={pekka.src} title="Stats Lookup" href="/stats" />
+        <MyCard image={pekka} title="Stats Lookup" href="/stats" />
       </Grid>
       <Grid size={{xs: 12, md: 4}}>
-        <MyCard bgImage={spells.src} title="Deck AI" href="/deckai" />
+        <MyCard image={spells} title="Deck AI" href="/deckai" />
       </Grid>
     </Grid>
   );

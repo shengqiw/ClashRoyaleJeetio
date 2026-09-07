@@ -82,7 +82,7 @@ export default function PromotionsPage() {
           transition={{ duration: 0.5 }}
           style={{ textAlign: "center", marginBottom: "2rem" }}
         >
-          <Typography className="game-title">Clan Progression</Typography>
+          <Typography component="h1" className="game-title">Clan Progression</Typography>
           <Typography className="game-subtitle" sx={{ mt: 1 }}>
             Your path to leadership starts here
           </Typography>

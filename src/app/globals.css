@@ -129,8 +129,8 @@ nav li {
   height: 350px;
   width: 100%;
   filter: brightness(0.95);
-  background-size: cover;
-  background-position: center;
+  position: relative; /* anchors the next/image fill */
+  overflow: hidden;
   border-radius: 10px;
   box-shadow: 8px 8px 10px rgba(0, 0, 0, 0.6);
   display: flex;

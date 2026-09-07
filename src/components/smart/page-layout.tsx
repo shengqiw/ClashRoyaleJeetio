@@ -51,6 +51,10 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
         </Link>
         <span className="site-footer-sep">·</span>
         <span className="site-footer-copy">© {new Date().getFullYear()} Jeetio. All rights reserved.</span>
+        <span className="site-footer-sep">·</span>
+        <Link href="/privacy" className="site-footer-copy no-underline">
+          Privacy
+        </Link>
       </footer>
     </div>
   );

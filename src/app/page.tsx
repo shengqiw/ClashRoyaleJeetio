@@ -1,5 +1,8 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { HomeCards } from "@/components/smart/home-cards";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const features = [
   {
@@ -19,7 +22,7 @@ export default function Root() {
     <>
       <Grid container sx={{ mt: 3 }}>
         <Grid size={8} offset={2} sx={{ textAlign: "center" }}>
-          <Typography variant="h3" className="purple-shadow">
+          <Typography variant="h3" component="h1" className="purple-shadow">
             Jeetio Clash Royale
           </Typography>
           <Typography variant="body1" className="purple-shadow" sx={{ mt: 1.5, opacity: 0.85 }}>

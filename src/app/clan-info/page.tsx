@@ -154,7 +154,7 @@ export default function ClanInfoPage() {
           transition={{ duration: 0.5 }}
           style={{ textAlign: "center", marginBottom: "2rem" }}
         >
-          <Typography className="game-title">Clan Info</Typography>
+          <Typography component="h1" className="game-title">Clan Info</Typography>
           <Typography className="game-subtitle" sx={{ mt: 1 }}>
             Rules, ranks, and the path to leadership
           </Typography>

@@ -147,7 +147,7 @@ export default function Stats() {
     <Box className="stats-bg">
       {/* Header */}
       <Box className="stats-header">
-        <Typography className="stats-title">Stats Lookup</Typography>
+        <Typography component="h1" className="stats-title">Stats Lookup</Typography>
         <Typography className="stats-tag-display">
           {mode === "clan"
             ? `Clan: #${activeTag}`
