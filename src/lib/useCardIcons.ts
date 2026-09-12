@@ -31,23 +31,10 @@ let cachePromise: Promise<CardCatalog> | null = null;
 // than the base card icon.
 const EVO_KEY_PREFIX = "evo::";
 
-/** True when a name asks for the evolution variant ("Evo Knight", "Evolved Knight"). */
-export function wantsEvo(name: string): boolean {
-  return /^\s*(evo|evolved)\s+/i.test(name);
-}
-
-/**
- * Collapse a card name to a comparison key that tolerates the variants an LLM
- * (or stored "Evo " prefix) produces: case, punctuation/spaces ("P.E.K.K.A" →
- * "pekka"), and the leading words "Evo "/"Evolved "/"The " ("Log" ⇄ "The Log").
- */
-export function normalizeCardName(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/^(evo|evolved)\s+/, "")
-    .replace(/^the\s+/, "")
-    .replace(/[^a-z0-9]/g, "");
-}
+// Name helpers live in cardName.ts (no "use client") so server code can share
+// them; re-exported here so existing imports keep working.
+export { wantsEvo, normalizeCardName } from "./cardName";
+import { wantsEvo, normalizeCardName } from "./cardName";
 
 async function loadCardCatalog(): Promise<CardCatalog> {
   const res = await fetch("/api/cards");

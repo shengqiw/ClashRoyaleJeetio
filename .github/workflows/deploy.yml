@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # War Decks engine constraints (own every card, no card twice, …) — no network.
+      - name: Test
+        run: npm test
+
       - name: Build
         env:
           API_KEY: ${{ secrets.API_KEY }}

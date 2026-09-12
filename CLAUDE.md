@@ -21,6 +21,7 @@ credentials and talks to no Supercell endpoint directly.
   Backend paths are `/clash/...` (clan, player, battlelog, cards) and `/intel/...`
   (deck counters, path-of-legend, pinecone, jobs).
 - `src/app/api/*` — 15 thin proxy routes. Each checks the two env vars, fetches, returns.
+  Exception: `api/war-decks` does real work (see War Decks below).
 - `src/lib/proxyJson.ts` — use this for backend calls that can hang or return non-JSON.
   It exists because a raw `await res.json()` on a gateway-timeout page throws inside the
   handler and Next turns that into an empty 500.
@@ -81,6 +82,40 @@ something twice, add it to `warnings` so the third time is free.
   `useState(() => ...)` initializer runs during SSR, returns the empty fallback, and the
   feature silently stops loading. The rule arrived with eslint-config-next 16.3.x.
 - Lint does not gate `next build`; the build passing does not mean lint is clean.
+
+## War Decks (Deck AI → "War Decks", added 2026-09-12)
+
+Builds a player's 4 Clan War decks (32 different cards, real levels) from a meta
+snapshot. `POST /api/war-decks { tag, band? }` — one backend call (`/clash/player/:tag`
+for the collection) + one Gemini call. Layers, in the order to read them:
+
+- `src/data/metaDecks.ts` — the dated meta snapshot (~30 decks, tier, bands, family,
+  trends). **This is the thing to refresh** after each balance patch; the file header
+  says how. Names use `Evo X` / `Hero X` prefixes; the engine strips them when the
+  player lacks the variant.
+- `src/data/cardRoles.ts` — role + elixir + preferred substitutes per card. Substitution
+  is how a template survives a missing / underleveled / already-used card. A card
+  missing here is a test failure (`npm test`), because the engine can't reason about it.
+- `src/lib/warDecks.ts` — pure engine. Level normalization (API levels are rarity-
+  relative: max legendary = 6/6 → in-game 14), band from trophies (low <5k, mid 5–8k,
+  high 8–11k, top ≥11k or PoL league ≥10), realize each template, greedy + improve
+  lineup search, `validateLineup`. No network, no React — `npm test` covers it.
+- `src/lib/warAdvisor.ts` — Gemini picks between the engine's lineups, assigns war
+  roles (duel opener/second/closer, 1v1/boat), writes the why/how, may swap ≤3 cards
+  from the player's unused cards. Every swap is re-validated; anything invalid is
+  dropped. No key / quota / timeout → `cannedOutcome` (rule-based, flagged in
+  `advisor.used=false`). The page never goes dark because Gemini did.
+- `src/lib/gemini.ts` — REST wrapper (no SDK). `GEMINI_API_KEY` (free AI Studio key),
+  `GEMINI_MODEL` (default gemini-2.5-flash, thinking off), `GEMINI_API_BASE` (tests only).
+- Route caches per tag+band for 10 min in-instance to spare the free-tier RPM.
+
+Local end-to-end without the real backend: `npx tsx eval/mock-backend.mjs`, then
+`API_BASE_URL=http://localhost:4000 API_KEY=x GEMINI_API_KEY=x
+GEMINI_API_BASE=http://localhost:4000/gemini npm start` and open `/deckai?mode=war`
+with tag `#FULL` (maxed) or anything else (partial mid-ladder collection).
+
+Known unknowns: the Supercell API's hero-unlock field isn't documented, so `Hero X`
+asks surface as a warning ("use it if unlocked") rather than being detected.
 
 ## PWA (added 2026-09-12)
 

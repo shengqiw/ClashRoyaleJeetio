@@ -7,7 +7,7 @@
 - [Home](https://www.jeetio.com/): what the clan is and what the site does.
 - [Clan Info](https://www.jeetio.com/clan-info): about the clan, rules, ranks and the path to leadership.
 - [Stats Lookup](https://www.jeetio.com/stats): search any player by tag (trophies, win rate, deck, donations), browse any clan's roster, or view the top 50 USA Path of Legend players.
-- [Deck AI](https://www.jeetio.com/deckai): name the deck you lose to and get a counter deck built from cards you own, with reasoning.
+- [Deck AI](https://www.jeetio.com/deckai): name the deck you lose to and get a counter deck built from cards you own, with reasoning. Its War Decks mode (https://www.jeetio.com/deckai?mode=war) builds 4 Clan War decks — 32 different cards — from the current meta at the player's real card levels.
 - [Clan Rules](https://www.jeetio.com/rules): donation, war and activity expectations.
 - [Clan Progression](https://www.jeetio.com/promotions): how promotions from member to elder to co-leader work.
 - [Privacy](https://www.jeetio.com/privacy): what the site collects (cookieless analytics only).

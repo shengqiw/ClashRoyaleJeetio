@@ -184,6 +184,60 @@ type DeckOptimization = {
 /** How many optimizer variants we surface (the backend may send more). */
 const MAX_OPT_SUGGESTIONS = 3;
 
+// ── War Decks (POST /api/war-decks) ──
+type WarCardView = {
+  name: string;
+  label: string;
+  level: number;
+  elixir: number;
+  evo: boolean;
+  hero: boolean;
+  replaces?: string;
+  reason?: string;
+};
+
+type WarDeckView = {
+  templateId: string;
+  name: string;
+  family: string;
+  tier: string;
+  cards: WarCardView[];
+  avgElixir: number;
+  avgLevel: number;
+  substitutions: { out: string; in: string; reason: string }[];
+  warnings: string[];
+  note: string;
+  source: string;
+  warRole: string;
+  why: string;
+  howToPlay: string;
+};
+
+type WarData = {
+  player: { tag: string; name?: string; trophies?: number; bestTrophies?: number; expLevel?: number };
+  band: TrophyBand;
+  bandSource: "override" | "trophies" | "league" | "default";
+  ref: number;
+  ownedCount: number;
+  decks: WarDeckView[];
+  summary: string;
+  alternates: { score: number; decks: { name: string; family: string; cards: string[] }[] }[];
+  unusedTop: { name: string; level: number }[];
+  notes: string[];
+  meta: { updated: string; season: string; trends: string[] };
+  advisor: { used: boolean; model: string; ms?: number; reason?: string; lineupIndex: number; swapsApplied: number };
+  cached?: boolean;
+};
+
+type Mode = "scan" | "counter" | "war";
+
+/** `?mode=war` deep-links straight into a tab. */
+function modeFromUrl(): Mode | null {
+  if (typeof window === "undefined") return null;
+  const m = new URLSearchParams(window.location.search).get("mode");
+  return m === "war" || m === "counter" || m === "scan" ? m : null;
+}
+
 type BattleCard = {
   name: string;
   iconUrls?: { medium?: string };
@@ -240,7 +294,7 @@ function gameTypeLabel(b: Battle): string {
 }
 
 export default function DeckAIPage() {
-  const [mode, setMode] = useState<"scan" | "counter">("scan");
+  const [mode, setMode] = useState<Mode>("scan");
   const [tagInput, setTagInput] = useState("");
   const [activeTag, setActiveTag] = useState("");
   const [bandChoice, setBandChoice] = useState<BandChoice>("auto");
@@ -264,12 +318,20 @@ export default function DeckAIPage() {
   const [matchupError, setMatchupError] = useState("");
   const [matchupRan, setMatchupRan] = useState(false);
 
+  // ── War Decks mode ──
+  const [warData, setWarData] = useState<WarData | null>(null);
+  const [warLoading, setWarLoading] = useState(false);
+  const [warError, setWarError] = useState("");
+  const [warTag, setWarTag] = useState("");
+
   const cardIcons = useCardIcons();
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     setRecentTags(loadRecentTags());
     setMatchupCards(loadMatchupCards());
+    const m = modeFromUrl();
+    if (m) setMode(m);
     return () => abortRef.current?.abort();
   }, []);
 
@@ -406,11 +468,47 @@ export default function DeckAIPage() {
     }
   }
 
+  /** War mode: one POST — player collection + engine + Gemini coach on the server. */
+  async function runWar(rawInput: string, bandOverride?: BandChoice) {
+    const raw = rawInput.trim();
+    if (!raw) return;
+    const tag = raw.startsWith("#") ? raw.toUpperCase() : `#${raw.toUpperCase()}`;
+    const band = bandParam(bandOverride ?? bandChoice);
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setTagInput("");
+    setWarTag(tag);
+    setWarError("");
+    setWarData(null);
+    setWarLoading(true);
+    setRecentTags((prev) => pushRecentTag(prev, tag));
+    try {
+      const res = await fetch("/api/war-decks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag, band }),
+        signal: controller.signal,
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(payload?.error || `HTTP ${res.status}`);
+      setWarData(payload as WarData);
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") setWarError((err as Error).message);
+    } finally {
+      if (abortRef.current === controller) setWarLoading(false);
+    }
+  }
+
   /** Band change re-runs whatever the active mode was already showing. */
   function handleBandChange(next: BandChoice) {
     setBandChoice(next);
     if (mode === "scan") {
       if (activeTag) runSearch(activeTag, next);
+    } else if (mode === "war") {
+      if (warTag) runWar(warTag, next);
     } else if (matchupRan && matchupCards.length >= MATCHUP_MIN) {
       runMatchup(next);
     }
@@ -482,6 +580,10 @@ export default function DeckAIPage() {
         <Typography className="deckai-subtitle">
           {mode === "counter"
             ? "Name their deck · get the answer"
+            : mode === "war"
+            ? warData
+              ? `War decks for ${warData.player.name ?? warData.player.tag}`
+              : "Four war decks · zero repeats · your card levels"
             : activeTag
             ? `Analyzing: ${activeTag}`
             : "Scan your losses · find your kryptonite"}
@@ -497,6 +599,7 @@ export default function DeckAIPage() {
               [
                 ["scan", "Scan Losses"],
                 ["counter", "Counter a Deck"],
+                ["war", "War Decks"],
               ] as const
             ).map(([value, label]) => (
               <Button
@@ -511,7 +614,7 @@ export default function DeckAIPage() {
             ))}
           </Box>
 
-          {mode === "scan" ? (
+          {mode === "scan" || mode === "war" ? (
             <>
               <Box className="deckai-input-row">
                 <Person sx={{ color: "#94A3B8", fontSize: 20, flexShrink: 0 }} />
@@ -521,14 +624,14 @@ export default function DeckAIPage() {
                   placeholder="Player tag (e.g. #ABC123)"
                   size="small"
                   className="deckai-tag-field"
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && (mode === "war" ? runWar(tagInput) : handleSearch())}
                 />
                 <Button
                   className="deckai-btn-analyze"
-                  onClick={handleSearch}
-                  disabled={busy}
+                  onClick={() => (mode === "war" ? runWar(tagInput) : handleSearch())}
+                  disabled={mode === "war" ? warLoading : busy}
                 >
-                  Analyze
+                  {mode === "war" ? (warLoading ? "Building…" : "Build War Decks") : "Analyze"}
                 </Button>
               </Box>
 
@@ -541,11 +644,16 @@ export default function DeckAIPage() {
                       label={t}
                       size="small"
                       className="deckai-recent-chip"
-                      onClick={() => runSearch(t)}
-                      disabled={busy}
+                      onClick={() => (mode === "war" ? runWar(t) : runSearch(t))}
+                      disabled={mode === "war" ? warLoading : busy}
                     />
                   ))}
                 </Box>
+              )}
+              {mode === "war" && !warData && !warLoading && (
+                <Typography className="deckai-hint" sx={{ mt: 1 }}>
+                  Clan War needs 4 decks with 32 different cards. We build them from this week&apos;s meta using your real card levels.
+                </Typography>
               )}
             </>
           ) : (
@@ -594,12 +702,19 @@ export default function DeckAIPage() {
             {mode === "scan" && bandChipLabel && (
               <Chip label={bandChipLabel} size="small" className="deckai-band-chip" />
             )}
+            {mode === "war" && warData && (
+              <Chip
+                label={`${typeof warData.player.trophies === "number" ? `~${warData.player.trophies.toLocaleString()} · ` : ""}${BAND_LABELS[warData.band] ?? warData.band.toUpperCase()}`}
+                size="small"
+                className="deckai-band-chip"
+              />
+            )}
             <Select
               value={bandChoice}
               onChange={(e) => handleBandChange(e.target.value as BandChoice)}
               size="small"
               className="deckai-band-select"
-              disabled={busy || matchupLoading}
+              disabled={busy || matchupLoading || warLoading}
               inputProps={{ "aria-label": "Trophy band" }}
             >
               {BAND_CHOICES.map((b) => (
@@ -613,6 +728,160 @@ export default function DeckAIPage() {
             )}
           </Box>
         </Box>
+
+        {/* ─────────────── War Decks results ─────────────── */}
+        {mode === "war" && (
+          <>
+            {warLoading && (
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 6, gap: 1.5 }}>
+                <CircularProgress sx={{ color: "#3B82F6" }} />
+                <Typography className="deckai-hint">reading your collection · building 4 decks · asking the coach</Typography>
+              </Box>
+            )}
+
+            {warError && !warLoading && (
+              <Typography color="error" sx={{ mt: 4, textAlign: "center", fontFamily: "monospace" }}>
+                {warError}
+              </Typography>
+            )}
+
+            {warData && !warLoading && (
+              <>
+                <Typography className="deckai-summary-bar" sx={{ mb: 1.5 }}>
+                  {warData.player.name ?? warData.player.tag} · {warData.ownedCount} cards · competitive level {warData.ref}
+                  {typeof warData.player.expLevel === "number" ? ` · king ${warData.player.expLevel}` : ""}
+                </Typography>
+
+                <Box className="deckai-analysis-card" sx={{ mb: 2.5 }}>
+                  <Box className="deckai-analysis-header">
+                    <Typography className="deckai-analysis-label">
+                      {warData.advisor.used ? "🤖 Coach" : "📐 Rule-based picks"}
+                    </Typography>
+                    <Typography className="deckai-war-meta">
+                      meta {warData.meta.updated}
+                      {warData.advisor.used ? ` · ${warData.advisor.model}` : ""}
+                    </Typography>
+                  </Box>
+                  <Typography className="deckai-analysis-body">{warData.summary}</Typography>
+                  {!warData.advisor.used && warData.advisor.reason && (
+                    <Typography className="deckai-hint" sx={{ mt: 1 }}>
+                      AI coaching off: {warData.advisor.reason}
+                    </Typography>
+                  )}
+                  {warData.notes.map((n) => (
+                    <Typography key={n} className="deckai-hint" sx={{ mt: 1 }}>
+                      {n}
+                    </Typography>
+                  ))}
+                </Box>
+
+                <Box className="deckai-deck-list">
+                  {warData.decks.map((deck, i) => {
+                    const swapped = new Set(deck.cards.filter((c) => c.replaces).map((c) => c.name));
+                    return (
+                      <Box key={deck.templateId} className="deckai-deck-card deckai-war-card">
+                        <Box className="deckai-deck-head">
+                          <Box>
+                            <Typography className="deckai-war-role">
+                              {i + 1} · {deck.warRole}
+                            </Typography>
+                            <Typography className="deckai-deck-tier">{deck.name}</Typography>
+                          </Box>
+                          <Box className="deckai-deck-actions">
+                            <Chip label={`tier ${deck.tier}`} size="small" className="deckai-elixir-chip" />
+                            <Chip label={`${deck.avgElixir.toFixed(1)} avg`} size="small" className="deckai-elixir-chip" />
+                            <Chip label={`lvl ${deck.avgLevel.toFixed(1)}`} size="small" className="deckai-elixir-chip" />
+                            <CopyDeckButton names={deck.cards.map((c) => c.label)} />
+                          </Box>
+                        </Box>
+
+                        <Box className="deckai-deck-cards deckai-war-cards">
+                          {deck.cards.map((c, j) => {
+                            const src = resolveCardIcon(cardIcons, c.label);
+                            const ring = swapped.has(c.name) ? " deckai-card-added" : "";
+                            const title = c.reason ? `${c.label} · L${c.level} · ${c.reason}` : `${c.label} · L${c.level}`;
+                            return (
+                              <Box key={`${c.name}-${j}`} className="deckai-war-slot">
+                                {src ? (
+                                  <CardImage icons={cardIcons} name={c.label} title={title} className={`deckai-deck-card-img${ring}`} />
+                                ) : (
+                                  <Box className={`deckai-deck-card-fallback${ring}`} title={title}>
+                                    {c.label}
+                                  </Box>
+                                )}
+                                <span className={`deckai-war-level${c.level < warData.ref - 2 ? " deckai-war-level-low" : ""}`}>
+                                  {c.evo ? "evo " : c.hero ? "hero " : ""}L{c.level}
+                                </span>
+                              </Box>
+                            );
+                          })}
+                        </Box>
+
+                        <Typography className="deckai-deck-reason">{deck.why}</Typography>
+                        <Typography className="deckai-war-howto">▸ {deck.howToPlay}</Typography>
+
+                        {deck.substitutions.length > 0 && (
+                          <Box className="deckai-swap-list">
+                            {deck.substitutions.map((s, k) => (
+                              <Box key={`${s.out}-${k}`} className="deckai-swap-line deckai-war-swap">
+                                <span className="deckai-swap-out-text">{s.out}</span>
+                                <span className="deckai-swap-sep">→</span>
+                                <span className="deckai-swap-in-text">{s.in}</span>
+                                <span className="deckai-war-swap-why">{s.reason}</span>
+                              </Box>
+                            ))}
+                          </Box>
+                        )}
+                        {deck.warnings.map((w) => (
+                          <Typography key={w} className="deckai-hint" sx={{ mt: 0.5 }}>
+                            {w}
+                          </Typography>
+                        ))}
+                      </Box>
+                    );
+                  })}
+                </Box>
+
+                {warData.unusedTop.length > 0 && (
+                  <>
+                    <Typography className="deckai-section-heading">On the bench — your best cards not in the lineup</Typography>
+                    <Box className="deckai-recent-row" sx={{ mb: 3 }}>
+                      {warData.unusedTop.map((c) => (
+                        <Chip key={c.name} label={`${c.name} · L${c.level}`} size="small" className="deckai-recent-chip" />
+                      ))}
+                    </Box>
+                  </>
+                )}
+
+                {warData.meta.trends.length > 0 && (
+                  <>
+                    <Typography className="deckai-section-heading">This week&apos;s meta — {warData.meta.season}</Typography>
+                    <Box className="deckai-war-trends">
+                      {warData.meta.trends.map((t) => (
+                        <Typography key={t} className="deckai-war-trend">
+                          {t}
+                        </Typography>
+                      ))}
+                    </Box>
+                  </>
+                )}
+
+                {warData.alternates.length > 0 && (
+                  <>
+                    <Typography className="deckai-section-heading">Other lineups that also work</Typography>
+                    <Box className="deckai-war-trends">
+                      {warData.alternates.map((alt, i) => (
+                        <Typography key={i} className="deckai-war-trend">
+                          {alt.decks.map((d) => d.name).join(" · ")}
+                        </Typography>
+                      ))}
+                    </Box>
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
 
         {/* ─────────────── Counter-a-deck results ─────────────── */}
         {mode === "counter" && (

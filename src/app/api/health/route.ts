@@ -10,6 +10,7 @@ import { errText, log, newTrace, stopwatch } from '@/lib/log';
  *   - are API_BASE_URL / API_KEY actually set in this environment?
  *   - is the backend reachable, and how slow is it right now?
  *   - `warnings`: known-bad states, already diagnosed, in plain English
+ *   - `info`: degraded-but-working states (never turn the check red)
  *
  * Modes:
  *   GET /api/health            config only, zero upstream calls, instant
@@ -21,7 +22,7 @@ import { errText, log, newTrace, stopwatch } from '@/lib/log';
 export const dynamic = 'force-dynamic';
 
 /** Every env var this app reads. Keep honest — it IS the env contract. */
-const ENV_KEYS = ['API_BASE_URL', 'API_KEY'] as const;
+const ENV_KEYS = ['API_BASE_URL', 'API_KEY', 'GEMINI_API_KEY', 'GEMINI_MODEL'] as const;
 
 /** Cheapest backend endpoint that needs no path params. */
 const PROBE_PATH = '/clash/cards';
@@ -39,6 +40,9 @@ export async function GET(req: NextRequest) {
   const warnings: string[] = [];
   if (!apiBase) warnings.push('API_BASE_URL is not set — every /api/* route returns 500 "Missing API_BASE_URL or API_KEY".');
   if (!apiKey) warnings.push('API_KEY is not set — every /api/* route returns 500 "Missing API_BASE_URL or API_KEY".');
+  // Degraded-but-working states: reported, but they don't flip the check to 503.
+  const info: string[] = [];
+  if (!process.env.GEMINI_API_KEY) info.push('GEMINI_API_KEY is not set — /api/war-decks runs rule-based only (no AI coaching). Free AI Studio key: aistudio.google.com/apikey.');
 
   let probe: { path: string; ok: boolean; status?: number; ms: number; detail?: string } | string =
     'not run — add ?probe=1';
@@ -82,6 +86,7 @@ export async function GET(req: NextRequest) {
       nodeEnv: process.env.NODE_ENV,
       ms: elapsed(),
       warnings,
+      info,
       env,
       backend: { baseUrl: apiBase ?? null, probePath: PROBE_PATH, probeTimeoutMs: PROBE_TIMEOUT_MS },
       probe,

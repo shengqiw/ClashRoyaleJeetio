@@ -24,7 +24,7 @@ export const PUBLIC_PAGES: { path: string; title: string; description: string }[
     path: "/deckai",
     title: "Deck AI — Clash Royale counter deck finder",
     description:
-      "Name the deck you keep losing to and Deck AI recommends a counter deck built from cards you own, with the reasoning behind each pick.",
+      "Name the deck you keep losing to and Deck AI recommends a counter deck built from cards you own, with the reasoning behind each pick. War Decks builds your 4 Clan War decks from this week's meta at your card levels.",
   },
   {
     path: "/rules",

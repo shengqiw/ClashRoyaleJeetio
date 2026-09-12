@@ -949,3 +949,107 @@
   border-color: rgba(59, 130, 246, 0.3) !important;
   border-top-color: rgba(99, 160, 255, 0.45) !important;
 }
+
+/* ── War Decks mode ──────────────────────────────────────────────────────
+   Four decks in war order. Each card slot shows its level; swapped-in cards
+   reuse the optimizer's green ring; low levels (≥3 under the player's
+   competitive level) are flagged amber so the weak spot is obvious. */
+.deckai-war-card {
+  border-left: 3px solid rgba(99, 160, 255, 0.5);
+}
+
+.deckai-war-role {
+  color: #E9D5FF !important;
+  font-weight: 900 !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  font-family: monospace !important;
+  display: block !important;
+  margin-bottom: 2px !important;
+}
+
+.deckai-war-meta {
+  margin-left: auto !important;
+  color: #64748B !important;
+  font-family: monospace !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+.deckai-war-cards {
+  max-width: 100%;
+  gap: 0.4rem;
+}
+
+.deckai-war-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.deckai-war-level {
+  font-family: monospace;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #93C5FD;
+  white-space: nowrap;
+}
+
+.deckai-war-level-low {
+  color: #FBBF24;
+}
+
+.deckai-war-howto {
+  color: #A7F3D0 !important;
+  font-size: 0.8rem !important;
+  line-height: 1.5 !important;
+  margin-top: 0.35rem !important;
+}
+
+.deckai-war-swap {
+  flex-wrap: wrap;
+  row-gap: 0.1rem;
+}
+
+.deckai-war-swap .deckai-swap-out-text,
+.deckai-war-swap .deckai-swap-in-text {
+  flex: 0 0 auto;
+  text-align: left;
+}
+
+.deckai-war-swap-why {
+  color: #64748B;
+  font-size: 0.72rem;
+  flex: 1 1 100%;
+  padding-left: 0.2rem;
+}
+
+.deckai-war-trends {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 2rem;
+  padding: 0.85rem 1rem;
+  background: rgba(11, 20, 55, 0.55);
+  border: 1px solid rgba(59, 130, 246, 0.16);
+  border-radius: 8px;
+}
+
+.deckai-war-trend {
+  color: #CBD5E1 !important;
+  font-size: 0.8rem !important;
+  line-height: 1.5 !important;
+}
+
+@media (max-width: 640px) {
+  .deckai-war-level {
+    font-size: 0.5rem;
+  }
+  .deckai-war-cards {
+    gap: 0.25rem;
+  }
+}

@@ -5,9 +5,9 @@ import type { Metadata } from "next";
 // template from the root layout.
 export const metadata: Metadata = {
   title: "Deck AI — Clash Royale counter deck finder",
-  description: "Name the deck you keep losing to and Deck AI recommends a counter deck built from cards you own, with the reasoning behind each pick.",
+  description: "Name the deck you keep losing to and Deck AI recommends a counter deck built from cards you own, with the reasoning behind each pick. War Decks builds your 4 Clan War decks from this week's meta at your card levels.",
   alternates: { canonical: "/deckai" },
-  openGraph: { title: "Deck AI — Clash Royale counter deck finder", description: "Name the deck you keep losing to and Deck AI recommends a counter deck built from cards you own, with the reasoning behind each pick.", images: ["/og.png"], url: "/deckai" },
+  openGraph: { title: "Deck AI — Clash Royale counter deck finder", description: "Name the deck you keep losing to and Deck AI recommends a counter deck built from cards you own, with the reasoning behind each pick. War Decks builds your 4 Clan War decks from this week's meta at your card levels.", images: ["/og.png"], url: "/deckai" },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
