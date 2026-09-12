@@ -38,7 +38,7 @@ export const PageLayout = ({ children }: { children: ReactNode }) => {
           <MetaLabNav />
         </ul>
       </nav>
-      {children}
+      <main>{children}</main>
       <footer className="site-footer">
         <span className="site-footer-name">Jeetio</span>
         <Link href="/admin" className="site-footer-secret" aria-label="🍊" title="">

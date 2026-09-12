@@ -27,7 +27,10 @@ credentials and talks to no Supercell endpoint directly.
 - `src/lib/log.ts` — the only logging sink. See Debugging.
 - `src/lib/` also has `CardImage.tsx`, `useCardIcons.ts`, `deckIntel.ts`, `inlineMarkdown.tsx`.
 - Pages: `/`, `/stats`, `/rules`, `/promotions`, `/deckai`, `/member/[tag]`, `/clan-info`,
-  `/admin`, `/test`.
+  `/meta-lab`, `/privacy`, `/offline`, `/admin`, `/test`.
+- Fonts: Geist via the `geist` npm package (`geist/font/sans|mono`), NOT `next/font/google`.
+  Same self-hosted output and CSS variables; the difference is `next build` no longer
+  phones fonts.googleapis.com, which made builds fail anywhere Google is blocked.
 - `clash-royale-apis/` (sibling repo) — LEGACY and DEAD. Its lambdas carry a JWT IP-locked
   to a decommissioned NAT EIP, so they cannot succeed from anywhere. Do not build on it.
   It still bills (NAT t3.nano + EIP + ALB) and is slated for teardown.
@@ -78,6 +81,25 @@ something twice, add it to `warnings` so the third time is free.
   `useState(() => ...)` initializer runs during SSR, returns the empty fallback, and the
   feature silently stops loading. The rule arrived with eslint-config-next 16.3.x.
 - Lint does not gate `next build`; the build passing does not mean lint is clean.
+
+## PWA (added 2026-09-12)
+
+The site installs to a phone home screen and survives a dead connection. Pieces:
+
+- `src/app/manifest.ts` → `/manifest.webmanifest` (auto-linked). Icons in `public/icons/`
+  (192, 512, maskable-512), `src/app/icon.png` (favicon — replaced a 4.6 MB `icon.svg`
+  that every page load was fetching), `src/app/apple-icon.png`. All generated from
+  `src/assets/jeetio-logo.png` with sharp; regenerate rather than hand-edit.
+- `public/sw.js` — hand-written, no workbox. Pages network-first (deploys always win),
+  `/_next/static` cache-first, card art stale-while-revalidate capped at 300, **`/api/*`
+  never cached**. Bump `VERSION` inside it when the strategy changes. `next.config.mjs`
+  serves it with `Cache-Control: max-age=0` so a new deploy's worker is picked up next visit.
+- `src/components/dumb/pwa-register.tsx` — registers the worker (production only) and shows
+  the bottom "add to home screen" bar: Android via `beforeinstallprompt`, iOS via
+  Share-sheet instructions, dismiss remembered 30 days in `pwa:install-dismissed-at`.
+- Verify locally: `npm run build && npm start`, open a page, kill the server, reload —
+  visited pages still render, unvisited ones get `/offline`. Playwright's `setOffline`
+  does NOT cut service-worker fetches, so kill the server for real when testing.
 
 ## Deploy
 

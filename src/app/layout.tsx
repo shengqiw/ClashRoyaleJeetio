@@ -1,22 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// Geist from the npm package, not next/font/google: same self-hosted woff2 output,
+// same --font-geist-* variables, but the build no longer needs to reach
+// fonts.googleapis.com (which made `next build` fail anywhere Google is blocked).
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import Script from "next/script";
 import "./globals.css";
 import { MuiAppProvider } from "@/components/providers/mui-app-provider";
 import { PageLayout } from "@/components/smart/page-layout";
+import { PwaRegister } from "@/components/dumb/pwa-register";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+const geistSans = GeistSans;
+const geistMono = GeistMono;
 
 // Site-wide metadata. Each route folder has its own layout.tsx that overrides
 // title/description (pages are client components, so they can't export metadata).
@@ -41,12 +37,24 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: ["/og.png"],
   },
+  // PWA: manifest.ts is auto-linked; this block is the iOS side of it
+  // (Safari ignores the manifest's display mode and reads these instead).
+  appleWebApp: {
+    capable: true,
+    title: "Jeetio",
+    statusBarStyle: "black-translucent",
+  },
+  applicationName: "Jeetio",
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: "#c293f8",
+  // Lets content extend under the iPhone notch / home indicator when installed;
+  // .pwa-bar uses env(safe-area-inset-bottom) to stay clear of it.
+  viewportFit: "cover",
 };
 
 // schema.org Organization block — tells search engines / AI assistants who this
@@ -97,6 +105,7 @@ export default function RootLayout({
         </Script>
         <MuiAppProvider>
           <PageLayout>{children}</PageLayout>
+          <PwaRegister />
         </MuiAppProvider>
       </body>
     </html>

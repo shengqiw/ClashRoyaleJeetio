@@ -15,6 +15,9 @@ const cspDirectives = [
   `font-src 'self' data:`,
   // API routes, Google Analytics collect beacons, + HMR websocket in dev
   `connect-src 'self' https://www.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com ${isDev ? "ws://localhost:* wss://localhost:*" : ""}`.trim(),
+  // PWA: the service worker (/sw.js) and /manifest.webmanifest are same-origin.
+  `worker-src 'self'`,
+  `manifest-src 'self'`,
   `default-src 'self'`,
   `frame-ancestors 'none'`,
 ].join("; ");
@@ -30,6 +33,20 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
+      },
+      {
+        // Browsers may cache a service worker script for up to 24h before
+        // checking for updates; no-cache means every deploy's sw.js is picked
+        // up on the next visit instead.
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+      {
+        source: "/icons/(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
     ];
   },

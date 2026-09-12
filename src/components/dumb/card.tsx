@@ -20,7 +20,7 @@ export const MyCard = ({
   image: StaticImageData;
   title: string;
   href: string;
-  /** true for the first card only — it's the mobile LCP element. */
+  /** true for above-the-fold cards — they're the mobile LCP candidates. */
   priority?: boolean;
   styleProps?: object;
 }) => {

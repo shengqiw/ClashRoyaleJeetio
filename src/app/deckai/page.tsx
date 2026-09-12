@@ -600,6 +600,7 @@ export default function DeckAIPage() {
               size="small"
               className="deckai-band-select"
               disabled={busy || matchupLoading}
+              inputProps={{ "aria-label": "Trophy band" }}
             >
               {BAND_CHOICES.map((b) => (
                 <MenuItem key={b} value={b} className="deckai-band-item">
