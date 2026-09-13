@@ -19,26 +19,27 @@ don't edit by hand.
 | 2026-09-12 | d327f39 | 30 | -24 | 8 | 0 |
 | 2026-09-12 | 88bcdfa | 30 | -24 | 8 | 0 |
 | 2026-09-13 | 34d58d3 | 30 | -24 | 8 | 0 |
+| 2026-09-13 | 1cee5a9 | 30 | -24 | 8 | 0 |
 
-## Last round — 2026-09-13 (34d58d3) vs https://www.jeetio.com
+## Last round — 2026-09-13 (1cee5a9) vs https://www.jeetio.com
 
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
-| 1 | Hog 2.6 Cycle | top | 1 | 2140ms | — |
-| 2 | Golem Beatdown | high | 1 | 640ms | — |
-| 3 | LavaLoon | high | 1 | 478ms | — |
-| 4 | X-Bow 2.9 Siege | top | 1 | 517ms | — |
-| 5 | Classic Log Bait | top | 1 | 538ms | — |
-| 6 | Mega Knight Bridge Spam | mid | 2 | 472ms | relevant |
-| 7 | Royal Giant Cycle | high | 3 | 416ms | relevant, golden |
+| 1 | Hog 2.6 Cycle | top | 1 | 1271ms | — |
+| 2 | Golem Beatdown | high | 1 | 646ms | — |
+| 3 | LavaLoon | high | 1 | 406ms | — |
+| 4 | X-Bow 2.9 Siege | top | 1 | 510ms | — |
+| 5 | Classic Log Bait | top | 1 | 417ms | — |
+| 6 | Mega Knight Bridge Spam | mid | 2 | 421ms | relevant |
+| 7 | Royal Giant Cycle | high | 3 | 564ms | relevant, golden |
 | 8 | Graveyard Freeze | high | 1 | 440ms | — |
-| 9 | Miner Poison Control | top | 1 | 447ms | — |
-| 10 | P.E.K.K.A Bridge Spam | high | 2 | 1270ms | golden |
-| 11 | Elixir Golem Heal | mid | 3 | 598ms | relevant, golden |
-| 12 | LumberLoon Freeze | high | 1 | 470ms | — |
-| 13 | Mortar Bait | top | 2 | 374ms | relevant |
-| 14 | Three Musketeers Pump | high | 2 | 414ms | relevant |
-| 15 | Hog Earthquake | mid | 2 | 441ms | relevant |
-| 16 | Splashyard | high | 2 | 435ms | relevant |
-| 17 | Mid-ladder Menace | mid | 2 | 446ms | relevant |
-| 18 | Sparky Royal Giant | mid | 2 | 460ms | relevant |
+| 9 | Miner Poison Control | top | 1 | 420ms | — |
+| 10 | P.E.K.K.A Bridge Spam | high | 2 | 436ms | golden |
+| 11 | Elixir Golem Heal | mid | 3 | 459ms | relevant, golden |
+| 12 | LumberLoon Freeze | high | 1 | 559ms | — |
+| 13 | Mortar Bait | top | 2 | 426ms | relevant |
+| 14 | Three Musketeers Pump | high | 2 | 443ms | relevant |
+| 15 | Hog Earthquake | mid | 2 | 409ms | relevant |
+| 16 | Splashyard | high | 2 | 378ms | relevant |
+| 17 | Mid-ladder Menace | mid | 2 | 385ms | relevant |
+| 18 | Sparky Royal Giant | mid | 2 | 378ms | relevant |
