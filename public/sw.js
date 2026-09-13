@@ -5,18 +5,23 @@
  *  - Pages (navigations): network-first. Fresh deploys always win; the cache is
  *    only read when the network is gone, then /offline as the last resort.
  *  - /_next/static/* (content-hashed) + /icons/* + fonts: cache-first, forever.
- *  - Card art (api-assets.clashroyale.com) + /_next/image: stale-while-revalidate,
- *    capped, so Deck AI's card grid stops re-downloading 100+ pngs per visit.
+ *  - Same-origin images (/_next/image, /og.png …): stale-while-revalidate, capped.
+ *  - CROSS-ORIGIN REQUESTS ARE NEVER TOUCHED. v1 tried to cache the Clash Royale
+ *    card art (api-assets.clashroyale.com) and broke every card image on the
+ *    site: /sw.js is served with the page CSP, whose connect-src doesn't list
+ *    that host, so the worker's own fetch() was blocked and the browser got an
+ *    undefined response. The CDN sends long cache headers anyway — the normal
+ *    HTTP cache is the right layer for it.
  *  - /api/*: NEVER cached. Battle logs, stats and counters must be live.
  *  - Non-GET: passthrough.
  *
  * Bump VERSION when the strategy changes; old caches are dropped on activate.
  */
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL = `jeetio-shell-${VERSION}`;
 const STATIC = `jeetio-static-${VERSION}`;
 const IMAGES = `jeetio-images-${VERSION}`;
-const IMAGE_CAP = 300;
+const IMAGE_CAP = 150;
 
 const OFFLINE_URL = "/offline";
 const PRECACHE = [OFFLINE_URL, "/icons/icon-192.png", "/icons/icon-512.png"];
@@ -50,23 +55,22 @@ self.addEventListener("message", (event) => {
 });
 
 const isStatic = (url) =>
-  url.origin === self.location.origin &&
-  (url.pathname.startsWith("/_next/static/") ||
-    url.pathname.startsWith("/icons/") ||
-    /\.(woff2?|ttf|otf)$/.test(url.pathname));
+  url.pathname.startsWith("/_next/static/") ||
+  url.pathname.startsWith("/icons/") ||
+  /\.(woff2?|ttf|otf)$/.test(url.pathname);
 
 const isImage = (url) =>
-  url.hostname === "api-assets.clashroyale.com" ||
-  (url.origin === self.location.origin &&
-    (url.pathname.startsWith("/_next/image") || /\.(png|jpe?g|webp|avif|svg)$/.test(url.pathname)));
+  url.pathname.startsWith("/_next/image") || /\.(png|jpe?g|webp|avif|svg)$/.test(url.pathname);
 
-const isApi = (url) => url.origin === self.location.origin && url.pathname.startsWith("/api/");
+const isApi = (url) => url.pathname.startsWith("/api/");
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
+  // Only same-origin traffic is ours to manage — see the header comment.
+  if (url.origin !== self.location.origin) return;
   if (isApi(url)) return;
 
   if (request.mode === "navigate") {
@@ -88,7 +92,7 @@ async function networkFirstPage(request) {
     const res = await fetch(request);
     // Keep a copy of the last good HTML for each visited page so the site still
     // opens on a dead connection (with whatever data it last had).
-    if (res.ok) cache.put(request, res.clone());
+    if (res.ok) safePut(cache, request, res.clone());
     return res;
   } catch {
     const cached = await cache.match(request);
@@ -103,28 +107,40 @@ async function cacheFirst(request, name) {
   const cached = await cache.match(request);
   if (cached) return cached;
   const res = await fetch(request);
-  if (res.ok) cache.put(request, res.clone());
+  if (res.ok) safePut(cache, request, res.clone());
   return res;
 }
 
+// Serve the cached copy immediately (if any) and refresh in the background.
+// A failed refresh with nothing cached must surface as a real network error,
+// never as an undefined response — that's what broke v1.
 async function staleWhileRevalidate(request, name, cap) {
   const cache = await caches.open(name);
   const cached = await cache.match(request);
-  const refresh = fetch(request)
-    .then(async (res) => {
-      if (res.ok || res.type === "opaque") {
-        await cache.put(request, res.clone());
-        trim(cache, cap);
-      }
-      return res;
-    })
-    .catch(() => cached);
-  return cached || refresh;
+  const refresh = fetch(request).then((res) => {
+    if (res.ok) safePut(cache, request, res.clone()).then(() => trim(cache, cap));
+    return res;
+  });
+  if (cached) {
+    refresh.catch(() => {});
+    return cached;
+  }
+  return refresh;
+}
+
+// cache.put can reject (quota, Vary: *, storage disabled) — that must never
+// take the response down with it.
+function safePut(cache, request, response) {
+  return cache.put(request, response).catch(() => {});
 }
 
 // Oldest-first eviction. Cache API keeps insertion order, so drop from the front.
 async function trim(cache, cap) {
-  const keys = await cache.keys();
-  if (keys.length <= cap) return;
-  await Promise.all(keys.slice(0, keys.length - cap).map((k) => cache.delete(k)));
+  try {
+    const keys = await cache.keys();
+    if (keys.length <= cap) return;
+    await Promise.all(keys.slice(0, keys.length - cap).map((k) => cache.delete(k)));
+  } catch {
+    /* best effort */
+  }
 }

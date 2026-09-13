@@ -116,8 +116,11 @@ Local end-to-end without the real backend: `npx tsx eval/mock-backend.mjs`, then
 GEMINI_API_BASE=http://localhost:4000/gemini npm start` and open `/deckai?mode=war`
 with tag `#FULL` (maxed) or anything else (partial mid-ladder collection).
 
-Known unknowns: the Supercell API's hero-unlock field isn't documented, so `Hero X`
-asks surface as a warning ("use it if unlocked") rather than being detected.
+Evolutions and Heroes in the live API (verified 2026-09-13): both ride on
+`evolutionLevel` — ≥1 with `iconUrls.evolutionMedium` = evolution unlocked; ≥2 with
+`iconUrls.heroMedium` = hero unlocked (hero-only cards like Dark Prince report 2).
+`pickCardArt()` / `hasHeroUnlocked()` in `useCardIcons.ts` and `hasHero()` in the engine
+encode this. The catalog indexes hero art under `hero::<name>` so "Hero X" labels render.
 
 ## PWA (added 2026-09-12)
 
@@ -128,12 +131,15 @@ The site installs to a phone home screen and survives a dead connection. Pieces:
   that every page load was fetching), `src/app/apple-icon.png`. All generated from
   `src/assets/jeetio-logo.png` with sharp; regenerate rather than hand-edit.
 - `public/sw.js` — hand-written, no workbox. Pages network-first (deploys always win),
-  `/_next/static` cache-first, card art stale-while-revalidate capped at 300, **`/api/*`
-  never cached**. Bump `VERSION` inside it when the strategy changes. `next.config.mjs`
-  serves it with `Cache-Control: max-age=0` so a new deploy's worker is picked up next visit.
-- `src/components/dumb/pwa-register.tsx` — registers the worker (production only) and shows
-  the bottom "add to home screen" bar: Android via `beforeinstallprompt`, iOS via
-  Share-sheet instructions, dismiss remembered 30 days in `pwa:install-dismissed-at`.
+  `/_next/static` cache-first, same-origin images stale-while-revalidate, **`/api/*`
+  never cached**, **cross-origin never touched** (v1 intercepted the card-art CDN and
+  broke every card image: `/sw.js` gets the page CSP, whose `connect-src` blocks the
+  worker's own fetch to api-assets.clashroyale.com). Bump `VERSION` when the strategy
+  changes. `next.config.mjs` serves it with `Cache-Control: max-age=0`.
+- `src/components/dumb/pwa-register.tsx` — `PwaRegister` (worker registration, root
+  layout) and `PwaInstallBar` (small inline "add to home screen" strip, home page only,
+  near the bottom — Shen found the fixed overlay annoying). Android via
+  `beforeinstallprompt`, iOS via Share-sheet instructions, dismiss remembered 30 days.
 - Verify locally: `npm run build && npm start`, open a page, kill the server, reload —
   visited pages still render, unvisited ones get `/offline`. Playwright's `setOffline`
   does NOT cut service-worker fetches, so kill the server for real when testing.

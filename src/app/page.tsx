@@ -1,5 +1,6 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { HomeCards } from "@/components/smart/home-cards";
+import { PwaInstallBar } from "@/components/dumb/pwa-register";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -79,6 +80,12 @@ export default function Root() {
           </Grid>
         ))}
       </Grid>
+
+      {/* Small "add to home screen" strip — inline, home page only, near the
+          bottom. Renders nothing once installed or after a dismiss. */}
+      <Box sx={{ px: { xs: 2, md: 8 }, mb: 3 }}>
+        <PwaInstallBar />
+      </Box>
 
       <Box className="br" sx={{ mb: 3 }} />
     </>

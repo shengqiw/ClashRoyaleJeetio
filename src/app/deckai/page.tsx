@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
-import { useCardIcons, resolveCardIcon } from "../../lib/useCardIcons";
+import { useCardIcons, resolveCardIcon, pickCardArt } from "../../lib/useCardIcons";
 import { CardImage } from "../../lib/CardImage";
 import { CardPicker } from "../../lib/CardPicker";
 import { CopyDeckButton } from "../../lib/CopyDeckButton";
@@ -240,7 +240,8 @@ function modeFromUrl(): Mode | null {
 
 type BattleCard = {
   name: string;
-  iconUrls?: { medium?: string };
+  evolutionLevel?: number;
+  iconUrls?: { medium?: string; evolutionMedium?: string; heroMedium?: string };
 };
 
 type BattleSide = {
@@ -1255,8 +1256,7 @@ export default function DeckAIPage() {
 
                     const renderCards = (cards: BattleCard[]) =>
                       cards.map((c, j) => {
-                        const src =
-                          c.iconUrls?.medium || resolveCardIcon(cardIcons, c.name);
+                        const src = pickCardArt(c) || resolveCardIcon(cardIcons, c.name);
                         return src ? (
                           <Box
                             component="img"

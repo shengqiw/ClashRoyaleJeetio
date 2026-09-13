@@ -16,25 +16,56 @@ export type CardCatalog = {
 
 const EMPTY_CATALOG: CardCatalog = { icons: {}, ids: {}, names: [] };
 
-// Shape of each card returned by the backend /clash/cards endpoint.
+// Shape of each card returned by the backend /clash/cards endpoint (and, with
+// the level fields, by /clash/player — see pickCardArt).
 type ApiCard = {
   name: string;
   id?: number;
-  iconUrls?: { medium?: string; evolutionMedium?: string };
+  iconUrls?: { medium?: string; evolutionMedium?: string; heroMedium?: string };
 };
+
+/**
+ * A card object as the Supercell API returns it inside a player's collection,
+ * current deck or a battle log. Evolutions and Heroes both ride on
+ * `evolutionLevel` (verified on live profiles, Sept 2026): level ≥ 1 with an
+ * `evolutionMedium` icon = evolution unlocked; level ≥ 2 with a `heroMedium`
+ * icon = hero unlocked (hero-only cards jump straight to 2).
+ */
+export type ApiPlayerCard = {
+  name?: string;
+  evolutionLevel?: number;
+  iconUrls?: { medium?: string; evolutionMedium?: string; heroMedium?: string };
+};
+
+export function hasHeroUnlocked(card: ApiPlayerCard): boolean {
+  return (card.evolutionLevel ?? 0) >= 2 && Boolean(card.iconUrls?.heroMedium);
+}
+
+export function hasEvoUnlocked(card: ApiPlayerCard): boolean {
+  return (card.evolutionLevel ?? 0) >= 1 && Boolean(card.iconUrls?.evolutionMedium);
+}
+
+/** The art to show for a card object: hero if unlocked, else evolution, else base. */
+export function pickCardArt(card: ApiPlayerCard | undefined | null): string | undefined {
+  if (!card) return undefined;
+  if (hasHeroUnlocked(card)) return card.iconUrls?.heroMedium;
+  if (hasEvoUnlocked(card)) return card.iconUrls?.evolutionMedium;
+  return card.iconUrls?.medium;
+}
 
 // Fetched once per page load and shared across all hook consumers.
 let cachePromise: Promise<CardCatalog> | null = null;
 
-// Evolution icons are indexed under this prefix so an "Evo "/"Evolved " name
-// can opt into the distinct evolution art (api .../cardevolutions/...) rather
-// than the base card icon.
+// Evolution / hero icons are indexed under these prefixes so an "Evo X" or
+// "Hero X" name can opt into the distinct art (api .../cardevolutions/... and
+// .../cardheroes/...) rather than the base card icon.
 const EVO_KEY_PREFIX = "evo::";
+const HERO_KEY_PREFIX = "hero::";
 
 // Name helpers live in cardName.ts (no "use client") so server code can share
 // them; re-exported here so existing imports keep working.
-export { wantsEvo, normalizeCardName } from "./cardName";
-import { wantsEvo, normalizeCardName } from "./cardName";
+export { wantsEvo, wantsHero, normalizeCardName } from "./cardName";
+import { wantsEvo, wantsHero, normalizeCardName } from "./cardName";
 
 async function loadCardCatalog(): Promise<CardCatalog> {
   const res = await fetch("/api/cards");
@@ -58,8 +89,10 @@ async function loadCardCatalog(): Promise<CardCatalog> {
       // resolveCardIcon). Exact names already in the map win on collision.
       if (norm && !(norm in map)) map[norm] = base;
     }
-    // Index the evolution art separately so evo-tagged names get the right icon.
+    // Index the evolution / hero art separately so tagged names get the right icon.
     if (evo && norm) map[EVO_KEY_PREFIX + norm] = evo;
+    const hero = card.iconUrls?.heroMedium;
+    if (hero && norm) map[HERO_KEY_PREFIX + norm] = hero;
     // Deck deep links address cards by their numeric id. Index under the
     // normalized key only — "Evo Knight" and "Knight" copy the same card.
     if (norm && typeof card.id === "number" && !(norm in ids)) {
@@ -76,6 +109,7 @@ async function loadCardCatalog(): Promise<CardCatalog> {
  *  - fuzzy base names — "Log" → "The Log", "Pekka" → "P.E.K.K.A"
  *  - evolution names — "Evo Knight" → the distinct evolution art (falling back
  *    to the base icon if that card has no evolution).
+ *  - hero names — "Hero Knight" → the hero art, same fallback.
  * Returns undefined if the card is unknown (or icons haven't loaded yet).
  */
 export function resolveCardIcon(
@@ -85,6 +119,9 @@ export function resolveCardIcon(
   const norm = normalizeCardName(name);
   if (wantsEvo(name)) {
     return icons[EVO_KEY_PREFIX + norm] ?? icons[name] ?? icons[norm];
+  }
+  if (wantsHero(name)) {
+    return icons[HERO_KEY_PREFIX + norm] ?? icons[name] ?? icons[norm];
   }
   return icons[name] ?? icons[norm];
 }

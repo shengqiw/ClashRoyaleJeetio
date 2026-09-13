@@ -42,9 +42,13 @@ function collection(full) {
         maxLevel,
         rarity,
         elixirCost: CARD_ROLES[name].elixir,
-        evolutionLevel: i % 6 === 0 ? 1 : 0,
-        maxEvolutionLevel: i % 6 === 0 ? 1 : 0,
-        iconUrls: { medium: `https://api-assets.clashroyale.com/cards/300/${i}.png` },
+        evolutionLevel: i % 6 === 0 ? 1 : i % 7 === 0 ? 2 : 0,
+        maxEvolutionLevel: i % 6 === 0 ? 1 : i % 7 === 0 ? 2 : 0,
+        iconUrls: {
+          medium: `https://api-assets.clashroyale.com/cards/300/${i}.png`,
+          ...(i % 6 === 0 ? { evolutionMedium: `https://api-assets.clashroyale.com/cardevolutions/300/${i}.png` } : {}),
+          ...(i % 7 === 0 ? { heroMedium: `https://api-assets.clashroyale.com/cardheroes/300/${i}.png` } : {}),
+        },
       };
     });
 }

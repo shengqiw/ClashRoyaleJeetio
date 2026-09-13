@@ -12,6 +12,8 @@ import {
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CopyDeckButton } from "../../../lib/CopyDeckButton";
+import { pickCardArt } from "../../../lib/useCardIcons";
+import { displayedLevel, levelCap } from "../../../lib/cardLevels";
 import "./member.css";
 
 const getRoleColor = (role: string) => {
@@ -178,16 +180,20 @@ export default function MemberPage() {
                   <Box className="deck-grid">
                     {player.currentDeck.map((card: any) => (
                       <Box key={card.id} className="deck-card">
-                        {card.iconUrls?.medium && (
+                        {/* Hero / evolution art when unlocked; the API's level is
+                            rarity-relative, so convert it to the in-game number. */}
+                        {pickCardArt(card) && (
                           <Box
                             component="img"
-                            src={card.iconUrls.medium}
+                            src={pickCardArt(card)}
                             alt={card.name}
                             className="deck-card-img"
                           />
                         )}
                         <Typography className="deck-card-name">{card.name}</Typography>
-                        <Typography className="deck-card-level">LVL {card.level}</Typography>
+                        <Typography className="deck-card-level">
+                          LVL {displayedLevel(card, levelCap(player.cards ?? player.currentDeck))}
+                        </Typography>
                       </Box>
                     ))}
                   </Box>
@@ -196,10 +202,10 @@ export default function MemberPage() {
                   <Box className="deck-side">
                     {player.currentDeckSupportCards?.[0] && (
                       <Box className="deck-card">
-                        {player.currentDeckSupportCards[0].iconUrls?.medium && (
+                        {pickCardArt(player.currentDeckSupportCards[0]) && (
                           <Box
                             component="img"
-                            src={player.currentDeckSupportCards[0].iconUrls.medium}
+                            src={pickCardArt(player.currentDeckSupportCards[0])}
                             alt={player.currentDeckSupportCards[0].name}
                             className="deck-card-img"
                           />

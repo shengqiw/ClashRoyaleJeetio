@@ -223,33 +223,27 @@ nav li {
   letter-spacing: 0.04em;
 }
 
-/* ── PWA install bar (components/dumb/pwa-register.tsx) ──
-   Fixed to the bottom, above the iOS home indicator. All selectors are
-   class-scoped — see the @layer mui gotcha in CLAUDE.md. */
+/* ── PWA install strip (components/dumb/pwa-register.tsx) ──
+   Inline on the home page, near the bottom — a quiet strip, not an overlay.
+   All selectors are class-scoped — see the @layer mui gotcha in CLAUDE.md. */
 .pwa-bar {
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: 1300;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: rgba(24, 20, 56, 0.96);
-  border: 1px solid rgba(150, 130, 255, 0.35);
-  box-shadow: 0 8px 30px rgba(10, 8, 40, 0.55);
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 0.85rem;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: rgba(24, 20, 56, 0.55);
+  border: 1px solid rgba(150, 130, 255, 0.28);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.74rem;
   line-height: 1.35;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .pwa-bar-text b {
-  color: #c293f8;
+  color: #e9d5ff;
 }
 
 .pwa-bar-actions {
@@ -262,9 +256,9 @@ nav li {
 .pwa-bar-dismiss {
   font: inherit;
   font-weight: 700;
-  font-size: 0.8rem;
-  padding: 7px 12px;
-  border-radius: 8px;
+  font-size: 0.7rem;
+  padding: 5px 10px;
+  border-radius: 7px;
   cursor: pointer;
 }
 
@@ -275,18 +269,9 @@ nav li {
 }
 
 .pwa-bar-dismiss {
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-@media (min-width: 900px) {
-  /* Desktop gets the bar too (Chrome installs PWAs), but keep it compact. */
-  .pwa-bar {
-    left: auto;
-    right: 20px;
-    max-width: 440px;
-  }
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /* ── Mobile nav ── */

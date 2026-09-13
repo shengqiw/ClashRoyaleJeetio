@@ -3,12 +3,18 @@ import { useEffect, useState } from "react";
 import { useStoredKey } from "@/lib/useStoredKey";
 
 /**
- * Registers public/sw.js (production only) and shows a one-line "add to home
- * screen" bar on phones that aren't already running the site as an app.
+ * Two pieces of the PWA story:
+ *
+ *  - <PwaRegister />   registers public/sw.js (production only). Lives in the
+ *                      root layout, renders nothing.
+ *  - <PwaInstallBar /> a small, inline "add to home screen" strip. Rendered by
+ *                      the home page only, near the bottom — it is content on
+ *                      the page, not a popup over it (the fixed bottom bar of
+ *                      the first cut got in the way on every page).
  *
  *  - Android/Chrome fire `beforeinstallprompt`; we hold the event and call
  *    prompt() from the Install button (browsers require a user gesture).
- *  - iOS Safari has no install API, so the bar tells the user where the
+ *  - iOS Safari has no install API, so the strip tells the user where the
  *    button is (Share → Add to Home Screen).
  *  - Dismiss is remembered in localStorage for 30 days. Standalone mode
  *    (already installed) renders nothing at all.
@@ -20,7 +26,6 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = "pwa:install-dismissed-at";
 const DISMISS_FOR_MS = 30 * 24 * 60 * 60 * 1000;
-const SHOW_AFTER_MS = 6000;
 
 const isStandalone = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -33,20 +38,23 @@ const isIos = () =>
 
 const isSafari = () => /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome|android/i.test(navigator.userAgent);
 
+/** Service worker — production only so `next dev` HMR never fights a cache. */
 export const PwaRegister = () => {
-  const [dismissedAt, setDismissedAt] = useStoredKey(DISMISS_KEY);
-  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
-  const [mode, setMode] = useState<"hidden" | "android" | "ios">("hidden");
-
-  // Service worker — production only so `next dev` HMR never fights a cache.
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
     navigator.serviceWorker.register("/sw.js").catch((err) => {
       console.warn("[pwa] service worker registration failed", err);
     });
   }, []);
+  return null;
+};
 
-  // Install bar — event listener + timer, both async, so no sync setState in the effect body.
+export const PwaInstallBar = () => {
+  const [dismissedAt, setDismissedAt] = useStoredKey(DISMISS_KEY);
+  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const [mode, setMode] = useState<"hidden" | "android" | "ios">("hidden");
+
+  // Event listener + timer, both async, so no sync setState in the effect body.
   useEffect(() => {
     if (isStandalone()) return;
     const dismissed = Number(dismissedAt) || 0;
@@ -61,7 +69,7 @@ export const PwaRegister = () => {
 
     const timer = window.setTimeout(() => {
       if (isIos() && isSafari()) setMode("ios");
-    }, SHOW_AFTER_MS);
+    }, 0);
 
     const onInstalled = () => setMode("hidden");
     window.addEventListener("appinstalled", onInstalled);
@@ -89,13 +97,13 @@ export const PwaRegister = () => {
   };
 
   return (
-    <div className="pwa-bar" role="dialog" aria-label="Add Jeetio to your home screen">
+    <div className="pwa-bar" role="note" aria-label="Add Jeetio to your home screen">
       <span className="pwa-bar-text">
         {mode === "android" ? (
           <>Add <b>Jeetio</b> to your home screen — Deck AI one tap away.</>
         ) : (
           <>
-            Add <b>Jeetio</b> to your home screen: tap <b>Share</b> then <b>Add to Home Screen</b>.
+            Add <b>Jeetio</b> to your home screen: tap <b>Share</b>, then <b>Add to Home Screen</b>.
           </>
         )}
       </span>

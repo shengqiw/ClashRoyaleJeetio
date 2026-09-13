@@ -37,6 +37,7 @@ export type PlayerCard = {
   evolutionLevel?: number;
   maxEvolutionLevel?: number;
   elixirCost?: number;
+  iconUrls?: { medium?: string; evolutionMedium?: string; heroMedium?: string };
   [extra: string]: unknown;
 };
 
@@ -110,25 +111,10 @@ export type WarResult = {
 
 // ── Levels & bands ─────────────────────────────────────────────────────────
 
-/**
- * The API's `level` is relative to the rarity's `maxLevel`: in Sept 2026 a
- * common caps at 16, rare 14, epic 11, legendary 8 (verified on a live
- * profile — a Goblin Barrel "level 9 / max 11" is an in-game 14). In-game
- * level = level + (cap − maxLevel), where `cap` is the game's top level —
- * the commons' maxLevel. Pass the cap inferred from the collection
- * (`levelCap`) so this keeps working when Supercell raises it again.
- */
-export const DEFAULT_LEVEL_CAP = 16;
-
-export function displayedLevel(card: Pick<PlayerCard, "level" | "maxLevel">, cap = DEFAULT_LEVEL_CAP): number {
-  const max = typeof card.maxLevel === "number" ? card.maxLevel : cap;
-  return Math.max(1, Math.round(card.level + Math.max(0, cap - max)));
-}
-
-/** The game's current max card level, read off the collection (commons carry it). */
-export function levelCap(cards: Pick<PlayerCard, "maxLevel">[]): number {
-  return cards.reduce((cap, c) => (typeof c.maxLevel === "number" && c.maxLevel > cap ? c.maxLevel : cap), DEFAULT_LEVEL_CAP);
-}
+// Level helpers live in cardLevels.ts (tiny, client-safe) — re-exported so
+// the engine's callers and tests keep one import.
+export { DEFAULT_LEVEL_CAP, displayedLevel, levelCap } from "./cardLevels";
+import { displayedLevel, levelCap } from "./cardLevels";
 
 export const BAND_ORDER: TrophyBand[] = ["low", "mid", "high", "top"];
 
@@ -145,11 +131,19 @@ export function bandFromTrophies(trophies: number | undefined, leagueNumber?: nu
 
 // ── Collection indexing ────────────────────────────────────────────────────
 
-/** Hero unlock detection — the API field isn't documented; accept any plausible flag. */
+/**
+ * Evolutions and Heroes both ride on `evolutionLevel` in the live API (verified
+ * Sept 2026): ≥1 with an `evolutionMedium` icon = evolution; ≥2 with a
+ * `heroMedium` icon = hero (hero-only cards like Dark Prince report 2 directly).
+ */
 function hasHero(card: PlayerCard): boolean {
-  const c = card as Record<string, unknown>;
-  const candidates = [c.heroLevel, c.maxHeroLevel, c.hero, c.isHero, c.heroUnlocked];
-  return candidates.some((v) => v === true || (typeof v === "number" && v > 0));
+  const icons = card.iconUrls as { heroMedium?: string } | undefined;
+  return (card.evolutionLevel ?? 0) >= 2 && Boolean(icons?.heroMedium);
+}
+
+function hasEvo(card: PlayerCard): boolean {
+  const icons = card.iconUrls as { evolutionMedium?: string } | undefined;
+  return (card.evolutionLevel ?? 0) >= 1 && Boolean(icons?.evolutionMedium);
 }
 
 function rolesFor(name: string): CardRole[] {
@@ -182,7 +176,7 @@ export function indexCollection(player: PlayerInput): Map<string, OwnedCard> {
       key,
       level: displayedLevel(raw, cap),
       elixir: typeof raw.elixirCost === "number" ? raw.elixirCost : info?.elixir ?? 4,
-      evo: (raw.evolutionLevel ?? 0) > 0,
+      evo: hasEvo(raw),
       hero: hasHero(raw),
       roles: info?.roles ?? [],
     });

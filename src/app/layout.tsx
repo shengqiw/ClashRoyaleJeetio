@@ -52,8 +52,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: "#c293f8",
-  // Lets content extend under the iPhone notch / home indicator when installed;
-  // .pwa-bar uses env(safe-area-inset-bottom) to stay clear of it.
+  // Lets content extend under the iPhone notch / home indicator when installed.
   viewportFit: "cover",
 };
 
@@ -105,7 +104,7 @@ export default function RootLayout({
         </Script>
         <MuiAppProvider>
           <PageLayout>{children}</PageLayout>
-          <PwaRegister />
+          <PwaRegister />{/* service worker only — the install strip lives on the home page */}
         </MuiAppProvider>
       </body>
     </html>

@@ -67,7 +67,7 @@ test("every meta template card has a role entry (so substitution can reason abou
 });
 
 test("maxed full collection → 4 decks, 32 unique cards, 4 families", () => {
-  const cards = ALL.map((n, i) => apiCard(n, 14, 14, { evolutionLevel: i % 4 === 0 ? 1 : 0 }));
+  const cards = ALL.map((n, i) => apiCard(n, 14, 16, i % 4 === 0 ? { evolutionLevel: 1, iconUrls: { medium: "m", evolutionMedium: "e" } } : {}));
   const res = buildWarLineups({ trophies: 12500, cards });
   assert.equal(res.band, "top");
   assert.ok(res.lineups.length >= 1);
@@ -85,7 +85,7 @@ test("mid-ladder account: substitutions are owned, explained, and never duplicat
   // ~75 cards, levels 9–13, no champions, a couple of evos, holes in the collection.
   const champions = ["Goblinstein", "Archer Queen", "Golden Knight", "Mighty Miner", "Boss Bandit", "Little Prince", "Monk", "Skeleton King", "Ronin", "Minion Giant", "Vines", "Cannon Cart"];
   const pool = ALL.filter((n, i) => !champions.includes(n) && i % 3 !== 1); // ~2/3 of the roster, all roles represented
-  const cards = pool.map((n, i) => apiCard(n, 9 + (i % 5), 14, { evolutionLevel: n === "Knight" || n === "Skeletons" ? 1 : 0 }));
+  const cards = pool.map((n, i) => apiCard(n, 9 + (i % 5), 16, n === "Knight" || n === "Skeletons" ? { evolutionLevel: 1, iconUrls: { medium: "m", evolutionMedium: "e" } } : {}));
   const res = buildWarLineups({ trophies: 6200, cards });
   assert.equal(res.band, "mid");
   const owned = indexCollection({ cards });
@@ -113,6 +113,20 @@ test("underleveled owned card gives way to a much stronger same-role card", () =
   assert.ok(!names.includes("Musketeer"), "level-8 Musketeer should be swapped out");
   assert.ok(names.includes("Archers"), "level-14 Archers should replace it");
   assert.ok(deck.substitutions.some((s) => s.out === "Musketeer" && s.in === "Archers"));
+});
+
+test("hero / evolution detection follows the live API model", () => {
+  const cards = [
+    apiCard("Dark Prince", 14, 11, { evolutionLevel: 2, iconUrls: { medium: "m", heroMedium: "h" } }), // hero-only card
+    apiCard("Elite Barbarians", 16, 16, { evolutionLevel: 1, iconUrls: { medium: "m", evolutionMedium: "e" } }),
+    apiCard("Knight", 14, 16, { iconUrls: { medium: "m", evolutionMedium: "e", heroMedium: "h" } }), // nothing unlocked
+    apiCard("Mini P.E.K.K.A", 14, 14, { evolutionLevel: 2, iconUrls: { medium: "m", heroMedium: "h" } }),
+  ];
+  const owned = indexCollection({ cards });
+  assert.deepEqual([owned.get("darkprince")!.hero, owned.get("darkprince")!.evo], [true, false]);
+  assert.deepEqual([owned.get("elitebarbarians")!.hero, owned.get("elitebarbarians")!.evo], [false, true]);
+  assert.deepEqual([owned.get("knight")!.hero, owned.get("knight")!.evo], [false, false]);
+  assert.equal(owned.get("minipekka")!.hero, true);
 });
 
 test("tiny collection → fewer decks and an explanatory note", () => {
