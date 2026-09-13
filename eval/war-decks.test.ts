@@ -13,6 +13,7 @@ import {
   competitiveLevel,
   displayedLevel,
   indexCollection,
+  levelCap,
   validateLineup,
   type PlayerCard,
 } from "../src/lib/warDecks";
@@ -22,24 +23,27 @@ import { normalizeCardName } from "../src/lib/cardName";
 
 const ALL = Object.keys(CARD_ROLES);
 
-/** Rarity-relative API level for a wanted in-game level. */
-const apiCard = (name: string, level: number, maxLevel = 14, extra: Partial<PlayerCard> = {}): PlayerCard => ({
+/** Rarity-relative API level for a wanted in-game level (cap 16: common 16, rare 14, epic 11, legendary 8). */
+const apiCard = (name: string, level: number, maxLevel = 16, extra: Partial<PlayerCard> = {}): PlayerCard => ({
   name,
-  level: level - (14 - maxLevel),
+  level: level - (16 - maxLevel),
   maxLevel,
   elixirCost: CARD_ROLES[name]?.elixir ?? 4,
   ...extra,
 });
 
-test("displayedLevel converts rarity-relative API levels", () => {
-  assert.equal(displayedLevel({ level: 14, maxLevel: 14 }), 14); // common
-  assert.equal(displayedLevel({ level: 12, maxLevel: 12 }), 14); // rare
-  assert.equal(displayedLevel({ level: 9, maxLevel: 9 }), 14); // epic
-  assert.equal(displayedLevel({ level: 6, maxLevel: 6 }), 14); // legendary
-  assert.equal(displayedLevel({ level: 4, maxLevel: 4 }), 14); // champion
-  assert.equal(displayedLevel({ level: 1, maxLevel: 6 }), 9); // fresh legendary
-  assert.equal(displayedLevel({ level: 15, maxLevel: 14 }), 15); // level 15 common
+test("displayedLevel converts rarity-relative API levels (live shapes, Sept 2026)", () => {
+  assert.equal(displayedLevel({ level: 14, maxLevel: 16 }), 14); // common Knight 14/16
+  assert.equal(displayedLevel({ level: 12, maxLevel: 14 }), 14); // rare Dart Goblin 12/14
+  assert.equal(displayedLevel({ level: 9, maxLevel: 11 }), 14); // epic Goblin Barrel 9/11
+  assert.equal(displayedLevel({ level: 7, maxLevel: 8 }), 15); // legendary Princess 7/8
+  assert.equal(displayedLevel({ level: 16, maxLevel: 16 }), 16); // maxed common
+  assert.equal(displayedLevel({ level: 1, maxLevel: 8 }), 9); // fresh legendary
   assert.equal(displayedLevel({ level: 13 }), 13); // already normalized / unknown rarity
+  // Pre-2026 shape (cap 14) still works when the cap is passed explicitly.
+  assert.equal(displayedLevel({ level: 6, maxLevel: 6 }, 14), 14);
+  assert.equal(levelCap([{ maxLevel: 11 }, { maxLevel: 16 }, { maxLevel: 8 }]), 16);
+  assert.equal(levelCap([{ maxLevel: 11 }]), 16); // never below the known cap
 });
 
 test("bandFromTrophies thresholds and league override", () => {

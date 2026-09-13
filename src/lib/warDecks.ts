@@ -11,7 +11,7 @@
  *
  * How a lineup is built
  *   1. Levels: the API reports rarity-relative levels (a max Legendary is
- *      level 6 of 6). `displayedLevel` converts to the in-game 1–15 number.
+ *      level 8 of 8). `displayedLevel` converts to the in-game 1–16 number.
  *      The player's "competitive level" (`ref`) is the median of their 32 best
  *      cards — that is what their war decks can realistically be built at.
  *   2. Realize: each meta template is rebuilt from the player's collection.
@@ -111,14 +111,23 @@ export type WarResult = {
 // ── Levels & bands ─────────────────────────────────────────────────────────
 
 /**
- * The API's `level` is relative to the rarity's `maxLevel` (14 common, 12 rare,
- * 9 epic, 6 legendary, 4 champion). In-game level = level + (14 − maxLevel).
- * If the backend has already normalized (maxLevel ≥ 14) this is a no-op.
+ * The API's `level` is relative to the rarity's `maxLevel`: in Sept 2026 a
+ * common caps at 16, rare 14, epic 11, legendary 8 (verified on a live
+ * profile — a Goblin Barrel "level 9 / max 11" is an in-game 14). In-game
+ * level = level + (cap − maxLevel), where `cap` is the game's top level —
+ * the commons' maxLevel. Pass the cap inferred from the collection
+ * (`levelCap`) so this keeps working when Supercell raises it again.
  */
-export function displayedLevel(card: Pick<PlayerCard, "level" | "maxLevel">): number {
-  const max = typeof card.maxLevel === "number" ? card.maxLevel : 14;
-  const offset = max < 14 ? 14 - max : 0;
-  return Math.max(1, Math.round(card.level + offset));
+export const DEFAULT_LEVEL_CAP = 16;
+
+export function displayedLevel(card: Pick<PlayerCard, "level" | "maxLevel">, cap = DEFAULT_LEVEL_CAP): number {
+  const max = typeof card.maxLevel === "number" ? card.maxLevel : cap;
+  return Math.max(1, Math.round(card.level + Math.max(0, cap - max)));
+}
+
+/** The game's current max card level, read off the collection (commons carry it). */
+export function levelCap(cards: Pick<PlayerCard, "maxLevel">[]): number {
+  return cards.reduce((cap, c) => (typeof c.maxLevel === "number" && c.maxLevel > cap ? c.maxLevel : cap), DEFAULT_LEVEL_CAP);
 }
 
 export const BAND_ORDER: TrophyBand[] = ["low", "mid", "high", "top"];
@@ -162,6 +171,7 @@ function canonicalName(name: string): string {
 
 export function indexCollection(player: PlayerInput): Map<string, OwnedCard> {
   const owned = new Map<string, OwnedCard>();
+  const cap = levelCap(player.cards ?? []);
   for (const raw of player.cards ?? []) {
     if (!raw?.name || typeof raw.level !== "number") continue;
     const key = normalizeCardName(raw.name);
@@ -170,7 +180,7 @@ export function indexCollection(player: PlayerInput): Map<string, OwnedCard> {
     owned.set(key, {
       name: raw.name,
       key,
-      level: displayedLevel(raw),
+      level: displayedLevel(raw, cap),
       elixir: typeof raw.elixirCost === "number" ? raw.elixirCost : info?.elixir ?? 4,
       evo: (raw.evolutionLevel ?? 0) > 0,
       hero: hasHero(raw),

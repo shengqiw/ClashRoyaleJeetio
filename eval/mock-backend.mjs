@@ -25,7 +25,8 @@ try {
   CARD_ROLES = Object.fromEntries(["Knight", "Archers", "Fireball", "The Log", "Hog Rider", "Musketeer", "Cannon", "Skeletons", "Ice Spirit", "Ice Golem"].map((n) => [n, { elixir: 3, roles: [] }]));
 }
 
-const RARITY = (i) => (i % 9 === 0 ? ["champion", 4] : i % 5 === 0 ? ["legendary", 6] : i % 3 === 0 ? ["epic", 9] : i % 2 === 0 ? ["rare", 12] : ["common", 14]);
+// Live Sept-2026 maxLevels: common 16, rare 14, epic 11, legendary 8, champion 6.
+const RARITY = (i) => (i % 9 === 0 ? ["champion", 6] : i % 5 === 0 ? ["legendary", 8] : i % 3 === 0 ? ["epic", 11] : i % 2 === 0 ? ["rare", 14] : ["common", 16]);
 
 function collection(full) {
   const names = Object.keys(CARD_ROLES);
@@ -33,11 +34,11 @@ function collection(full) {
     .filter((_n, i) => full || i % 4 !== 3)
     .map((name, i) => {
       const [rarity, maxLevel] = RARITY(i);
-      const wanted = full ? 14 : 9 + ((i * 7) % 6); // 9..14
+      const wanted = full ? 16 : 10 + ((i * 7) % 6); // 10..15
       return {
         name,
         id: 26000000 + i,
-        level: wanted - (14 - maxLevel),
+        level: wanted - (16 - maxLevel),
         maxLevel,
         rarity,
         elixirCost: CARD_ROLES[name].elixir,

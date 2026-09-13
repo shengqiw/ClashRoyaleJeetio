@@ -97,7 +97,8 @@ for the collection) + one Gemini call. Layers, in the order to read them:
   is how a template survives a missing / underleveled / already-used card. A card
   missing here is a test failure (`npm test`), because the engine can't reason about it.
 - `src/lib/warDecks.ts` — pure engine. Level normalization (API levels are rarity-
-  relative: max legendary = 6/6 → in-game 14), band from trophies (low <5k, mid 5–8k,
+  relative; Sept 2026 caps: common 16 / rare 14 / epic 11 / legendary 8, so an epic
+  "9/11" is an in-game 14 — the cap is read off the collection), band from trophies (low <5k, mid 5–8k,
   high 8–11k, top ≥11k or PoL league ≥10), realize each template, greedy + improve
   lineup search, `validateLineup`. No network, no React — `npm test` covers it.
 - `src/lib/warAdvisor.ts` — Gemini picks between the engine's lineups, assigns war
@@ -106,7 +107,8 @@ for the collection) + one Gemini call. Layers, in the order to read them:
   dropped. No key / quota / timeout → `cannedOutcome` (rule-based, flagged in
   `advisor.used=false`). The page never goes dark because Gemini did.
 - `src/lib/gemini.ts` — REST wrapper (no SDK). `GEMINI_API_KEY` (free AI Studio key),
-  `GEMINI_MODEL` (default gemini-2.5-flash, thinking off), `GEMINI_API_BASE` (tests only).
+  `GEMINI_MODEL` (default gemini-3.6-flash — 2.5 was retired for new keys 2026-09-13; a 404
+  walks a fallback chain ending in `gemini-flash-latest`), `GEMINI_API_BASE` (tests only).
 - Route caches per tag+band for 10 min in-instance to spare the free-tier RPM.
 
 Local end-to-end without the real backend: `npx tsx eval/mock-backend.mjs`, then

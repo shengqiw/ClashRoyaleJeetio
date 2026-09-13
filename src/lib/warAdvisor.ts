@@ -84,6 +84,13 @@ Plain English, no hype, no emojis. Card names exactly as given.`;
 
 const CANNED_ROLES: WarRole[] = ["Duel opener", "Duel second", "Duel closer", "1v1 / boat"];
 
+/** The template's play note, unless the win condition got swapped — then the note would coach the wrong card. */
+function cannedHow(d: WarDeck): string {
+  const winconSwap = d.substitutions.find((s) => CARD_ROLES[s.out]?.roles?.[0] === "wincon");
+  if (!winconSwap) return d.note;
+  return `${winconSwap.in} is your win condition here instead of ${winconSwap.out}; the rest of the deck defends the way ${d.name} does.`;
+}
+
 function cannedWhy(d: WarDeck, band: string): string {
   const tier = d.tier === "S" ? "an S-tier" : d.tier === "A" ? "an A-tier" : "a solid";
   const levels = `your cards average level ${d.avgLevel}`;
@@ -98,7 +105,7 @@ export function cannedOutcome(result: WarResult, reason: string): AdvisorOutcome
     ...d,
     warRole: CANNED_ROLES[i] ?? "1v1 / boat",
     why: cannedWhy(d, result.band),
-    howToPlay: d.note,
+    howToPlay: cannedHow(d),
   }));
   return {
     decks,
@@ -229,7 +236,7 @@ export async function coachLineups(
     annotated.set(d.deckIndex, {
       warRole: role ?? ([...rolesLeft][0] ?? "1v1 / boat"),
       why: typeof d.why === "string" && d.why.trim() ? d.why.trim() : cannedWhy(decks[d.deckIndex], result.band),
-      howToPlay: typeof d.howToPlay === "string" && d.howToPlay.trim() ? d.howToPlay.trim() : decks[d.deckIndex].note,
+      howToPlay: typeof d.howToPlay === "string" && d.howToPlay.trim() ? d.howToPlay.trim() : cannedHow(decks[d.deckIndex]),
     });
     rolesLeft.delete(annotated.get(d.deckIndex)!.warRole);
   }
@@ -237,7 +244,7 @@ export async function coachLineups(
     const a = annotated.get(i);
     const role = a?.warRole ?? ([...rolesLeft][0] ?? "1v1 / boat");
     if (!a) rolesLeft.delete(role);
-    return { ...d, warRole: role, why: a?.why ?? cannedWhy(d, result.band), howToPlay: a?.howToPlay ?? d.note };
+    return { ...d, warRole: role, why: a?.why ?? cannedWhy(d, result.band), howToPlay: a?.howToPlay ?? cannedHow(d) };
   });
   // Present in war order: opener, second, closer, 1v1.
   coached.sort((a, b) => WAR_ROLES.indexOf(a.warRole) - WAR_ROLES.indexOf(b.warRole));
