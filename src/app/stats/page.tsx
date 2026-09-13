@@ -427,10 +427,27 @@ export default function Stats() {
                             {member.trophies.toLocaleString()}
                           </span>
                         </Box>
-                        <Box className="stat-box">
-                          <span className="stat-label">Level</span>
-                          <span className="stat-value">{member.expLevel}</span>
-                        </Box>
+                        {/* The clan-members API stopped populating expLevel (it
+                            reads 0 for everyone since Sept 2026), so show rank
+                            movement since last season instead when level is dead. */}
+                        {member.expLevel > 0 ? (
+                          <Box className="stat-box">
+                            <span className="stat-label">Level</span>
+                            <span className="stat-value">{member.expLevel}</span>
+                          </Box>
+                        ) : (
+                          <Box className="stat-box">
+                            <span className="stat-label">Rank Δ</span>
+                            <span className="stat-value">
+                              {(() => {
+                                const prev = member.previousClanRank;
+                                if (typeof prev !== "number" || prev <= 0) return "—";
+                                const d = prev - member.clanRank;
+                                return d > 0 ? `▲ ${d}` : d < 0 ? `▼ ${-d}` : "=";
+                              })()}
+                            </span>
+                          </Box>
+                        )}
                         <Box className="stat-box">
                           <span className="stat-label">Donated</span>
                           <span className="stat-value">

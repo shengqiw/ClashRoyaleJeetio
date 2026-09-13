@@ -1052,4 +1052,8 @@
   .deckai-war-cards {
     gap: 0.25rem;
   }
+  /* "meta 2026-09-12 · gemini-3.6-flash" wraps into the COACH label on phones. */
+  .deckai-war-meta {
+    display: none !important;
+  }
 }

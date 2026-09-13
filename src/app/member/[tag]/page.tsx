@@ -222,8 +222,10 @@ export default function MemberPage() {
                     <Box className="deck-card deck-king">
                       <Typography className="deck-king-icon">👑</Typography>
                       <Typography className="deck-card-name">King Tower</Typography>
+                      {/* kingTowerLevel is the tower's real level (16 at max);
+                          expLevel is the account's XP level (79 for a maxed player). */}
                       <Typography className="deck-card-level">
-                        LVL {player.expLevel}
+                        LVL {player.kingTowerLevel ?? player.expLevel}
                       </Typography>
                     </Box>
                   </Box>

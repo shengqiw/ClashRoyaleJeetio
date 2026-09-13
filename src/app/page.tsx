@@ -14,7 +14,7 @@ const features = [
   {
     emoji: "🤖",
     title: "Deck AI",
-    body: "Our upcoming AI project analyzes any deck or playstyle and recommends the optimal counter-deck from your card collection. Build smarter, climb faster.",
+    body: "Scan your losses to find your kryptonite, name any deck to get the counter, or build your four Clan War decks from this week's meta at your real card levels.",
   },
 ];
 

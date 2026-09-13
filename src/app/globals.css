@@ -40,6 +40,7 @@ body {
 
 nav {
   width: 100%;
+  box-sizing: border-box; /* width:100% + padding was 40px wider than the phone */
   padding: 6px 20px;
   background: linear-gradient(
     90deg,
@@ -104,6 +105,13 @@ nav li {
   display: inline;
   margin: 0 2px;
   padding: 0.4rem 0.7rem;
+}
+
+/* The link itself carries the tap target (≥40px tall on phones); the text
+   inside stays small. */
+nav li a {
+  display: inline-block;
+  padding: 10px 2px;
 }
 
 .purple-shadow {
@@ -172,7 +180,9 @@ nav li {
 /* ── Footer ── */
 .site-footer {
   width: 100%;
+  box-sizing: border-box; /* same overflow as nav — clipped the Privacy link on phones */
   padding: 14px 20px;
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: center;
