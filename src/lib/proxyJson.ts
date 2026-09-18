@@ -1,6 +1,28 @@
 import { NextResponse } from 'next/server';
 
 /**
+ * What the player sees when the backend box can't be reached at all. Seen
+ * twice now (2026-08-22, 2026-09-18): the GCP VM `clash-royale-api` (project
+ * clash-api-486819) stops answering TCP and every data page dies with it.
+ * The fix both times was a VM reset from the GCP console — say so, so the
+ * next person doesn't debug the Next app for an hour.
+ */
+export const BACKEND_OFFLINE =
+  "Jeetio's backend server is offline right now (the game-data box isn't answering), so this can't load. " +
+  'Not a problem with your tag — it usually means the clash-royale-api VM needs a reset. Try again in a few minutes.';
+
+/** True when a fetch error means "nothing is listening" rather than "slow". */
+export function isConnectFailure(err: unknown): boolean {
+  const e = err as { name?: string; message?: string; cause?: { code?: string } };
+  return (
+    e?.message === 'fetch failed' ||
+    /ECONNREFUSED|ECONNRESET|ETIMEDOUT|EHOSTUNREACH|ENETUNREACH|UND_ERR_CONNECT_TIMEOUT/i.test(
+      `${e?.cause?.code ?? ''} ${e?.message ?? ''}`
+    )
+  );
+}
+
+/**
  * Proxy a JSON request to the backend API and return a NextResponse that is
  * ALWAYS valid JSON — even when the backend is slow, down, or replies with a
  * non-JSON body (a gateway timeout page, an empty 502, a refused connection).
@@ -32,6 +54,8 @@ export async function proxyJson(
       {
         error: aborted
           ? `Backend did not respond within ${Math.round(timeoutMs / 1000)}s — it may be unreachable. Try Refresh.`
+          : isConnectFailure(err)
+          ? BACKEND_OFFLINE
           : `Could not reach backend: ${(err as Error).message}`,
       },
       { status: 504 }

@@ -61,7 +61,7 @@ export default function MemberPage() {
         if (!res.ok) {
           const payload = await res.json().catch(() => ({}));
           throw new Error(
-            payload?.message || payload?.reason || `HTTP ${res.status}`
+            payload?.error || payload?.message || payload?.reason || `HTTP ${res.status}`
           );
         }
         setPlayer(await res.json());

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { proxyJson } from '@/lib/proxyJson';
 
 export const revalidate = 180;
 
@@ -17,14 +18,11 @@ export async function GET(
     );
   }
 
-  const url = `${apiBase}/clash/clan/${encodeURIComponent(tag)}/members`;
-  const response = await fetch(url, {
-    headers: {
-      'x-api-key': apiKey,
-      Accept: 'application/json',
-    },
-  });
-
-  const data = await response.json();
-  return NextResponse.json(data, { status: response.status });
+  // 8s: under Vercel's 10s function limit, so a dead backend yields a JSON
+  // error the page can show instead of Vercel's FUNCTION_INVOCATION_TIMEOUT page.
+  return proxyJson(
+    `${apiBase}/clash/clan/${encodeURIComponent(tag)}/members`,
+    { headers: { 'x-api-key': apiKey, Accept: 'application/json' } },
+    { timeoutMs: 8000 }
+  );
 }

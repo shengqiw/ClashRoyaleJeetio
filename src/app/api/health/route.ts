@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { errText, log, newTrace, stopwatch } from '@/lib/log';
+import { isConnectFailure } from '@/lib/proxyJson';
 
 /**
  * GET /api/health — the one call that explains the whole system.
@@ -71,6 +72,15 @@ export async function GET(req: NextRequest) {
           `Backend unreachable at ${apiBase}${PROBE_PATH} (${errText(e, 80)}). ` +
             'If it is a cold container, retry once; if it stays down, every data page on the site is empty.'
         );
+        // Diagnosed twice (2026-08-22, 2026-09-18): a connect-level failure — not a
+        // slow reply — has meant the GCP VM itself stopped answering. Fix was a reset.
+        if (isConnectFailure(e) || (e as Error)?.name === 'TimeoutError') {
+          warnings.push(
+            'Nothing is answering on the backend host at all (TCP connect fails/times out). Both times so far the fix was: ' +
+              'GCP console → project clash-api-486819 → Compute Engine → VM instances → clash-royale-api → Reset ' +
+              '(Docker --restart brings the API back in ~1 min). If the VM is STOPPED, Start it and check API_BASE_URL still matches its external IP.'
+          );
+        }
       }
     }
   }

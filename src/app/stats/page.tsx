@@ -107,7 +107,7 @@ export default function Stats() {
       });
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload?.message || payload?.reason || `HTTP ${res.status}`);
+        throw new Error(payload?.error || payload?.message || payload?.reason || `HTTP ${res.status}`);
       }
       const data = await res.json();
       setMembers(data?.items || []);

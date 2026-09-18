@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { errText, log, newTrace, stopwatch } from "@/lib/log";
+import { BACKEND_OFFLINE, isConnectFailure } from "@/lib/proxyJson";
 import { buildWarLineups, indexCollection, type PlayerInput, type WarResult } from "@/lib/warDecks";
 import { coachLineups, type AdvisorOutcome } from "@/lib/warAdvisor";
 import { META_SNAPSHOT, type TrophyBand } from "@/data/metaDecks";
@@ -110,7 +111,13 @@ export async function POST(request: Request) {
     const aborted = (e as Error)?.name === "TimeoutError" || (e as Error)?.name === "AbortError";
     log("backend", { path: `/clash/player/${tag}`, err: errText(e), ms: t(), trace });
     return NextResponse.json(
-      { error: aborted ? "The backend didn't answer in time — try again." : `Could not reach backend: ${errText(e, 80)}` },
+      {
+        error: aborted
+          ? "The backend didn't answer in time — try again."
+          : isConnectFailure(e)
+          ? BACKEND_OFFLINE
+          : `Could not reach backend: ${errText(e, 80)}`,
+      },
       { status: 504 }
     );
   }

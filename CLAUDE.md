@@ -71,6 +71,14 @@ something twice, add it to `warnings` so the third time is free.
   that environment. `.env.local` on Shen's Mac does NOT have them, so local dev cannot reach
   the backend without them; `/api/health` says so explicitly.
 - Client hangs with "Unexpected end of JSON input" → a route bypassed `proxyJson.ts`.
+- **Every data page dead, `/api/health?probe=1` says "Backend unreachable … TimeoutError" /
+  "fetch failed"** → the GCP VM `clash-royale-api` (project `clash-api-486819`, external IP
+  in `API_BASE_URL`) has stopped answering. Happened 2026-08-22 and 2026-09-18; the fix both
+  times was Compute Engine → VM instances → clash-royale-api → **Reset** (Docker `--restart`
+  brings the API back in ~1 min). Nothing in this repo can fix it — it needs Shen's GCP login
+  (his Chrome, or the phone). War Decks reports it as "Jeetio's backend server is offline".
+  The scorecard round (`eval/scorecard.md`, committed by CI on every push and Mondays) now
+  carries a War Decks probe + health snapshot, so an outage is visible from the repo alone.
 - MUI renders inside `@layer mui` (`enableCssLayer: true` in `mui-app-provider.tsx`), so
   ANY unlayered element selector in a global stylesheet beats MUI's own styles regardless
   of specificity. A bare `li { display: inline }` in globals.css flattened the card-picker
