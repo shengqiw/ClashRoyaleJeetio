@@ -23,26 +23,73 @@ don't edit by hand.
 | 2026-09-13 | bc49885 | 30 | -24 | 8 | 0 |
 | 2026-09-13 | bb759d2 | 30 | -24 | 8 | 0 |
 | 2026-09-14 | 6db7dc8 | 30 | -24 | 8 | 0 |
+| 2026-09-18 | 7061499 | 126 | +72 | 0 | 18 |
 
-## Last round — 2026-09-14 (6db7dc8) vs https://www.jeetio.com
+## Last round — 2026-09-18 (7061499) vs https://www.jeetio.com
 
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
-| 1 | Hog 2.6 Cycle | top | 1 | 2368ms | — |
-| 2 | Golem Beatdown | high | 1 | 549ms | — |
-| 3 | LavaLoon | high | 1 | 490ms | — |
-| 4 | X-Bow 2.9 Siege | top | 1 | 516ms | — |
-| 5 | Classic Log Bait | top | 1 | 506ms | — |
-| 6 | Mega Knight Bridge Spam | mid | 2 | 529ms | relevant |
-| 7 | Royal Giant Cycle | high | 3 | 510ms | relevant, golden |
-| 8 | Graveyard Freeze | high | 1 | 539ms | — |
-| 9 | Miner Poison Control | top | 1 | 488ms | — |
-| 10 | P.E.K.K.A Bridge Spam | high | 2 | 475ms | golden |
-| 11 | Elixir Golem Heal | mid | 3 | 551ms | relevant, golden |
-| 12 | LumberLoon Freeze | high | 1 | 501ms | — |
-| 13 | Mortar Bait | top | 2 | 437ms | relevant |
-| 14 | Three Musketeers Pump | high | 2 | 513ms | relevant |
-| 15 | Hog Earthquake | mid | 2 | 448ms | relevant |
-| 16 | Splashyard | high | 2 | 474ms | relevant |
-| 17 | Mid-ladder Menace | mid | 2 | 490ms | relevant |
-| 18 | Sparky Royal Giant | mid | 2 | 537ms | relevant |
+| 1 | Hog 2.6 Cycle | top | 7 | 10622ms | answered, valid, relevant, evidence, golden, fast |
+| 2 | Golem Beatdown | high | 7 | 10500ms | answered, valid, relevant, evidence, golden, fast |
+| 3 | LavaLoon | high | 7 | 10480ms | answered, valid, relevant, evidence, golden, fast |
+| 4 | X-Bow 2.9 Siege | top | 7 | 10479ms | answered, valid, relevant, evidence, golden, fast |
+| 5 | Classic Log Bait | top | 7 | 10598ms | answered, valid, relevant, evidence, golden, fast |
+| 6 | Mega Knight Bridge Spam | mid | 7 | 10480ms | answered, valid, relevant, evidence, golden, fast |
+| 7 | Royal Giant Cycle | high | 7 | 10389ms | answered, valid, relevant, evidence, golden, fast |
+| 8 | Graveyard Freeze | high | 7 | 10476ms | answered, valid, relevant, evidence, golden, fast |
+| 9 | Miner Poison Control | top | 7 | 10424ms | answered, valid, relevant, evidence, golden, fast |
+| 10 | P.E.K.K.A Bridge Spam | high | 7 | 10411ms | answered, valid, relevant, evidence, golden, fast |
+| 11 | Elixir Golem Heal | mid | 7 | 10381ms | answered, valid, relevant, evidence, golden, fast |
+| 12 | LumberLoon Freeze | high | 7 | 10402ms | answered, valid, relevant, evidence, golden, fast |
+| 13 | Mortar Bait | top | 7 | 10399ms | answered, valid, relevant, evidence, golden, fast |
+| 14 | Three Musketeers Pump | high | 7 | 10420ms | answered, valid, relevant, evidence, golden, fast |
+| 15 | Hog Earthquake | mid | 7 | 10377ms | answered, valid, relevant, evidence, golden, fast |
+| 16 | Splashyard | high | 7 | 10380ms | answered, valid, relevant, evidence, golden, fast |
+| 17 | Mid-ladder Menace | mid | 7 | 10377ms | answered, valid, relevant, evidence, golden, fast |
+| 18 | Sparky Royal Giant | mid | 7 | 10384ms | answered, valid, relevant, evidence, golden, fast |
+
+## War Decks probe — last round
+
+`/api/health?probe=1` then `POST /api/war-decks` for two clan members (the 19th hole).
+
+```json
+{
+  "at": "2026-09-18T02:36:23.868Z",
+  "health": {
+    "status": 503,
+    "ms": 8697,
+    "ok": false,
+    "env": {
+      "API_BASE_URL": true,
+      "API_KEY": true,
+      "GEMINI_API_KEY": true,
+      "GEMINI_MODEL": true
+    },
+    "warnings": [
+      "Backend unreachable at http://34.29.99.84:3000/clash/cards (TimeoutError: The operation was aborted due to timeout). If it is a cold container, retry once; if it stays down, every data page on the site is empty."
+    ],
+    "info": [],
+    "probe": {
+      "path": "/clash/cards",
+      "ok": false,
+      "ms": 8002,
+      "detail": "TimeoutError: The operation was aborted due to timeout"
+    }
+  },
+  "players": [
+    {
+      "tag": "#PRURJPJP",
+      "status": 504,
+      "ms": 11738,
+      "error": "Could not reach backend: TypeError: fetch failed",
+      "decks": null
+    }
+  ],
+  "members": {
+    "status": 504,
+    "ms": 10266,
+    "count": null,
+    "text": "An error occurred with your deployment\n\nFUNCTION_INVOCATION_TIMEOUT\n\nsfo1::snvgz-1789698992652-a7d8957cc0fe\n"
+  }
+}
+```

@@ -115,5 +115,53 @@
     "par": 54,
     "aces": 8,
     "blowups": 0
+  },
+  {
+    "date": "2026-09-18",
+    "sha": "7061499",
+    "base": "https://www.jeetio.com",
+    "strokes": 126,
+    "par": 54,
+    "aces": 0,
+    "blowups": 18,
+    "warProbe": {
+      "at": "2026-09-18T02:36:23.868Z",
+      "health": {
+        "status": 503,
+        "ms": 8697,
+        "ok": false,
+        "env": {
+          "API_BASE_URL": true,
+          "API_KEY": true,
+          "GEMINI_API_KEY": true,
+          "GEMINI_MODEL": true
+        },
+        "warnings": [
+          "Backend unreachable at http://34.29.99.84:3000/clash/cards (TimeoutError: The operation was aborted due to timeout). If it is a cold container, retry once; if it stays down, every data page on the site is empty."
+        ],
+        "info": [],
+        "probe": {
+          "path": "/clash/cards",
+          "ok": false,
+          "ms": 8002,
+          "detail": "TimeoutError: The operation was aborted due to timeout"
+        }
+      },
+      "players": [
+        {
+          "tag": "#PRURJPJP",
+          "status": 504,
+          "ms": 11738,
+          "error": "Could not reach backend: TypeError: fetch failed",
+          "decks": null
+        }
+      ],
+      "members": {
+        "status": 504,
+        "ms": 10266,
+        "count": null,
+        "text": "An error occurred with your deployment\n\nFUNCTION_INVOCATION_TIMEOUT\n\nsfo1::snvgz-1789698992652-a7d8957cc0fe\n"
+      }
+    }
   }
 ]
