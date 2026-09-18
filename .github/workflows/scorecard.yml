@@ -41,6 +41,9 @@ jobs:
       # [skip ci] keeps Vercel from redeploying over a docs-only commit;
       # pushes made with GITHUB_TOKEN never retrigger workflows.
       - name: Commit the round
+        # Also after a losing round (exit 1 = outage): the committed round is
+        # where the outage evidence lives, so it must land either way.
+        if: always()
         run: |
           git config user.name "jeetio-scorecard"
           git config user.email "actions@users.noreply.github.com"
