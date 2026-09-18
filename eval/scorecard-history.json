@@ -163,5 +163,53 @@
         "text": "An error occurred with your deployment\n\nFUNCTION_INVOCATION_TIMEOUT\n\nsfo1::snvgz-1789698992652-a7d8957cc0fe\n"
       }
     }
+  },
+  {
+    "date": "2026-09-18",
+    "sha": "8c65168",
+    "base": "https://www.jeetio.com",
+    "strokes": 126,
+    "par": 54,
+    "aces": 0,
+    "blowups": 18,
+    "warProbe": {
+      "at": "2026-09-18T02:50:34.818Z",
+      "health": {
+        "status": 503,
+        "ms": 8611,
+        "ok": false,
+        "env": {
+          "API_BASE_URL": true,
+          "API_KEY": true,
+          "GEMINI_API_KEY": true,
+          "GEMINI_MODEL": true
+        },
+        "warnings": [
+          "Backend unreachable at http://34.29.99.84:3000/clash/cards (TimeoutError: The operation was aborted due to timeout). If it is a cold container, retry once; if it stays down, every data page on the site is empty.",
+          "Nothing is answering on the backend host at all (TCP connect fails/times out). Both times so far the fix was: GCP console → project clash-api-486819 → Compute Engine → VM instances → clash-royale-api → Reset (Docker --restart brings the API back in ~1 min). If the VM is STOPPED, Start it and check API_BASE_URL still matches its external IP."
+        ],
+        "info": [],
+        "probe": {
+          "path": "/clash/cards",
+          "ok": false,
+          "ms": 8001,
+          "detail": "TimeoutError: The operation was aborted due to timeout"
+        }
+      },
+      "players": [
+        {
+          "tag": "#PRURJPJP",
+          "status": 504,
+          "ms": 11544,
+          "error": "Jeetio's backend server is offline right now (the game-data box isn't answering), so this can't load. Not a problem with your tag — it usually means the clash-royale-api VM needs a reset. Try again in a few minutes.",
+          "decks": null
+        }
+      ],
+      "members": {
+        "status": 504,
+        "ms": 8970,
+        "count": null
+      }
+    }
   }
 ]

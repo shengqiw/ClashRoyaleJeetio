@@ -24,29 +24,30 @@ don't edit by hand.
 | 2026-09-13 | bb759d2 | 30 | -24 | 8 | 0 |
 | 2026-09-14 | 6db7dc8 | 30 | -24 | 8 | 0 |
 | 2026-09-18 | 7061499 | 126 | +72 | 0 | 18 |
+| 2026-09-18 | 8c65168 | 126 | +72 | 0 | 18 |
 
-## Last round — 2026-09-18 (7061499) vs https://www.jeetio.com
+## Last round — 2026-09-18 (8c65168) vs https://www.jeetio.com
 
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
-| 1 | Hog 2.6 Cycle | top | 7 | 10622ms | answered, valid, relevant, evidence, golden, fast |
-| 2 | Golem Beatdown | high | 7 | 10500ms | answered, valid, relevant, evidence, golden, fast |
-| 3 | LavaLoon | high | 7 | 10480ms | answered, valid, relevant, evidence, golden, fast |
-| 4 | X-Bow 2.9 Siege | top | 7 | 10479ms | answered, valid, relevant, evidence, golden, fast |
-| 5 | Classic Log Bait | top | 7 | 10598ms | answered, valid, relevant, evidence, golden, fast |
-| 6 | Mega Knight Bridge Spam | mid | 7 | 10480ms | answered, valid, relevant, evidence, golden, fast |
-| 7 | Royal Giant Cycle | high | 7 | 10389ms | answered, valid, relevant, evidence, golden, fast |
-| 8 | Graveyard Freeze | high | 7 | 10476ms | answered, valid, relevant, evidence, golden, fast |
-| 9 | Miner Poison Control | top | 7 | 10424ms | answered, valid, relevant, evidence, golden, fast |
-| 10 | P.E.K.K.A Bridge Spam | high | 7 | 10411ms | answered, valid, relevant, evidence, golden, fast |
-| 11 | Elixir Golem Heal | mid | 7 | 10381ms | answered, valid, relevant, evidence, golden, fast |
-| 12 | LumberLoon Freeze | high | 7 | 10402ms | answered, valid, relevant, evidence, golden, fast |
-| 13 | Mortar Bait | top | 7 | 10399ms | answered, valid, relevant, evidence, golden, fast |
-| 14 | Three Musketeers Pump | high | 7 | 10420ms | answered, valid, relevant, evidence, golden, fast |
-| 15 | Hog Earthquake | mid | 7 | 10377ms | answered, valid, relevant, evidence, golden, fast |
-| 16 | Splashyard | high | 7 | 10380ms | answered, valid, relevant, evidence, golden, fast |
-| 17 | Mid-ladder Menace | mid | 7 | 10377ms | answered, valid, relevant, evidence, golden, fast |
-| 18 | Sparky Royal Giant | mid | 7 | 10384ms | answered, valid, relevant, evidence, golden, fast |
+| 1 | Hog 2.6 Cycle | top | 7 | 10326ms | answered, valid, relevant, evidence, golden, fast |
+| 2 | Golem Beatdown | high | 7 | 10405ms | answered, valid, relevant, evidence, golden, fast |
+| 3 | LavaLoon | high | 7 | 10322ms | answered, valid, relevant, evidence, golden, fast |
+| 4 | X-Bow 2.9 Siege | top | 7 | 10318ms | answered, valid, relevant, evidence, golden, fast |
+| 5 | Classic Log Bait | top | 7 | 10373ms | answered, valid, relevant, evidence, golden, fast |
+| 6 | Mega Knight Bridge Spam | mid | 7 | 10320ms | answered, valid, relevant, evidence, golden, fast |
+| 7 | Royal Giant Cycle | high | 7 | 10276ms | answered, valid, relevant, evidence, golden, fast |
+| 8 | Graveyard Freeze | high | 7 | 10271ms | answered, valid, relevant, evidence, golden, fast |
+| 9 | Miner Poison Control | top | 7 | 10277ms | answered, valid, relevant, evidence, golden, fast |
+| 10 | P.E.K.K.A Bridge Spam | high | 7 | 10334ms | answered, valid, relevant, evidence, golden, fast |
+| 11 | Elixir Golem Heal | mid | 7 | 10309ms | answered, valid, relevant, evidence, golden, fast |
+| 12 | LumberLoon Freeze | high | 7 | 10267ms | answered, valid, relevant, evidence, golden, fast |
+| 13 | Mortar Bait | top | 7 | 10287ms | answered, valid, relevant, evidence, golden, fast |
+| 14 | Three Musketeers Pump | high | 7 | 10314ms | answered, valid, relevant, evidence, golden, fast |
+| 15 | Hog Earthquake | mid | 7 | 10292ms | answered, valid, relevant, evidence, golden, fast |
+| 16 | Splashyard | high | 7 | 10280ms | answered, valid, relevant, evidence, golden, fast |
+| 17 | Mid-ladder Menace | mid | 7 | 10296ms | answered, valid, relevant, evidence, golden, fast |
+| 18 | Sparky Royal Giant | mid | 7 | 10294ms | answered, valid, relevant, evidence, golden, fast |
 
 ## War Decks probe — last round
 
@@ -54,10 +55,10 @@ don't edit by hand.
 
 ```json
 {
-  "at": "2026-09-18T02:36:23.868Z",
+  "at": "2026-09-18T02:50:34.818Z",
   "health": {
     "status": 503,
-    "ms": 8697,
+    "ms": 8611,
     "ok": false,
     "env": {
       "API_BASE_URL": true,
@@ -66,13 +67,14 @@ don't edit by hand.
       "GEMINI_MODEL": true
     },
     "warnings": [
-      "Backend unreachable at http://34.29.99.84:3000/clash/cards (TimeoutError: The operation was aborted due to timeout). If it is a cold container, retry once; if it stays down, every data page on the site is empty."
+      "Backend unreachable at http://34.29.99.84:3000/clash/cards (TimeoutError: The operation was aborted due to timeout). If it is a cold container, retry once; if it stays down, every data page on the site is empty.",
+      "Nothing is answering on the backend host at all (TCP connect fails/times out). Both times so far the fix was: GCP console → project clash-api-486819 → Compute Engine → VM instances → clash-royale-api → Reset (Docker --restart brings the API back in ~1 min). If the VM is STOPPED, Start it and check API_BASE_URL still matches its external IP."
     ],
     "info": [],
     "probe": {
       "path": "/clash/cards",
       "ok": false,
-      "ms": 8002,
+      "ms": 8001,
       "detail": "TimeoutError: The operation was aborted due to timeout"
     }
   },
@@ -80,16 +82,15 @@ don't edit by hand.
     {
       "tag": "#PRURJPJP",
       "status": 504,
-      "ms": 11738,
-      "error": "Could not reach backend: TypeError: fetch failed",
+      "ms": 11544,
+      "error": "Jeetio's backend server is offline right now (the game-data box isn't answering), so this can't load. Not a problem with your tag — it usually means the clash-royale-api VM needs a reset. Try again in a few minutes.",
       "decks": null
     }
   ],
   "members": {
     "status": 504,
-    "ms": 10266,
-    "count": null,
-    "text": "An error occurred with your deployment\n\nFUNCTION_INVOCATION_TIMEOUT\n\nsfo1::snvgz-1789698992652-a7d8957cc0fe\n"
+    "ms": 8970,
+    "count": null
   }
 }
 ```
