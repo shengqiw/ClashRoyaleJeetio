@@ -113,7 +113,66 @@ ${rows}
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
 ${detail}
+
+## War Decks probe — last round
+
+\`/api/health?probe=1\` then \`POST /api/war-decks\` for two clan members (the 19th hole).
+
+\`\`\`json
+${JSON.stringify(last.warProbe ?? null, null, 2)}
+\`\`\`
 `;
+}
+
+/**
+ * War Decks probe — the 19th hole. One health check, then /api/war-decks for
+ * two real clan members, recorded verbatim (status, error, advisor state) so
+ * a broken War Decks shows up in the committed round, not in a phone report.
+ */
+async function probeWarDecks() {
+  const out = { at: new Date().toISOString(), health: null, players: [] };
+  const get = async (path, init) => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 55000);
+    const started = Date.now();
+    try {
+      const res = await fetch(`${BASE}${path}`, { ...init, signal: ctrl.signal });
+      const text = await res.text();
+      let json = null;
+      try {
+        json = JSON.parse(text);
+      } catch {}
+      return { status: res.status, ms: Date.now() - started, json, text: json ? undefined : text.slice(0, 300) };
+    } catch (e) {
+      return { status: 0, ms: Date.now() - started, error: e?.name === "AbortError" ? "timeout" : String(e?.message || e) };
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+  const h = await get("/api/health?probe=1");
+  out.health = { status: h.status, ms: h.ms, ...(h.json ? { ok: h.json.ok, env: h.json.env, warnings: h.json.warnings, info: h.json.info, probe: h.json.probe } : { error: h.error, text: h.text }) };
+  const members = await get(`/api/clan/${encodeURIComponent("#PRURJPJP")}/members`);
+  const tags = (members.json?.items || []).slice(0, 2).map((m) => m.tag).filter(Boolean);
+  out.members = { status: members.status, ms: members.ms, count: members.json?.items?.length ?? null, error: members.error, text: members.text };
+  for (const tag of tags.length ? tags : ["#PRURJPJP"]) {
+    const r = await get("/api/war-decks", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tag }) });
+    const j = r.json;
+    out.players.push({
+      tag,
+      status: r.status,
+      ms: r.ms,
+      error: r.error || j?.error || r.text,
+      decks: Array.isArray(j?.decks) ? j.decks.length : null,
+      band: j?.band,
+      ref: j?.ref,
+      ownedCount: j?.ownedCount,
+      notes: j?.notes,
+      advisor: j?.advisor,
+      cached: j?.cached,
+      deckNames: Array.isArray(j?.decks) ? j.decks.map((d) => `${d.name} (${d.cards?.length} cards, ${d.warRole})`) : undefined,
+    });
+  }
+  return out;
 }
 
 const { holes } = JSON.parse(readFileSync(join(DIR, "holes.json"), "utf8"));
@@ -139,7 +198,9 @@ const round = {
   par,
   aces,
   blowups,
+  warProbe: await probeWarDecks().catch((e) => ({ error: String(e?.message || e) })),
 };
+console.log("\nWar Decks probe:\n" + JSON.stringify(round.warProbe, null, 2));
 
 const historyPath = join(DIR, "scorecard-history.json");
 let history = [];
