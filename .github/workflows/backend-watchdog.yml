@@ -1,0 +1,108 @@
+# Backend watchdog: if jeetio's API box stops answering, reset it from here.
+#
+# The backend is one GCP VM (clash-royale-api, project clash-api-486819) that
+# has wedged twice in four weeks (2026-08-22, 2026-09-18). Each time the fix was
+# a Reset in the GCP console, and each time it needed Shen's phone. This job
+# does the same thing with a service account, so the site heals itself.
+#
+# One-time setup (needs Shen's Google login, once):
+#   1. GCP console → IAM & Admin → Service Accounts → Create:
+#        name: jeetio-watchdog, role: "Compute Instance Admin (v1)"
+#   2. That account → Keys → Add key → JSON → download.
+#   3. GitHub repo → Settings → Secrets and variables → Actions → New secret:
+#        name: GCP_SA_KEY, value: the whole JSON file's contents.
+# Until the secret exists, runs print this and stop — nothing else happens.
+name: backend-watchdog
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Reset the VM even if the health check passes"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-watchdog
+  cancel-in-progress: false
+
+env:
+  SITE: https://www.jeetio.com
+  GCP_PROJECT: clash-api-486819
+  VM_NAME: clash-royale-api
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Health check
+        id: health
+        run: |
+          set +e
+          body=$(curl -s --max-time 20 "$SITE/api/health?probe=1")
+          ok=$(printf '%s' "$body" | jq -r '.ok // false' 2>/dev/null || echo false)
+          probe=$(printf '%s' "$body" | jq -c '.probe // "no reply"' 2>/dev/null || echo '"no reply"')
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          echo "health ok=$ok probe=$probe"
+          if [ "$ok" = "true" ] && [ "${{ inputs.force }}" != "true" ]; then
+            echo "Backend healthy — nothing to do."
+          fi
+
+      - name: Need the GCP key?
+        if: steps.health.outputs.ok != 'true' || inputs.force == true
+        env:
+          HAS_KEY: ${{ secrets.GCP_SA_KEY != '' }}
+        run: |
+          if [ "$HAS_KEY" != "true" ]; then
+            echo "::error::Backend is DOWN and GCP_SA_KEY is not set — can't reset the VM from here."
+            echo "One-time fix: GCP console → IAM → Service Accounts → create 'jeetio-watchdog' with role 'Compute Instance Admin (v1)' → add JSON key → paste it as repo secret GCP_SA_KEY."
+            echo "Manual reset meanwhile: GCP console → $GCP_PROJECT → Compute Engine → VM instances → $VM_NAME → Reset."
+            exit 1
+          fi
+
+      - name: Auth to GCP
+        if: steps.health.outputs.ok != 'true' || inputs.force == true
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: gcloud
+        if: steps.health.outputs.ok != 'true' || inputs.force == true
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Reset (or start) the VM
+        if: steps.health.outputs.ok != 'true' || inputs.force == true
+        run: |
+          zone=$(gcloud compute instances list --project "$GCP_PROJECT" --filter="name=$VM_NAME" --format="value(zone.basename())")
+          [ -n "$zone" ] || { echo "::error::VM $VM_NAME not found in $GCP_PROJECT"; exit 1; }
+          status=$(gcloud compute instances describe "$VM_NAME" --project "$GCP_PROJECT" --zone "$zone" --format="value(status)")
+          ip=$(gcloud compute instances describe "$VM_NAME" --project "$GCP_PROJECT" --zone "$zone" --format="value(networkInterfaces[0].accessConfigs[0].natIP)")
+          echo "VM $VM_NAME zone=$zone status=$status ip=$ip"
+          case "$status" in
+            RUNNING)   gcloud compute instances reset "$VM_NAME" --project "$GCP_PROJECT" --zone "$zone" ;;
+            TERMINATED|STOPPED|SUSPENDED)
+                       gcloud compute instances start "$VM_NAME" --project "$GCP_PROJECT" --zone "$zone" ;;
+            *)         echo "::warning::VM is $status — waiting for it to settle"; sleep 60 ;;
+          esac
+          newip=$(gcloud compute instances describe "$VM_NAME" --project "$GCP_PROJECT" --zone "$zone" --format="value(networkInterfaces[0].accessConfigs[0].natIP)")
+          echo "external IP now $newip"
+          if [ "$newip" != "$ip" ]; then
+            echo "::warning::External IP changed ($ip → $newip). Vercel's API_BASE_URL must be updated, or reserve a static IP for the VM."
+          fi
+
+      - name: Verify it came back
+        if: steps.health.outputs.ok != 'true' || inputs.force == true
+        run: |
+          for i in 1 2 3 4 5 6; do
+            sleep 30
+            ok=$(curl -s --max-time 20 "$SITE/api/health?probe=1" | jq -r '.ok // false' 2>/dev/null || echo false)
+            echo "attempt $i: ok=$ok"
+            [ "$ok" = "true" ] && { echo "Backend is back."; exit 0; }
+          done
+          echo "::error::Reset issued but /api/health is still failing after 3 minutes — the API container may not be starting. Check the VM's Docker logs."
+          exit 1

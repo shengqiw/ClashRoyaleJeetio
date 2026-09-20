@@ -79,6 +79,11 @@ something twice, add it to `warnings` so the third time is free.
   (his Chrome, or the phone). War Decks reports it as "Jeetio's backend server is offline".
   The scorecard round (`eval/scorecard.md`, committed by CI on every push and Mondays) now
   carries a War Decks probe + health snapshot, so an outage is visible from the repo alone.
+  `.github/workflows/backend-watchdog.yml` checks `/api/health?probe=1` every 20 min and
+  resets/starts the VM with gcloud when it's down — but only once the repo secret
+  `GCP_SA_KEY` (service account with Compute Instance Admin v1) exists; the file header has
+  the 3-step setup. Run it by hand from the Actions tab ("Run workflow", `force` to reset
+  regardless).
 - MUI renders inside `@layer mui` (`enableCssLayer: true` in `mui-app-provider.tsx`), so
   ANY unlayered element selector in a global stylesheet beats MUI's own styles regardless
   of specificity. A bare `li { display: inline }` in globals.css flattened the card-picker
