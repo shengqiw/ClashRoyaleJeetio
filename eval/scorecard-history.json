@@ -259,5 +259,50 @@
         "count": null
       }
     }
+  },
+  {
+    "date": "2026-09-21",
+    "sha": "157ca73",
+    "base": "https://www.jeetio.com",
+    "strokes": 54,
+    "par": 54,
+    "aces": 4,
+    "blowups": 4,
+    "warProbe": {
+      "at": "2026-09-21T00:18:27.332Z",
+      "health": {
+        "status": 200,
+        "ms": 159,
+        "ok": true,
+        "env": {
+          "API_BASE_URL": true,
+          "API_KEY": true,
+          "GEMINI_API_KEY": true,
+          "GEMINI_MODEL": true
+        },
+        "warnings": [],
+        "info": [],
+        "probe": {
+          "path": "/clash/cards",
+          "ok": true,
+          "status": 200,
+          "ms": 51
+        }
+      },
+      "players": [
+        {
+          "tag": "#PRURJPJP",
+          "status": 504,
+          "ms": 626,
+          "error": "Jeetio's backend server is offline right now (the game-data box isn't answering), so this can't load. Not a problem with your tag — it usually means the clash-royale-api VM needs a reset. Try again in a few minutes.",
+          "decks": null
+        }
+      ],
+      "members": {
+        "status": 504,
+        "ms": 145,
+        "count": null
+      }
+    }
   }
 ]
