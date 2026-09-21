@@ -27,29 +27,30 @@ don't edit by hand.
 | 2026-09-18 | 8c65168 | 126 | +72 | 0 | 18 |
 | 2026-09-20 | 083e180 | 126 | +72 | 0 | 18 |
 | 2026-09-21 | 157ca73 | 54 | +0 | 4 | 4 |
+| 2026-09-21 | a2453c2 | 30 | -24 | 8 | 0 |
 
-## Last round — 2026-09-21 (157ca73) vs https://www.jeetio.com
+## Last round — 2026-09-21 (a2453c2) vs https://www.jeetio.com
 
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
-| 1 | Hog 2.6 Cycle | top | 7 | 10444ms | answered, valid, relevant, evidence, golden, fast |
-| 2 | Golem Beatdown | high | 7 | 10667ms | answered, valid, relevant, evidence, golden, fast |
-| 3 | LavaLoon | high | 7 | 10480ms | answered, valid, relevant, evidence, golden, fast |
-| 4 | X-Bow 2.9 Siege | top | 7 | 10428ms | answered, valid, relevant, evidence, golden, fast |
-| 5 | Classic Log Bait | top | 1 | 1559ms | — |
-| 6 | Mega Knight Bridge Spam | mid | 2 | 852ms | relevant |
-| 7 | Royal Giant Cycle | high | 3 | 468ms | relevant, golden |
-| 8 | Graveyard Freeze | high | 1 | 468ms | — |
-| 9 | Miner Poison Control | top | 1 | 423ms | — |
-| 10 | P.E.K.K.A Bridge Spam | high | 2 | 665ms | golden |
-| 11 | Elixir Golem Heal | mid | 3 | 540ms | relevant, golden |
-| 12 | LumberLoon Freeze | high | 1 | 421ms | — |
-| 13 | Mortar Bait | top | 2 | 474ms | relevant |
-| 14 | Three Musketeers Pump | high | 2 | 443ms | relevant |
-| 15 | Hog Earthquake | mid | 2 | 412ms | relevant |
+| 1 | Hog 2.6 Cycle | top | 1 | 2344ms | — |
+| 2 | Golem Beatdown | high | 1 | 557ms | — |
+| 3 | LavaLoon | high | 1 | 494ms | — |
+| 4 | X-Bow 2.9 Siege | top | 1 | 484ms | — |
+| 5 | Classic Log Bait | top | 1 | 515ms | — |
+| 6 | Mega Knight Bridge Spam | mid | 2 | 467ms | relevant |
+| 7 | Royal Giant Cycle | high | 3 | 416ms | relevant, golden |
+| 8 | Graveyard Freeze | high | 1 | 549ms | — |
+| 9 | Miner Poison Control | top | 1 | 468ms | — |
+| 10 | P.E.K.K.A Bridge Spam | high | 2 | 799ms | golden |
+| 11 | Elixir Golem Heal | mid | 3 | 534ms | relevant, golden |
+| 12 | LumberLoon Freeze | high | 1 | 510ms | — |
+| 13 | Mortar Bait | top | 2 | 626ms | relevant |
+| 14 | Three Musketeers Pump | high | 2 | 631ms | relevant |
+| 15 | Hog Earthquake | mid | 2 | 424ms | relevant |
 | 16 | Splashyard | high | 2 | 454ms | relevant |
-| 17 | Mid-ladder Menace | mid | 2 | 440ms | relevant |
-| 18 | Sparky Royal Giant | mid | 2 | 443ms | relevant |
+| 17 | Mid-ladder Menace | mid | 2 | 536ms | relevant |
+| 18 | Sparky Royal Giant | mid | 2 | 439ms | relevant |
 
 ## War Decks probe — last round
 
@@ -57,10 +58,10 @@ don't edit by hand.
 
 ```json
 {
-  "at": "2026-09-21T00:18:27.332Z",
+  "at": "2026-09-21T18:22:11.424Z",
   "health": {
     "status": 200,
-    "ms": 159,
+    "ms": 140,
     "ok": true,
     "env": {
       "API_BASE_URL": true,
@@ -74,22 +75,61 @@ don't edit by hand.
       "path": "/clash/cards",
       "ok": true,
       "status": 200,
-      "ms": 51
+      "ms": 43
     }
   },
   "players": [
     {
-      "tag": "#PRURJPJP",
-      "status": 504,
-      "ms": 626,
-      "error": "Jeetio's backend server is offline right now (the game-data box isn't answering), so this can't load. Not a problem with your tag — it usually means the clash-royale-api VM needs a reset. Try again in a few minutes.",
-      "decks": null
+      "tag": "#LJCUR0VV",
+      "status": 200,
+      "ms": 26636,
+      "decks": 4,
+      "band": "top",
+      "ref": 16,
+      "ownedCount": 122,
+      "notes": [],
+      "advisor": {
+        "used": false,
+        "model": "gemini-3.6-flash",
+        "reason": "Gemini timed out",
+        "lineupIndex": 0,
+        "swapsApplied": 0
+      },
+      "deckNames": [
+        "Giant Skeleton Evo Ram Hero Wizard (8 cards, Duel opener)",
+        "Hog 2.6 · Hero Musketeer (8 cards, Duel second)",
+        "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, Duel closer)",
+        "Evo Mortar Cart · Hero Berserker (8 cards, 1v1 / boat)"
+      ]
+    },
+    {
+      "tag": "#Y9R9VRCV",
+      "status": 200,
+      "ms": 5761,
+      "decks": 4,
+      "band": "top",
+      "ref": 16,
+      "ownedCount": 123,
+      "notes": [],
+      "advisor": {
+        "used": false,
+        "model": "gemini-3.6-flash",
+        "reason": "Gemini answered 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+        "lineupIndex": 0,
+        "swapsApplied": 0
+      },
+      "deckNames": [
+        "Evo Mortar Cart · Hero Berserker (8 cards, Duel opener)",
+        "Goblinstein 3.3 Cycle (8 cards, Duel second)",
+        "Giant Skeleton Evo Ram Hero Wizard (8 cards, Duel closer)",
+        "Hero Knight Log Bait 2.9 (8 cards, 1v1 / boat)"
+      ]
     }
   ],
   "members": {
-    "status": 504,
-    "ms": 145,
-    "count": null
+    "status": 200,
+    "ms": 408,
+    "count": 41
   }
 }
 ```
