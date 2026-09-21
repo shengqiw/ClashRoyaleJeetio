@@ -36,11 +36,15 @@ export function isConnectFailure(err: unknown): boolean {
  * @param url   Absolute backend URL to fetch.
  * @param init  Standard fetch init (method/headers/body).
  * @param opts.timeoutMs  Abort the request after this long (default 25s).
+ * @param opts.edgeCacheSeconds  Opt-in, public GET reads only. A 200 is served
+ *   from Vercel's CDN for this long (then stale-while-revalidate for 10 min), so
+ *   a burst of people opening the same roster/player is ONE hit on the 1 GB
+ *   backend box instead of one each. Errors are never cached.
  */
 export async function proxyJson(
   url: string,
   init: RequestInit = {},
-  { timeoutMs = 25_000 }: { timeoutMs?: number } = {}
+  { timeoutMs = 25_000, edgeCacheSeconds = 0 }: { timeoutMs?: number; edgeCacheSeconds?: number } = {}
 ): Promise<NextResponse> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -74,7 +78,11 @@ export async function proxyJson(
   }
 
   try {
-    return NextResponse.json(JSON.parse(text), { status: response.status });
+    const headers: Record<string, string> =
+      edgeCacheSeconds > 0 && response.status === 200
+        ? { 'Cache-Control': `public, s-maxage=${edgeCacheSeconds}, stale-while-revalidate=600` }
+        : { 'Cache-Control': 'no-store' };
+    return NextResponse.json(JSON.parse(text), { status: response.status, headers });
   } catch {
     return NextResponse.json(
       { error: `Backend returned a non-JSON response (HTTP ${response.status}): ${text.slice(0, 200)}` },

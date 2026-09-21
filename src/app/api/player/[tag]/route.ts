@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { proxyJson } from '@/lib/proxyJson';
 
-export const revalidate = 180;
+// Request-time proxy; caching is done at the CDN via proxyJson's edgeCacheSeconds.
+export const dynamic = 'force-dynamic';
 
 export async function GET(
   _request: Request,
@@ -23,6 +24,6 @@ export async function GET(
   return proxyJson(
     `${apiBase}/clash/player/${encodeURIComponent(tag)}`,
     { headers: { 'x-api-key': apiKey, Accept: 'application/json' } },
-    { timeoutMs: 8000 }
+    { timeoutMs: 8000, edgeCacheSeconds: 120 }
   );
 }
