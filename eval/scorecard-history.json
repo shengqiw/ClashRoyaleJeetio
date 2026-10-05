@@ -472,5 +472,89 @@
         "count": 38
       }
     }
+  },
+  {
+    "date": "2026-10-05",
+    "sha": "e823c66",
+    "base": "https://www.jeetio.com",
+    "strokes": 31,
+    "par": 54,
+    "aces": 7,
+    "blowups": 0,
+    "warProbe": {
+      "at": "2026-10-05T20:52:34.443Z",
+      "health": {
+        "status": 200,
+        "ms": 112,
+        "ok": true,
+        "env": {
+          "API_BASE_URL": true,
+          "API_KEY": true,
+          "GEMINI_API_KEY": true,
+          "GEMINI_MODEL": true
+        },
+        "warnings": [],
+        "info": [],
+        "probe": {
+          "path": "/clash/cards",
+          "ok": true,
+          "status": 200,
+          "ms": 78
+        }
+      },
+      "players": [
+        {
+          "tag": "#8LU99YPJP",
+          "status": 200,
+          "ms": 7982,
+          "decks": 4,
+          "band": "top",
+          "ref": 16,
+          "ownedCount": 123,
+          "notes": [],
+          "advisor": {
+            "used": false,
+            "model": "gemini-3.6-flash",
+            "reason": "Gemini answered 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+            "lineupIndex": 0,
+            "swapsApplied": 0
+          },
+          "deckNames": [
+            "P.E.K.K.A Bridge Spam (8 cards, Duel opener)",
+            "Evo Mortar Goblinstein Cannon Cart (8 cards, Duel second)",
+            "Hero Knight Log Bait 2.9 (8 cards, Duel closer)",
+            "Hog Mighty Miner Evo Cannon 2.6 (8 cards, 1v1 / boat)"
+          ]
+        },
+        {
+          "tag": "#JYVJRQ2",
+          "status": 200,
+          "ms": 7385,
+          "decks": 4,
+          "band": "top",
+          "ref": 16,
+          "ownedCount": 123,
+          "notes": [],
+          "advisor": {
+            "used": true,
+            "model": "gemini-3.6-flash",
+            "ms": 5834,
+            "lineupIndex": 0,
+            "swapsApplied": 0
+          },
+          "deckNames": [
+            "Evo Mortar Cart · Hero Berserker (8 cards, Duel opener)",
+            "Hero Knight Log Bait 2.9 (8 cards, Duel second)",
+            "Giant Skeleton Evo Ram Hero Wizard (8 cards, Duel closer)",
+            "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, 1v1 / boat)"
+          ]
+        }
+      ],
+      "members": {
+        "status": 200,
+        "ms": 634,
+        "count": 38
+      }
+    }
   }
 ]
