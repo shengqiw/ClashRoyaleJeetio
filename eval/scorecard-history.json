@@ -556,5 +556,89 @@
         "count": 38
       }
     }
+  },
+  {
+    "date": "2026-10-12",
+    "sha": "401c466",
+    "base": "https://www.jeetio.com",
+    "strokes": 37,
+    "par": 54,
+    "aces": 6,
+    "blowups": 1,
+    "warProbe": {
+      "at": "2026-10-12T21:27:33.349Z",
+      "health": {
+        "status": 200,
+        "ms": 77,
+        "ok": true,
+        "env": {
+          "API_BASE_URL": true,
+          "API_KEY": true,
+          "GEMINI_API_KEY": true,
+          "GEMINI_MODEL": true
+        },
+        "warnings": [],
+        "info": [],
+        "probe": {
+          "path": "/clash/cards",
+          "ok": true,
+          "status": 200,
+          "ms": 40
+        }
+      },
+      "players": [
+        {
+          "tag": "#LJCUR0VV",
+          "status": 200,
+          "ms": 7478,
+          "decks": 4,
+          "band": "top",
+          "ref": 16,
+          "ownedCount": 123,
+          "notes": [],
+          "advisor": {
+            "used": true,
+            "model": "gemini-3.6-flash",
+            "ms": 5810,
+            "lineupIndex": 1,
+            "swapsApplied": 1
+          },
+          "deckNames": [
+            "Giant Skeleton Evo Ram Hero Wizard (8 cards, Duel opener)",
+            "Hog 2.6 · Hero Musketeer (8 cards, Duel second)",
+            "Evo Mortar Cart · Minion Giant (8 cards, Duel closer)",
+            "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, 1v1 / boat)"
+          ]
+        },
+        {
+          "tag": "#8LU99YPJP",
+          "status": 200,
+          "ms": 5057,
+          "decks": 4,
+          "band": "top",
+          "ref": 16,
+          "ownedCount": 123,
+          "notes": [],
+          "advisor": {
+            "used": true,
+            "model": "gemini-3.6-flash",
+            "ms": 3474,
+            "lineupIndex": 0,
+            "swapsApplied": 0
+          },
+          "deckNames": [
+            "P.E.K.K.A Bridge Spam (8 cards, Duel opener)",
+            "Evo Mortar Goblinstein Cannon Cart (8 cards, Duel second)",
+            "Hog Mighty Miner Evo Cannon 2.6 (8 cards, Duel closer)",
+            "Hero Knight Log Bait 2.9 (8 cards, 1v1 / boat)"
+          ]
+        }
+      ],
+      "members": {
+        "status": 200,
+        "ms": 453,
+        "count": 38
+      }
+    }
   }
 ]
