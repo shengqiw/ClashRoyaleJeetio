@@ -32,29 +32,30 @@ don't edit by hand.
 | 2026-10-05 | e823c66 | 31 | -23 | 7 | 0 |
 | 2026-10-12 | 401c466 | 37 | -17 | 6 | 1 |
 | 2026-10-19 | 2867278 | 31 | -23 | 7 | 0 |
+| 2026-10-26 | 2708f07 | 30 | -24 | 8 | 0 |
 
-## Last round — 2026-10-19 (2867278) vs https://www.jeetio.com
+## Last round — 2026-10-26 (2708f07) vs https://www.jeetio.com
 
 | # | hole | band | strokes | rtt | missed checks |
 |---|------|------|---------|-----|---------------|
-| 1 | Hog 2.6 Cycle | top | 2 | 4136ms | fast |
-| 2 | Golem Beatdown | high | 1 | 720ms | — |
-| 3 | LavaLoon | high | 1 | 421ms | — |
-| 4 | X-Bow 2.9 Siege | top | 1 | 470ms | — |
-| 5 | Classic Log Bait | top | 1 | 453ms | — |
-| 6 | Mega Knight Bridge Spam | mid | 2 | 427ms | relevant |
-| 7 | Royal Giant Cycle | high | 3 | 602ms | relevant, golden |
-| 8 | Graveyard Freeze | high | 1 | 426ms | — |
-| 9 | Miner Poison Control | top | 1 | 458ms | — |
-| 10 | P.E.K.K.A Bridge Spam | high | 2 | 431ms | golden |
-| 11 | Elixir Golem Heal | mid | 3 | 458ms | relevant, golden |
-| 12 | LumberLoon Freeze | high | 1 | 377ms | — |
-| 13 | Mortar Bait | top | 2 | 394ms | relevant |
-| 14 | Three Musketeers Pump | high | 2 | 393ms | relevant |
-| 15 | Hog Earthquake | mid | 2 | 436ms | relevant |
-| 16 | Splashyard | high | 2 | 459ms | relevant |
-| 17 | Mid-ladder Menace | mid | 2 | 445ms | relevant |
-| 18 | Sparky Royal Giant | mid | 2 | 496ms | relevant |
+| 1 | Hog 2.6 Cycle | top | 1 | 3679ms | — |
+| 2 | Golem Beatdown | high | 1 | 540ms | — |
+| 3 | LavaLoon | high | 1 | 540ms | — |
+| 4 | X-Bow 2.9 Siege | top | 1 | 444ms | — |
+| 5 | Classic Log Bait | top | 1 | 427ms | — |
+| 6 | Mega Knight Bridge Spam | mid | 2 | 522ms | relevant |
+| 7 | Royal Giant Cycle | high | 3 | 406ms | relevant, golden |
+| 8 | Graveyard Freeze | high | 1 | 465ms | — |
+| 9 | Miner Poison Control | top | 1 | 436ms | — |
+| 10 | P.E.K.K.A Bridge Spam | high | 2 | 466ms | golden |
+| 11 | Elixir Golem Heal | mid | 3 | 490ms | relevant, golden |
+| 12 | LumberLoon Freeze | high | 1 | 353ms | — |
+| 13 | Mortar Bait | top | 2 | 442ms | relevant |
+| 14 | Three Musketeers Pump | high | 2 | 417ms | relevant |
+| 15 | Hog Earthquake | mid | 2 | 401ms | relevant |
+| 16 | Splashyard | high | 2 | 373ms | relevant |
+| 17 | Mid-ladder Menace | mid | 2 | 394ms | relevant |
+| 18 | Sparky Royal Giant | mid | 2 | 417ms | relevant |
 
 ## War Decks probe — last round
 
@@ -62,10 +63,10 @@ don't edit by hand.
 
 ```json
 {
-  "at": "2026-10-19T18:53:15.201Z",
+  "at": "2026-10-26T18:55:27.363Z",
   "health": {
     "status": 200,
-    "ms": 210,
+    "ms": 472,
     "ok": true,
     "env": {
       "API_BASE_URL": true,
@@ -79,37 +80,37 @@ don't edit by hand.
       "path": "/clash/cards",
       "ok": true,
       "status": 200,
-      "ms": 112
+      "ms": 397
     }
   },
   "players": [
     {
       "tag": "#LJCUR0VV",
       "status": 200,
-      "ms": 5331,
+      "ms": 6681,
       "decks": 4,
       "band": "top",
       "ref": 16,
       "ownedCount": 123,
       "notes": [],
       "advisor": {
-        "used": false,
+        "used": true,
         "model": "gemini-3.6-flash",
-        "reason": "Gemini answered 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
-        "lineupIndex": 0,
+        "ms": 5155,
+        "lineupIndex": 1,
         "swapsApplied": 0
       },
       "deckNames": [
-        "P.E.K.K.A Bridge Spam (8 cards, Duel opener)",
-        "Hog Mighty Miner Evo Cannon 2.6 (8 cards, Duel second)",
-        "Hero Knight Log Bait 2.9 (8 cards, Duel closer)",
-        "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, 1v1 / boat)"
+        "Giant Skeleton Evo Ram Hero Wizard (8 cards, Duel opener)",
+        "Evo Mortar Cart · Minion Giant (8 cards, Duel second)",
+        "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, Duel closer)",
+        "Hog 2.6 · Hero Musketeer (8 cards, 1v1 / boat)"
       ]
     },
     {
-      "tag": "#8ULVV8PL",
+      "tag": "#LR0PGCR",
       "status": 200,
-      "ms": 4289,
+      "ms": 1657,
       "decks": 4,
       "band": "top",
       "ref": 16,
@@ -123,17 +124,17 @@ don't edit by hand.
         "swapsApplied": 0
       },
       "deckNames": [
-        "Hero Knight Log Bait 2.9 (8 cards, Duel opener)",
-        "Hog Mighty Miner Evo Cannon 2.6 (8 cards, Duel second)",
-        "P.E.K.K.A Bridge Spam (8 cards, Duel closer)",
+        "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, Duel opener)",
+        "Goblinstein 3.3 Cycle (8 cards, Duel second)",
+        "Hero Knight Log Bait 2.9 (8 cards, Duel closer)",
         "Evo Mortar Cart · Hero Berserker (8 cards, 1v1 / boat)"
       ]
     }
   ],
   "members": {
     "status": 200,
-    "ms": 551,
-    "count": 40
+    "ms": 172,
+    "count": 38
   }
 }
 ```

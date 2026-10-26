@@ -724,5 +724,89 @@
         "count": 40
       }
     }
+  },
+  {
+    "date": "2026-10-26",
+    "sha": "2708f07",
+    "base": "https://www.jeetio.com",
+    "strokes": 30,
+    "par": 54,
+    "aces": 8,
+    "blowups": 0,
+    "warProbe": {
+      "at": "2026-10-26T18:55:27.363Z",
+      "health": {
+        "status": 200,
+        "ms": 472,
+        "ok": true,
+        "env": {
+          "API_BASE_URL": true,
+          "API_KEY": true,
+          "GEMINI_API_KEY": true,
+          "GEMINI_MODEL": true
+        },
+        "warnings": [],
+        "info": [],
+        "probe": {
+          "path": "/clash/cards",
+          "ok": true,
+          "status": 200,
+          "ms": 397
+        }
+      },
+      "players": [
+        {
+          "tag": "#LJCUR0VV",
+          "status": 200,
+          "ms": 6681,
+          "decks": 4,
+          "band": "top",
+          "ref": 16,
+          "ownedCount": 123,
+          "notes": [],
+          "advisor": {
+            "used": true,
+            "model": "gemini-3.6-flash",
+            "ms": 5155,
+            "lineupIndex": 1,
+            "swapsApplied": 0
+          },
+          "deckNames": [
+            "Giant Skeleton Evo Ram Hero Wizard (8 cards, Duel opener)",
+            "Evo Mortar Cart · Minion Giant (8 cards, Duel second)",
+            "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, Duel closer)",
+            "Hog 2.6 · Hero Musketeer (8 cards, 1v1 / boat)"
+          ]
+        },
+        {
+          "tag": "#LR0PGCR",
+          "status": 200,
+          "ms": 1657,
+          "decks": 4,
+          "band": "top",
+          "ref": 16,
+          "ownedCount": 123,
+          "notes": [],
+          "advisor": {
+            "used": false,
+            "model": "gemini-3.6-flash",
+            "reason": "Gemini answered 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+            "lineupIndex": 0,
+            "swapsApplied": 0
+          },
+          "deckNames": [
+            "Golem Hero Mini P.E.K.K.A Night Witch (8 cards, Duel opener)",
+            "Goblinstein 3.3 Cycle (8 cards, Duel second)",
+            "Hero Knight Log Bait 2.9 (8 cards, Duel closer)",
+            "Evo Mortar Cart · Hero Berserker (8 cards, 1v1 / boat)"
+          ]
+        }
+      ],
+      "members": {
+        "status": 200,
+        "ms": 172,
+        "count": 38
+      }
+    }
   }
 ]
